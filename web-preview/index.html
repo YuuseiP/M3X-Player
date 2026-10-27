@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>澄 · M3X Player</title>
+  <link rel="icon" href="covers/01.jpg">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="tracks.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="avatar.js"></script>
+  <script defer src="player-tools.js"></script>
+</head>
+<body>
+  <div id="m3x-concept">
+    <div class="m3x-screen" data-layout="album" aria-label="澄播放器">
+      <nav class="m3x-nav" aria-label="播放器导航">
+        <button type="button" data-page="library"><i data-icon="library"></i>曲库</button>
+        <button type="button" data-page="player"><i data-icon="disc"></i>播放</button>
+        <button type="button" data-page="profile"><i data-icon="user"></i>我的</button>
+      </nav>
+      <main class="m3x-content">
+        <section class="m3x-panel m3x-player" data-panel="player" aria-label="正在播放" hidden>
+          <button type="button" class="m3x-cover-open" data-page="lyrics" aria-label="查看歌词"><img class="m3x-cover" alt="" width="240" height="240"></button>
+          <div class="m3x-song">
+            <div class="m3x-song-text"><h2 class="m3x-title" data-text="title"></h2><div class="m3x-artist" data-text="singer"></div><div class="m3x-album" data-text="album"></div></div>
+          </div>
+          <div class="m3x-player-tools"><span class="m3x-metadata" data-text="format"></span><button type="button" class="m3x-icon" data-action="favorite" aria-label="收藏当前歌曲" aria-pressed="false"><i data-icon="heart"></i></button><button type="button" class="m3x-icon" data-action="add-playlist" aria-label="添加到歌单"><i data-icon="add-list"></i></button><button type="button" class="m3x-icon" data-action="song-menu" aria-label="更多歌曲操作"><i data-icon="more"></i></button></div>
+          <div class="m3x-seek">
+            <input id="seek" type="range" class="m3x-range" min="0" max="1" step="0.1" value="0" aria-label="播放进度">
+            <div class="m3x-times"><span data-text="position">0:00</span><span data-text="duration"></span></div>
+          </div>
+          <div class="m3x-transport">
+            <button type="button" class="m3x-icon" data-action="mode" aria-label="播放模式：顺序"><i data-icon="sequential"></i></button>
+            <button type="button" class="m3x-icon" data-action="previous" aria-label="上一首"><i data-icon="previous"></i></button>
+            <button type="button" class="m3x-play" data-action="play" aria-label="播放"><i data-icon="play"></i></button>
+            <button type="button" class="m3x-icon" data-action="next" aria-label="下一首"><i data-icon="next"></i></button>
+            <button type="button" class="m3x-icon" data-page="queue" aria-label="打开播放队列"><i data-icon="queue"></i></button>
+          </div>
+          <button type="button" class="m3x-output" data-action="output" data-open-tab="signal" aria-haspopup="dialog" aria-expanded="false"><span>音频输出</span><i data-icon="up"></i></button>
+          <div class="m3x-up-next"><button type="button" data-page="queue"><small>接下来</small><span data-text="next"></span><i data-icon="right"></i></button><div class="m3x-track-list" data-list="upcoming" aria-label="接下来播放"></div></div>
+        </section>
+        <section class="m3x-panel" data-panel="library" aria-label="本地曲库">
+          <div class="m3x-page-heading"><h2 class="m3x-heading">曲库 <small data-text="trackCount">10 首</small></h2><button type="button" class="m3x-icon" data-action="scan" aria-label="扫描歌曲"><i data-icon="scan"></i></button></div>
+          <input class="m3x-search" type="search" placeholder="搜索歌曲、歌手、专辑" aria-label="搜索曲库">
+          <div class="m3x-filters" aria-label="曲库筛选"><button type="button" data-filter="all" aria-pressed="true">歌曲</button><button type="button" data-filter="albums" aria-pressed="false">专辑</button><button type="button" data-filter="artists" aria-pressed="false">歌手</button><button type="button" data-filter="folders" aria-pressed="false">文件夹</button><button type="button" data-filter="favorites" aria-pressed="false">收藏</button><button type="button" data-filter="playlists" aria-pressed="false">歌单</button><button type="button" class="m3x-icon" data-action="new-playlist" aria-label="新建歌单"><i data-icon="plus"></i></button></div>
+          <div class="m3x-library-controls"><button type="button" class="m3x-text-button" id="group-back" data-action="group-back" hidden><i data-icon="back"></i><span id="group-label"></span></button><label>排序<select data-setting="sort" aria-label="歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
+          <div class="m3x-track-list" data-list="library" aria-label="歌曲列表"></div>
+          <div class="m3x-scroll" id="library-groups" hidden></div>
+          <div class="m3x-playlist-list m3x-scroll" id="library-playlists" hidden></div>
+        </section>
+        <section class="m3x-panel" data-panel="queue" aria-label="播放队列" hidden>
+          <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="player" aria-label="返回播放"><i data-icon="back"></i></button><h2>播放队列</h2></div>
+          <div class="m3x-queue-toolbar"><span data-text="queueCount"></span><button type="button" class="m3x-text-button" data-action="locate-current">当前歌曲</button><button type="button" class="m3x-text-button" data-action="clear-queue">清空</button></div><div class="m3x-track-list" data-list="queue"></div>
+        </section>
+        <section class="m3x-panel m3x-lyrics-panel" data-panel="lyrics" aria-label="歌词" hidden>
+          <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="player" aria-label="返回播放"><i data-icon="back"></i></button><h2>歌词</h2></div>
+          <h3 class="m3x-lyric-title" data-text="title"></h3><p class="m3x-subheading" data-text="singer"></p>
+          <div id="lyrics-lines" class="m3x-scroll" aria-label="歌词内容"></div>
+          <label class="m3x-lyric-offset">歌词偏移 <output id="lyric-offset-label">0.0 秒</output><input id="lyric-offset" type="range" min="-10" max="10" step="0.1" value="0" aria-label="歌词偏移"></label>
+        </section>
+        <section class="m3x-panel m3x-scroll" data-panel="statistics" aria-label="听歌统计" hidden>
+          <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>听歌统计</h2></div>
+          <div class="m3x-stats-summary"><div><strong id="listening-minutes">0</strong><small>累计听歌分钟</small></div><div><strong id="listening-count">0</strong><small>播放次数</small></div></div>
+          <h3 class="m3x-section-label">常听歌曲</h3><div id="listening-ranking"></div>
+        </section>
+        <section class="m3x-panel" data-panel="playlist" aria-label="歌单详情" hidden>
+          <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-action="back-playlists" aria-label="返回歌单"><i data-icon="back"></i></button><h2 data-text="playlistName"></h2></div><button type="button" class="m3x-icon" data-action="rename-playlist" aria-label="重命名歌单"><i data-icon="edit"></i></button></div>
+          <div class="m3x-playlist-toolbar"><button type="button" class="m3x-text-button" data-action="play-playlist"><i data-icon="play"></i>播放全部</button><span data-text="playlistCount"></span></div>
+          <div class="m3x-track-list" data-list="playlist"></div>
+        </section>
+        <section class="m3x-panel m3x-scroll" data-panel="profile" aria-label="我的" hidden>
+          <h2 class="m3x-heading">我的</h2>
+          <div class="m3x-profile-identity">
+            <button type="button" class="m3x-avatar" data-action="avatar" aria-label="更换头像"><span>澄</span><img id="avatar-image" alt="个人头像" hidden></button>
+            <div class="m3x-profile-name"><input id="nickname" type="text" maxlength="20" value="本地听众" aria-label="昵称" autocomplete="nickname"></div>
+            <button type="button" class="m3x-icon" data-action="edit-profile" aria-label="修改昵称"><i data-icon="edit"></i></button>
+          </div>
+          <div class="m3x-profile-stats">
+            <button type="button" data-action="open-favorites"><strong data-text="favoriteCount">0</strong><span>我的收藏</span></button>
+            <button type="button" data-action="open-library"><strong data-text="songCount">10</strong><span>本地歌曲</span></button>
+            <button type="button" data-action="open-playlists"><strong data-text="playlistTotal">0</strong><span>我的歌单</span></button>
+          </div>
+          <button type="button" class="m3x-menu-row" data-page="settings"><span class="m3x-menu-icon"><i data-icon="settings"></i></span><span><strong>软件设置</strong></span><i data-icon="right"></i></button>
+          <button type="button" class="m3x-menu-row" data-page="statistics"><span class="m3x-menu-icon"><i data-icon="disc"></i></span><span><strong>听歌统计</strong></span><i data-icon="right"></i></button>
+          <div class="m3x-section-heading"><h3>最近播放</h3><span data-text="historyCount">0 首</span></div>
+          <div class="m3x-track-list" data-list="recent" aria-label="最近播放"></div>
+        </section>
+        <section class="m3x-panel" data-panel="settings" aria-label="软件设置" hidden>
+          <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>软件设置</h2></div>
+          <div class="m3x-scroll m3x-settings-body">
+            <h3 class="m3x-section-label">外观</h3>
+            <label class="m3x-setting"><span>主题</span><select data-setting="theme" aria-label="主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+            <label class="m3x-setting"><span>播放器布局</span><select data-setting="layout" aria-label="播放器布局"><option value="album">专辑沉浸</option><option value="catalog">曲库优先</option></select></label>
+            <label class="m3x-setting"><span>以文件名显示歌曲</span><input type="checkbox" data-setting="filenameTitle" aria-label="以文件名显示歌曲"></label>
+            <label class="m3x-setting"><span>列表显示封面</span><input type="checkbox" data-setting="showCovers" aria-label="列表显示封面" checked></label>
+            <h3 class="m3x-section-label">播放与启动</h3>
+            <label class="m3x-setting"><span>默认启动页</span><select data-setting="startPage" aria-label="默认启动页"><option value="library">曲库</option><option value="player">播放</option><option value="profile">我的</option></select></label>
+            <label class="m3x-setting"><span>记住播放进度</span><input type="checkbox" data-setting="rememberPosition" aria-label="记住播放进度" checked></label>
+            <button type="button" class="m3x-setting m3x-setting-button" data-tool="sleep"><span>睡眠定时</span><span class="m3x-caption" id="sleep-summary">未开启</span><i data-icon="right"></i></button>
+            <label class="m3x-setting"><span>播放速度</span><select id="playback-rate" aria-label="播放速度"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1.0×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2.0×</option></select></label>
+            <label class="m3x-setting"><span>变速保持音调</span><input type="checkbox" id="preserve-pitch" aria-label="变速保持音调" checked></label>
+            <h3 class="m3x-section-label">音乐文件</h3>
+            <button type="button" class="m3x-folder-setting" data-action="choose-folder"><span>添加扫描目录<small id="music-folder"></small></span><i data-icon="plus"></i></button>
+            <ul id="scan-directories" class="m3x-scan-directories" aria-label="已添加的扫描目录"></ul>
+            <label class="m3x-setting" id="media-store-setting" hidden><span>包含 Android 媒体库</span><input type="checkbox" id="include-media-store" aria-label="包含 Android 媒体库"></label>
+            <button type="button" class="m3x-setting m3x-setting-button" data-action="scan"><span>开始扫描</span><span class="m3x-caption" data-text="scanStatus" role="status">尚未扫描</span><i data-icon="scan"></i></button>
+            <progress id="scan-progress" value="0" max="1" hidden aria-label="扫描进度"></progress>
+            <button type="button" class="m3x-text-button" data-action="stop-scan" hidden>停止扫描</button>
+            <button type="button" class="m3x-setting m3x-setting-button" data-action="scan-options"><span>扫描筛选</span><i data-icon="right"></i></button>
+            <button type="button" class="m3x-setting m3x-setting-button" data-action="hidden-songs"><span>隐藏的歌曲</span><span class="m3x-caption" data-text="hiddenCount">0 首</span><i data-icon="right"></i></button>
+            <div class="m3x-setting"><span>本地曲库</span><span class="m3x-caption" data-text="librarySize"></span></div>
+            <h3 class="m3x-section-label">关于</h3>
+            <div class="m3x-setting"><span>版本</span><span class="m3x-caption">0.1</span></div>
+          </div>
+        </section>
+      </main>
+      <div class="m3x-mini">
+        <button type="button" class="m3x-mini-open" data-page="player" aria-label="打开正在播放"><img class="m3x-mini-cover" alt="" width="40" height="40"><span class="m3x-mini-text"><span data-text="title"></span><small data-text="singer"></small></span></button>
+        <button type="button" class="m3x-icon" data-action="play" aria-label="播放"><i data-icon="play"></i></button>
+      </div>
+      <div class="m3x-feedback" id="playback-status" role="status" hidden></div>
+      <div id="toast" role="status" aria-live="polite" hidden></div>
+      <dialog id="output-dialog" class="m3x-sheet-overlay" aria-label="声音与硬件输出">
+        <div class="m3x-sheet-scrim" aria-hidden="true"></div>
+        <section class="m3x-sheet">
+          <div class="m3x-sheet-handle" aria-hidden="true"></div>
+          <header class="m3x-sheet-header"><h2>声音与输出</h2><button type="button" class="m3x-icon" data-action="close-output" aria-label="关闭声音与输出"><i data-icon="close"></i></button></header>
+          <div class="m3x-sheet-tabs" role="tablist" aria-label="声音与输出选项">
+            <button type="button" id="signal-tab" role="tab" data-sheet-tab="signal" aria-controls="signal-panel" aria-selected="true">输出链路</button>
+            <button type="button" id="processing-tab" role="tab" data-sheet-tab="processing" aria-controls="processing-panel" aria-selected="false">声音处理</button>
+          </div>
+          <section class="m3x-sheet-tab-panel" id="signal-panel" data-sheet-panel="signal" role="tabpanel" aria-labelledby="signal-tab">
+            <dl class="m3x-signal">
+              <div><dt>源文件</dt><dd data-text="format"></dd></div>
+              <div><dt>播放引擎</dt><dd data-text="engine">浏览器原生音频</dd></div>
+              <div><dt>硬件输出</dt><dd>未获取</dd></div>
+            </dl>
+          </section>
+          <section class="m3x-sheet-tab-panel" id="processing-panel" data-sheet-panel="processing" role="tabpanel" aria-labelledby="processing-tab" hidden>
+            <label class="m3x-setting"><span>均衡器 EQ</span><input type="checkbox" id="eq-enabled" data-preference="eq" aria-label="均衡器 EQ"></label>
+            <div id="eq-controls" hidden><label class="m3x-setting"><span>预设</span><select id="eq-preset" aria-label="均衡器预设"><option value="flat">平直</option><option value="vocal">人声</option><option value="bass">低音</option><option value="bright">明亮</option><option value="custom">自定义</option></select></label><div id="eq-bands"></div><button type="button" class="m3x-text-button" id="eq-reset">重置均衡器</button></div>
+            <label class="m3x-setting"><span>ReplayGain</span><select id="replaygain-mode" data-preference="replaygain" aria-label="ReplayGain"><option value="off">关闭</option><option value="track">单曲</option><option value="album">专辑</option></select></label>
+            <p class="m3x-caption" id="replaygain-status"></p>
+          </section>
+        </section>
+      </dialog>
+      <dialog id="song-menu-dialog" class="m3x-sheet-overlay" aria-labelledby="song-menu-title"><div class="m3x-sheet-scrim" aria-hidden="true"></div><section class="m3x-sheet"><div class="m3x-sheet-handle" aria-hidden="true"></div><header class="m3x-sheet-header"><h2 id="song-menu-title">歌曲</h2><button type="button" class="m3x-icon" data-close aria-label="关闭歌曲菜单"><i data-icon="close"></i></button></header><p class="m3x-caption" id="song-menu-artist"></p><button type="button" class="m3x-sheet-action" data-action="play-next">下一首播放</button><button type="button" class="m3x-sheet-action" data-action="menu-add-playlist">添加到歌单</button><button type="button" class="m3x-sheet-action" data-action="song-info">歌曲信息</button><button type="button" class="m3x-sheet-action" data-action="hide-song">隐藏歌曲</button></section></dialog>
+      <dialog id="info-dialog" class="m3x-sheet-overlay" aria-labelledby="song-info-title"><div class="m3x-sheet-scrim" aria-hidden="true"></div><section class="m3x-sheet"><header class="m3x-sheet-header"><h2 id="song-info-title">歌曲信息</h2><button type="button" class="m3x-icon" data-close aria-label="关闭歌曲信息"><i data-icon="close"></i></button></header><dl id="song-info" class="m3x-signal"></dl></section></dialog>
+      <dialog id="sleep-dialog" class="m3x-sheet-overlay" aria-labelledby="sleep-title"><div class="m3x-sheet-scrim" aria-hidden="true"></div><section class="m3x-sheet"><header class="m3x-sheet-header"><h2 id="sleep-title">睡眠定时</h2><button type="button" class="m3x-icon" data-close aria-label="关闭睡眠定时"><i data-icon="close"></i></button></header><form id="sleep-form"><label class="m3x-setting"><span>分钟</span><input id="sleep-minutes" type="number" min="1" max="180" value="30" required aria-label="睡眠定时分钟"></label><label class="m3x-setting"><span>播完当前歌曲再停止</span><input type="checkbox" id="sleep-finish-song" aria-label="播完当前歌曲再停止"></label><p class="m3x-caption" id="sleep-status">未开启</p><div class="m3x-inline-form"><button type="button" class="m3x-text-button" id="sleep-cancel">关闭定时</button><button type="submit" class="m3x-primary">开始定时</button></div></form></section></dialog>
+      <dialog id="scan-options-dialog" class="m3x-sheet-overlay" aria-labelledby="scan-options-title"><div class="m3x-sheet-scrim" aria-hidden="true"></div><section class="m3x-sheet"><header class="m3x-sheet-header"><h2 id="scan-options-title">扫描筛选</h2><button type="button" class="m3x-icon" data-close aria-label="关闭扫描筛选"><i data-icon="close"></i></button></header><form id="scan-options-form"><label class="m3x-setting"><span>屏蔽 60 秒以下音频</span><input type="checkbox" id="skip-short" aria-label="屏蔽短音频"></label><label class="m3x-section-label" for="excluded-folders">屏蔽子目录（每行一个相对路径）</label><textarea id="excluded-folders" rows="4" placeholder="例如：Podcasts"></textarea><p id="scan-options-error" class="m3x-error" role="status" hidden></p><button type="submit" class="m3x-primary">保存筛选</button></form></section></dialog>
+      <dialog id="hidden-dialog" class="m3x-sheet-overlay" aria-labelledby="hidden-title"><div class="m3x-sheet-scrim" aria-hidden="true"></div><section class="m3x-sheet"><header class="m3x-sheet-header"><h2 id="hidden-title">隐藏的歌曲</h2><button type="button" class="m3x-icon" data-close aria-label="关闭隐藏歌曲"><i data-icon="close"></i></button></header><button type="button" class="m3x-text-button" data-action="restore-all">全部恢复</button><div id="hidden-list"></div></section></dialog>
+      <dialog id="playlist-dialog" class="m3x-sheet-overlay" aria-labelledby="playlist-dialog-title">
+        <div class="m3x-sheet-scrim" aria-hidden="true"></div>
+        <section class="m3x-sheet">
+          <div class="m3x-sheet-handle" aria-hidden="true"></div>
+          <header class="m3x-sheet-header"><h2 id="playlist-dialog-title">添加到歌单</h2><button type="button" class="m3x-icon" data-close aria-label="关闭歌单"><i data-icon="close"></i></button></header>
+          <div id="playlist-choices" class="m3x-scroll"></div>
+          <form id="playlist-form"><label class="m3x-section-label" for="playlist-name">新建歌单</label><div class="m3x-inline-form"><input id="playlist-name" type="text" required maxlength="40" placeholder="歌单名称" aria-label="歌单名称"><button type="submit" class="m3x-text-button">创建</button></div></form>
+        </section>
+      </dialog>
+      <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp,image/avif" hidden>
+      <dialog id="avatar-dialog" class="m3x-sheet-overlay" aria-labelledby="avatar-title">
+        <div class="m3x-sheet-scrim" aria-hidden="true"></div>
+        <section class="m3x-sheet">
+          <div class="m3x-sheet-handle" aria-hidden="true"></div>
+          <header class="m3x-sheet-header"><h2 id="avatar-title">裁切头像</h2><button type="button" class="m3x-icon" data-close aria-label="取消裁切"><i data-icon="close"></i></button></header>
+          <div id="crop-stage" tabindex="0" aria-label="头像裁切区域，拖动图片调整位置，方向键微调"><canvas id="crop-canvas" width="600" height="600"></canvas><div class="m3x-crop-circle"></div></div>
+          <label class="m3x-crop-control">裁切大小<input id="crop-size" type="range" min="1" max="5" step="0.01" value="1" aria-label="裁切大小"></label>
+          <button type="button" class="m3x-primary" id="save-avatar">使用头像</button>
+        </section>
+      </dialog>
+      <dialog id="folder-dialog" class="m3x-sheet-overlay" aria-labelledby="folder-title">
+        <div class="m3x-sheet-scrim" aria-hidden="true"></div>
+        <section class="m3x-sheet">
+          <div class="m3x-sheet-handle" aria-hidden="true"></div>
+          <header class="m3x-sheet-header"><h2 id="folder-title">扫描目录</h2><button type="button" class="m3x-icon" data-close aria-label="关闭目录选择"><i data-icon="close"></i></button></header>
+          <form id="folder-form" class="m3x-inline-form"><input id="folder-path" type="text" aria-label="文件夹路径" placeholder="输入完整文件夹路径" required><button type="submit" class="m3x-text-button">打开</button></form>
+          <button type="button" class="m3x-text-button" id="folder-parent"><i data-icon="back"></i>上一级</button>
+          <div id="folder-children" class="m3x-scroll"></div>
+          <p id="folder-error" class="m3x-error" role="status" hidden></p>
+          <button type="button" class="m3x-primary" id="select-folder">使用此目录</button>
+        </section>
+      </dialog>
+      <div class="m3x-live" aria-live="polite" aria-atomic="true"></div>
+    </div>
+    <audio id="audio" preload="metadata"></audio>
+  </div>
+</body>
+</html>

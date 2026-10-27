@@ -1,0 +1,39 @@
+{
+  "approval": "draft_pending_user_confirmation",
+  "note": "Proposed group labels from the local report and source credits; not an authoritative membership or alias database.",
+  "groups": [
+    "\u521d\u661f\u5b66\u5712",
+    "\u30a4\u30eb\u30df\u30cd\u30fc\u30b7\u30e7\u30f3\u30b9\u30bf\u30fc\u30ba",
+    "\u30a2\u30f3\u30c6\u30a3\u30fc\u30ab",
+    "\u653e\u8ab2\u5f8c\u30af\u30e9\u30a4\u30de\u30c3\u30af\u30b9\u30ac\u30fc\u30eb\u30ba",
+    "\u30a2\u30eb\u30b9\u30c8\u30ed\u30e1\u30ea\u30a2",
+    "\u30b9\u30c8\u30ec\u30a4\u30e9\u30a4\u30c8",
+    "\u30ce\u30af\u30c1\u30eb",
+    "\u30b7\u30fc\u30ba",
+    "\u30b3\u30e1\u30c6\u30a3\u30c3\u30af",
+    "\u30b7\u30e3\u30a4\u30cb\u30fc\u30ab\u30e9\u30fc\u30ba",
+    "765PRO ALLSTARS",
+    "876PRO ALLSTARS",
+    "315 STARS",
+    "MILLIONSTARS",
+    "CINDERELLA GIRLS",
+    "v\u03b1-liv",
+    "Re;IRIS",
+    "Begrazia",
+    "U149"
+  ],
+  "shared_prefix_shorthands": [
+    {
+      "text": "\u53cc\u6d77\u4e9c\u7f8e/\u771f\u7f8e",
+      "members": ["\u53cc\u6d77\u4e9c\u7f8e", "\u53cc\u6d77\u771f\u7f8e"]
+    }
+  ],
+  "placeholders": ["N/A", "Unknown", "\u672a\u77e5\u6b4c\u624b"],
+  "approved_aliases": {
+    "character": {},
+    "voice_actor": {},
+    "group": {},
+    "artist": {},
+    "album_artist": {}
+  }
+}

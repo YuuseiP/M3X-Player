@@ -1,0 +1,7 @@
+media/
+covers/
+__pycache__/
+test-output/
+scanned-covers/
+.library.json
+.library.tmp

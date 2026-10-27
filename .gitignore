@@ -1,0 +1,29 @@
+# Local tools, generated files, and editor state.
+**/__pycache__/
+*.py[cod]
+*.log
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Credentials and signing material must stay on this machine.
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+**/local.properties
+**/local-signing.properties
+**/.signing/
+
+# Ship APKs as GitHub Release assets, not Git objects.
+/dist/
+
+# Personal music-library reports are not source fixtures.
+/歌手问题汇报_*/
+/artist-classification/output/

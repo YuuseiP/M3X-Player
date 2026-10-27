@@ -1,0 +1,10 @@
+.gradle/
+.tools/
+local.properties
+**/build/
+node_modules/
+app/src/main/assets/player/
+captures/
+.signing/
+local-signing.properties
+*.log

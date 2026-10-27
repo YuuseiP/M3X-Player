@@ -1,0 +1,100 @@
+# 澄 · M3X Player
+
+面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和独立的歌手署名分类工具。当前版本为 **0.2.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
+
+本项目不是山灵官方产品。面向 Android 7.1 / API 25；已有模拟器验收记录，尚未完成 M3X 实体设备与 DAC 输出验证。
+
+## 下载与安装
+
+从本仓库的 [Releases](../../releases) 下载 `Cheng-M3X-0.2.0.apk` 和对应的 `.apk.sha256` 文件。仓库当前为私有，下载需要有仓库访问权限。
+
+1. 将 APK 复制到设备，使用文件管理器打开并按系统提示允许安装。
+2. 首次启动授予读取音乐的权限，或在「我的 → 设置 → 添加扫描目录」授权音乐文件夹。
+3. 点击「开始扫描」后播放；授权和目录修改不会自动扫描。音量使用设备实体音量键控制，安装包不附带歌曲。
+
+在下载目录校验 APK：
+
+```powershell
+$expected = ((Get-Content -Raw -Encoding UTF8 '.\Cheng-M3X-0.2.0.apk.sha256').Trim() -split '\s+')[0]
+$actual = (Get-FileHash -LiteralPath '.\Cheng-M3X-0.2.0.apk' -Algorithm SHA256).Hash
+if ($actual -ne $expected) { throw 'APK SHA-256 mismatch' }
+```
+
+## 主要功能
+
+- 本地曲库：MediaStore、多目录 SAF 授权、歌曲/专辑/歌手/文件夹分类、搜索、收藏、歌单、队列和 CUE 虚拟分轨。
+- 原生播放：Media3 / ExoPlayer 后台服务、媒体通知、音频焦点、系统媒体键、倍速、睡眠定时和播放统计。
+- 声音处理：十段 EQ、32 段参数 EQ、ReplayGain、AutoEQ 参数导入、混响、压限和手动重采样。
+- 扩展功能：LRC 歌词、WebDAV / DLNA 浏览播放、片段导出、倒放，以及设置与歌单备份。
+- 共享界面：浅色/深色主题、两种布局、头像裁切、个人资料和独立的本机网页预览。
+
+原生版与网页版能力不同，逐项状态及验收边界见 [Android 实现记录](M3X-Android-Implementation.md) 和 [网页功能记录](M3X-Feature-Completion.md)。
+
+## 项目结构
+
+| 路径 | 用途 |
+| --- | --- |
+| `android/` | Android Java 源码、共享页面构建、签名打包脚本、JVM 与设备测试 |
+| `web-preview/` | HTML/CSS/JavaScript 界面、本机 Python 曲库服务与网页测试 |
+| `artist-classification/` | 从 JSON 报告快照分类歌手、组合、角色及声优，不改写音频文件 |
+| `M3X-Player-Design-Draft.md` | 产品与界面设计草案 |
+| `M3X-Specifications.md` | 整理时的目标设备规格 |
+| `RELEASE_NOTES.md` | 本次发布说明 |
+
+`dist/`、构建缓存、工具下载、签名文件、私人曲库扫描报告、歌曲和封面不纳入 Git。APK 与校验文件单独放在 GitHub Release 中。
+
+## 本机网页预览
+
+需要 Python 3.11+；扫描音乐还需要 `ffmpeg` 和 `ffprobe` 可从 `PATH` 调用。在项目根目录运行：
+
+```powershell
+python '.\web-preview\server.py'
+```
+
+浏览器打开 `http://127.0.0.1:18765/`，在设置中选择自己的音乐目录并扫描。服务仅监听本机，按 Ctrl+C 停止。
+
+仓库保留了原预览曲目的标签清单，但**不包含对应歌曲或封面**；首次打开可能看到无法播放的示例条目，扫描自己的目录后替换。不要为了普通使用运行 `prepare_music.py`，该脚本针对原开发机的音乐目录。更多说明见 [网页 README](web-preview/README.md)。
+
+## Android 构建
+
+需要 Windows PowerShell、JDK 17 或 21、Node.js/npm、Python 3.11+，以及已安装 Android 35 平台和 Build Tools 34.0.0 的 Android SDK。`setup-tools.py` 下载 Gradle 8.9 并生成本机 SDK 路径配置，不负责安装完整 SDK。
+
+在项目根目录运行：
+
+```powershell
+Set-Location '.\android'
+python '.\setup-tools.py'
+.\build-apk.ps1 -Test
+```
+
+脚本安装锁定的 npm 依赖、生成旧 WebView 页面、执行 JVM 测试，并将签名 APK 和 SHA-256 写入根目录 `dist/`。首次构建会生成自己的本地签名。
+
+**`.signing/` 与 `local-signing.properties` 只保存在本机，必须自行备份。** 自行生成的密钥不能覆盖安装本仓库已发布 APK；发布更新必须沿用原签名，不能将私钥上传到仓库。设备测试命令见 [Android README](android/README.md)。
+
+## 测试
+
+在项目根目录执行不依赖设备的检查：
+
+```powershell
+python -m unittest discover -s '.\web-preview' -p 'test_*.py'
+node '.\web-preview\test_player_tools.cjs'
+python -m unittest discover -s '.\artist-classification' -p 'test_*.py'
+```
+
+网页曲库测试使用临时合成音频，需要本机 FFmpeg；未安装时相关用例会跳过。浏览器 Playwright 测试和 Android 模拟器测试需另行准备环境及音乐夹具，不能仅凭上述命令认定全部端到端验证通过。
+
+## 已知边界
+
+- AudioTrack 提交格式、源文件的位深/采样率不等于实际 DAC 输出，也不构成 bit-perfect 证明。
+- DSF/DFF 使用 PCM 转换缓存，不是原生 DSD、DoP 或 DST 解码。
+- 当前 DSP 处理链为 PCM16 输入/输出；尚未验证采样级无缝播放。
+- 未实现 USB 独占/UAC、厂商 Direct/DAC 控制、MQA 或跨音源节奏分析过渡。
+- M3X 真机、真实 NAS/USB DAC、长期后台播放、功耗与长曲处理性能仍待验收。
+
+## 依赖与资源
+
+Android 依赖及已收集的许可文本位于 [`android/licenses/`](android/licenses/)，具体版本见 Gradle 配置与 npm 锁文件。
+
+字体来源记录见 [`web-preview/fonts/README.md`](web-preview/fonts/README.md)：现有字体从开发机游戏安装目录复制，随源码和现有 APK 保留，**其再分发授权尚未核实**。在确认授权或替换为明确允许分发的字体之前，不应将本仓库及安装包作为已完成授权审查的公开发行物。
+
+本次未替项目作者选择开源许可证；仓库可访问不等于获得源码或第三方资源的再分发授权。
