@@ -30,21 +30,35 @@ public final class MusicLibrary {
     private volatile JSONObject scan = json("running", false);
     private volatile boolean cancelled;
     private final AtomicFile catalog;
+    private final AtomicFile scanReport;
+    private final ArtistClassification classification;
+    private final ConcurrentMap<String, Object> artworkLocks = new ConcurrentHashMap<>();
     public final File artwork;
     public final File lyrics;
     private final Set<String> formats = new HashSet<>(Arrays.asList("flac", "mp3", "wav", "m4a", "aac", "ogg", "opus", "aif", "aiff", "dsf", "dff"));
+    private boolean scanCandidate(String name) {
+        String ext = extension(name);
+        return formats.contains(ext) || ext.equals("cue") || ext.equals("wv");
+    }
 
     public MusicLibrary(PlayerApp context) {
         app = context;
         catalog = new AtomicFile(new File(app.getFilesDir(), "library.json"));
+        scanReport = new AtomicFile(new File(app.getFilesDir(), "scan-report.json"));
         artwork = new File(app.getCacheDir(), "covers"); artwork.mkdirs();
         lyrics = new File(app.getFilesDir(), "lyrics"); lyrics.mkdirs();
+        try {
+            classification = new ArtistClassification(new JSONObject(new String(
+                read(app.getAssets().open("player/artist-classification.json"), 16 * 1024 * 1024), "UTF-8")));
+        } catch (Exception error) { throw new IllegalStateException("内置分类配置不可读取", error); }
         try {
             JSONArray saved = new JSONArray(new String(read(catalog.openRead(), 64 * 1024 * 1024), "UTF-8"));
             List<JSONObject> list = new ArrayList<>();
             for (int i = 0; i < saved.length(); i++) list.add(saved.getJSONObject(i));
             setTracks(list);
         } catch (Exception ignored) {}
+        try { scan = new JSONObject(new String(read(scanReport.openRead(), 16 * 1024 * 1024), "UTF-8")); }
+        catch (Exception ignored) {}
     }
 
     public JSONObject options() {
@@ -97,7 +111,17 @@ public final class MusicLibrary {
 
     public JSONObject snapshot() {
         JSONArray list = new JSONArray();
-        for (JSONObject item : tracks) list.put(item);
+        Map<String, JSONObject> entities = new LinkedHashMap<>();
+        int matched = 0;
+        for (JSONObject item : tracks) {
+            list.put(item);
+            if (item.optBoolean("classificationMatched")) matched++;
+            JSONArray credits = item.optJSONArray("credits");
+            if (credits != null) for (int i = 0; i < credits.length(); i++) {
+                JSONObject entity = credits.optJSONObject(i);
+                entities.put(entity.optString("id"), entity);
+            }
+        }
         JSONObject options = options();
         JSONArray roots = options.optJSONArray("roots");
         JSONArray directories = new JSONArray();
@@ -108,7 +132,9 @@ public final class MusicLibrary {
             directories.put(json("path", path));
         }
         return json("tracks", list, "scan", scan, "options", options, "directories", directories,
-            "folder", roots.length() + " 个固定音乐目录");
+            "folder", roots.length() + " 个固定音乐目录",
+            "classification", json("status", "confirmed", "builtin", true, "baseline", classification.baseline,
+                "trackCount", classification.trackCount, "matched", matched, "entities", new JSONArray(entities.values())));
     }
 
     public JSONObject scanStatus() { return json("scan", scan); }
@@ -116,10 +142,16 @@ public final class MusicLibrary {
     public JSONObject track(String id) {
         return byId.get(id);
     }
-    private void setTracks(List<JSONObject> list) {
+    private void setTracks(List<JSONObject> list) throws Exception {
         Map<String, JSONObject> index = new HashMap<>();
-        for (JSONObject item : list) index.put(item.optString("id"), item);
-        byId = index; tracks = list;
+        List<JSONObject> classified = new ArrayList<>();
+        for (JSONObject item : list) {
+            Uri uri = Uri.parse(item.optString("uri"));
+            String path = DocumentsContract.isDocumentUri(app, uri) ? DocumentsContract.getDocumentId(uri) : uri.getPath();
+            JSONObject track = classification.apply(item, "http".equals(uri.getScheme()) || "https".equals(uri.getScheme()) ? "" : path == null ? "" : path);
+            index.put(track.optString("id"), track); classified.add(track);
+        }
+        byId = index; tracks = classified;
     }
 
     public List<JSONObject> all() { return tracks; }
@@ -167,14 +199,14 @@ public final class MusicLibrary {
     private void files(File dir, String relative, Map<String, Source> sources, JSONObject options) throws IOException {
         if (cancelled || excluded(relative, options)) return;
         File[] children = dir.listFiles();
-        if (children == null) throw new IOException("目录不可读取：" + dir.getName());
+        if (children == null) throw new IOException("目录不可读取：" + dir.getPath());
         for (File file : children) {
             if (cancelled) return;
             if (!file.getCanonicalPath().equals(new File(dir.getCanonicalFile(), file.getName()).getPath()) || file.getName().startsWith(".")) continue;
             String rel = relative.isEmpty() ? file.getName() : relative + "/" + file.getName();
             if (file.isDirectory()) files(file, rel, sources, options);
-            else if (formats.contains(extension(file.getName())) || extension(file.getName()).equals("cue"))
-                sources.put(identity(Uri.fromFile(file)), new Source(Uri.fromFile(file), file.getName(), relative.isEmpty() ? dir.getName() : relative, file.length(), file.lastModified()));
+            else if (scanCandidate(file.getName()))
+                sources.put(identity(Uri.fromFile(file)), new Source(Uri.fromFile(file), file.getName(), relative, file.length(), file.lastModified()));
         }
     }
 
@@ -190,9 +222,9 @@ public final class MusicLibrary {
                 String id = cursor.getString(0), name = cursor.getString(1);
                 if (name.startsWith(".")) continue;
                 if (DocumentsContract.Document.MIME_TYPE_DIR.equals(cursor.getString(2))) tree(root, id, relative.isEmpty() ? name : relative + "/" + name, sources, options);
-                else if (formats.contains(extension(name)) || extension(name).equals("cue")) {
+                else if (scanCandidate(name)) {
                     Uri uri = DocumentsContract.buildDocumentUriUsingTree(root, id);
-                    sources.put(identity(uri), new Source(uri, name, relative.isEmpty() ? "所选目录" : relative, cursor.getLong(3), cursor.getLong(4)));
+                    sources.put(identity(uri), new Source(uri, name, relative, cursor.getLong(3), cursor.getLong(4)));
                 }
             }
         }
@@ -201,8 +233,8 @@ public final class MusicLibrary {
     private void performScan() {
         List<JSONObject> result = new ArrayList<>();
         for (JSONObject track : tracks) if (track.optString("uri").startsWith("https://") || track.optString("uri").startsWith("http://")) result.add(track);
-        int done = 0, failed = 0, skipped = 0;
-        List<String> errors = new ArrayList<>();
+        int done = 0, failed = 0, skipped = 0, cueFailed = 0, unsupported = 0;
+        List<JSONObject> errors = new ArrayList<>();
         long started = SystemClock.elapsedRealtime();
         ExecutorService readers = Executors.newFixedThreadPool(4);
         JSONObject finished;
@@ -217,8 +249,9 @@ public final class MusicLibrary {
                         String path = cursor.getString(1), name = cursor.getString(2);
                         if (path != null && new File(path).isFile()) {
                             File file = new File(path);
-                            if (!excluded(file.getParentFile().getName(), options)) sources.put(identity(Uri.fromFile(file)),
-                                new Source(Uri.fromFile(file), name, file.getParentFile().getName(), file.length(), file.lastModified()));
+                            String folder = mediaFolder(file);
+                            if (!excluded(folder, options)) sources.put(identity(Uri.fromFile(file)),
+                                new Source(Uri.fromFile(file), name, folder, file.length(), file.lastModified()));
                         } else {
                             Uri uri = Uri.withAppendedPath(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, cursor.getString(0));
                             sources.put(identity(uri), new Source(uri, name, "媒体库", cursor.getLong(3), cursor.getLong(4) * 1000));
@@ -240,7 +273,11 @@ public final class MusicLibrary {
             List<Source> cues = new ArrayList<>();
             List<Source> audio = new ArrayList<>();
             for (Source source : sources.values()) {
-                if (extension(source.name).equals("cue")) cues.add(source); else audio.add(source);
+                if (extension(source.name).equals("cue")) cues.add(source);
+                else if (extension(source.name).equals("wv")) {
+                    unsupported++; done++;
+                    errors.add(scanError("unsupported", source, "暂不支持 WavPack 解码，未导入；原文件未修改"));
+                } else audio.add(source);
             }
             CompletionService<JSONObject> completed = new ExecutorCompletionService<>(readers);
             Map<Future<JSONObject>, Source> pending = new HashMap<>();
@@ -253,7 +290,7 @@ public final class MusicLibrary {
                     Source source = remaining.next();
                     JSONObject old = previous.get(identity(source.uri));
                     pending.put(completed.submit(() -> {
-                        JSONObject item = old != null && old.optLong("modified") == source.modified && old.optLong("bytes") == source.size
+                        JSONObject item = old != null && old.optInt("scanVersion") == 2 && old.optLong("modified") == source.modified && old.optLong("bytes") == source.size
                             && (!old.optString("cover").startsWith("native-covers/") || new File(artwork, old.optString("cover").substring(14)).isFile())
                             ? new JSONObject(old.toString()) : probe(source, folderCovers);
                         item.put("uri", source.uri.toString());
@@ -269,7 +306,7 @@ public final class MusicLibrary {
                     JSONObject item = future.get();
                     if (item.optDouble("duration") >= options.optInt("minDuration")) scanned.put(source, item); else skipped++;
                 } catch (ExecutionException error) {
-                    failed++; if (errors.size() < 20) errors.add(source.name + "：" + error.getCause().getMessage());
+                    failed++; errors.add(scanError("audio", source, error.getCause().toString()));
                 }
                 scan = json("running", true, "phase", "metadata", "total", sources.size(), "processed", ++done, "failed", failed, "skipped", skipped,
                     "rate", done * 1000d / Math.max(1, SystemClock.elapsedRealtime() - started));
@@ -278,7 +315,7 @@ public final class MusicLibrary {
             for (Source source : cues) {
                 if (cancelled) break;
                 try { applyCue(source, sources, result); }
-                catch (Exception error) { failed++; if (errors.size() < 20) errors.add(source.name + "：" + error.getMessage()); }
+                catch (Exception error) { cueFailed++; errors.add(scanError("cue", source, error.toString())); }
                 scan = json("running", true, "phase", "metadata", "total", sources.size(), "processed", ++done, "failed", failed, "skipped", skipped);
             }
             if (!cancelled) {
@@ -289,20 +326,46 @@ public final class MusicLibrary {
                 setTracks(result);
             }
             finished = json("running", false, "processed", done, "total", sources.size(), "failed", failed,
-                "skipped", skipped, "cancelled", cancelled, "lastScan", System.currentTimeMillis(), "errors", new JSONArray(errors),
+                "cueFailed", cueFailed, "unsupported", unsupported, "skipped", skipped, "cancelled", cancelled,
+                "lastScan", System.currentTimeMillis(), "errors", new JSONArray(errors),
                 "rate", done * 1000d / Math.max(1, SystemClock.elapsedRealtime() - started));
         } catch (Exception error) {
-            finished = json("running", false, "error", "扫描未完成：" + error.getMessage(), "failed", failed, "errors", new JSONArray(errors));
+            finished = json("running", false, "error", "扫描未完成：" + error.getMessage(), "failed", failed,
+                "cueFailed", cueFailed, "unsupported", unsupported, "errors", new JSONArray(errors));
         } finally {
             readers.shutdownNow();
             try { while (!readers.awaitTermination(100, TimeUnit.MILLISECONDS)) {} }
             catch (InterruptedException error) { Thread.currentThread().interrupt(); }
         }
+        FileOutputStream report = null;
+        try {
+            report = scanReport.startWrite();
+            report.write(finished.toString().getBytes("UTF-8")); scanReport.finishWrite(report);
+        } catch (IOException error) {
+            if (report != null) scanReport.failWrite(report);
+            try { finished.put("reportError", "扫描报告保存失败：" + error.getMessage()); } catch (Exception ignored) {}
+        }
         scan = finished;
     }
 
+    private JSONObject scanError(String kind, Source source, String message) {
+        return json("kind", kind, "path", Uri.decode(source.uri.toString()), "message", message);
+    }
+
+    private String mediaFolder(File file) throws IOException {
+        String parent = file.getParentFile().getCanonicalPath();
+        String primary = android.os.Environment.getExternalStorageDirectory().getCanonicalPath();
+        if (parent.equals(primary)) return "";
+        if (parent.startsWith(primary + "/")) return parent.substring(primary.length() + 1);
+        return parent.replaceFirst("^/storage/[^/]+/?", "").replaceFirst("^/+", "");
+    }
+
     public JSONObject importUri(Uri uri, String name) throws Exception {
-        JSONObject track = probe(new Source(uri, name, "外部打开", 0, 0));
+        long size = 0;
+        try (android.content.res.AssetFileDescriptor file = app.getContentResolver().openAssetFileDescriptor(uri, "r")) {
+            if (file != null) size = Math.max(0, file.getLength());
+        } catch (IOException ignored) {}
+        JSONObject track = probe(new Source(uri, name, "外部打开", size, 0));
         List<JSONObject> list = new ArrayList<>(tracks);
         if (track(track.getString("id")) == null) list.add(track);
         setTracks(list);
@@ -340,39 +403,49 @@ public final class MusicLibrary {
             "artist", "未知歌手", "album", source.folder, "folder", source.folder,
             "path", source.uri.toString(), "cover", "cover-placeholder.svg", "bytes", source.size,
             "modified", source.modified, "added", System.currentTimeMillis(), "codec", extension(source.name).toUpperCase(Locale.ROOT),
-            "bits", 0, "replayGain", new JSONObject());
+            "bits", 0, "scanVersion", 2, "replayGain", new JSONObject());
         if (extension(source.name).equals("dsf") || extension(source.name).equals("dff")) {
             DsdDecoder.inspect(app, source.uri, item);
             return item;
         }
-        MediaMetadataRetriever reader = new MediaMetadataRetriever();
-        try {
-            reader.setDataSource(app, source.uri);
-            int[] keys = {7, 2, 1, 20, 0, 14, 9};
-            String[] names = {"title", "artist", "album", "bitrate", "trackNumber", "year", "duration"};
-            for (int i = 0; i < keys.length; i++) {
-                String value = reader.extractMetadata(keys[i]);
-                if (value != null && !value.trim().isEmpty())
-                    item.put(names[i], names[i].equals("duration") ? Double.parseDouble(value) / 1000 : names[i].equals("bitrate") ? Long.parseLong(value) : value);
-            }
-            byte[] cover = reader.getEmbeddedPicture();
-            if (cover != null) try { cacheArtwork(id, new ByteArrayInputStream(cover), item); } catch (IOException ignored) {}
-        } finally { reader.release(); }
-        MediaExtractor extractor = new MediaExtractor();
-        try {
-            extractor.setDataSource(app, source.uri, null);
-            for (int i = 0; i < extractor.getTrackCount(); i++) {
-                MediaFormat format = extractor.getTrackFormat(i);
-                if (!format.getString(MediaFormat.KEY_MIME).startsWith("audio/")) continue;
-                item.put("sampleRate", format.getInteger(MediaFormat.KEY_SAMPLE_RATE));
-                item.put("channels", format.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
-                if (!item.has("duration") && format.containsKey(MediaFormat.KEY_DURATION)) item.put("duration", format.getLong(MediaFormat.KEY_DURATION) / 1e6);
-                break;
-            }
-        } finally { extractor.release(); }
+        byte[] picture = TagReader.read(app, source.uri, item);
+        String metadataError = "";
+        // A valid header is enough for import; platform tag/format readers are independent fallbacks.
+        if (!validAudio(item) || !extension(source.name).equals("flac")) {
+            MediaMetadataRetriever reader = new MediaMetadataRetriever();
+            try {
+                reader.setDataSource(app, source.uri);
+                int[] keys = {7, 2, 1, 20, 0, 14, 9};
+                String[] names = {"title", "artist", "album", "bitrate", "trackNumber", "year", "duration"};
+                for (int i = 0; i < keys.length; i++) {
+                    String value = reader.extractMetadata(keys[i]);
+                    if (value != null && !value.trim().isEmpty())
+                        item.put(names[i], names[i].equals("duration") ? Double.parseDouble(value) / 1000 : names[i].equals("bitrate") ? Long.parseLong(value) : value);
+                }
+                byte[] embedded = reader.getEmbeddedPicture();
+                if (embedded != null) picture = embedded;
+            } catch (Exception error) { metadataError = "标签：" + error; }
+            finally { try { reader.release(); } catch (Exception ignored) {} }
+        }
+        if (!validAudio(item)) {
+            MediaExtractor extractor = new MediaExtractor();
+            try {
+                extractor.setDataSource(app, source.uri, null);
+                for (int i = 0; i < extractor.getTrackCount(); i++) {
+                    MediaFormat format = extractor.getTrackFormat(i);
+                    if (!format.getString(MediaFormat.KEY_MIME).startsWith("audio/")) continue;
+                    if (format.containsKey(MediaFormat.KEY_SAMPLE_RATE)) item.put("sampleRate", format.getInteger(MediaFormat.KEY_SAMPLE_RATE));
+                    if (format.containsKey(MediaFormat.KEY_CHANNEL_COUNT)) item.put("channels", format.getInteger(MediaFormat.KEY_CHANNEL_COUNT));
+                    if (item.optDouble("duration", 0) <= 0 && format.containsKey(MediaFormat.KEY_DURATION)) item.put("duration", format.getLong(MediaFormat.KEY_DURATION) / 1e6);
+                    break;
+                }
+            } catch (Exception error) { metadataError += " 格式：" + error; }
+            finally { extractor.release(); }
+        }
+        if (picture != null) try { cacheArtwork(picture, item); } catch (IOException ignored) {}
         double duration = item.optDouble("duration", 0);
-        if (!Double.isFinite(duration) || duration <= 0) throw new IOException("音频时长无效或格式不支持");
-        TagReader.read(app, source.uri, item);
+        if (!validAudio(item)) throw new IOException("音频参数无效或格式不支持 " + metadataError);
+        if (item.optLong("bitrate") <= 0 && source.size > 0) item.put("bitrate", Math.round(source.size * 8d / duration));
         if (item.optString("cover").equals("cover-placeholder.svg")) {
             String parent = identity(source.uri);
             parent = parent.substring(0, parent.lastIndexOf('/') + 1);
@@ -380,7 +453,7 @@ public final class MusicLibrary {
                 if (!folderCovers.containsKey(parent)) {
                     JSONObject cover = json("cover", "cover-placeholder.svg");
                     Uri sibling = sibling(source.uri, Arrays.asList("cover.jpg", "folder.jpg", "front.jpg", "cover.png", "folder.png"));
-                    if (sibling != null) try (InputStream stream = app.getContentResolver().openInputStream(sibling)) { cacheArtwork(hash(parent), stream, cover); } catch (IOException ignored) {}
+                    if (sibling != null) try (InputStream stream = app.getContentResolver().openInputStream(sibling)) { cacheArtwork(read(stream, 12 * 1024 * 1024), cover); } catch (IOException ignored) {}
                     folderCovers.put(parent, cover.getString("cover"));
                 }
                 item.put("cover", folderCovers.get(parent));
@@ -389,17 +462,36 @@ public final class MusicLibrary {
         return item;
     }
 
-    private void cacheArtwork(String id, InputStream input, JSONObject item) throws Exception {
-        byte[] bytes = read(input, 12 * 1024 * 1024);
-        BitmapFactory.Options options = new BitmapFactory.Options(); options.inJustDecodeBounds = true;
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-        if (options.outWidth <= 0 || options.outHeight <= 0) return;
-        options.inJustDecodeBounds = false; options.inSampleSize = Math.max(1, Math.max(options.outWidth, options.outHeight) / 400);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-        if (bitmap == null) return;
-        try (FileOutputStream output = new FileOutputStream(new File(artwork, id + ".jpg"))) { bitmap.compress(Bitmap.CompressFormat.JPEG, 84, output); }
-        finally { bitmap.recycle(); }
-        item.put("cover", "native-covers/" + id + ".jpg");
+    private static boolean validAudio(JSONObject item) {
+        double duration = item.optDouble("duration", 0);
+        return Double.isFinite(duration) && duration > 0 && item.optInt("sampleRate") > 0 && item.optInt("channels") > 0;
+    }
+
+    private void cacheArtwork(byte[] bytes, JSONObject item) throws Exception {
+        if (bytes.length > 12 * 1024 * 1024) throw new IOException("文件过大");
+        String id = "art-" + hash(bytes);
+        // Lock by image content so parallel readers transcode a shared cover only once.
+        synchronized (artworkLocks.computeIfAbsent(id, key -> new Object())) {
+            File file = new File(artwork, id + ".jpg");
+            if (!file.isFile()) {
+                BitmapFactory.Options options = new BitmapFactory.Options(); options.inJustDecodeBounds = true;
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+                if (options.outWidth <= 0 || options.outHeight <= 0) return;
+                options.inJustDecodeBounds = false; options.inSampleSize = Math.max(1, Math.max(options.outWidth, options.outHeight) / 400);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
+                if (bitmap == null) return;
+                AtomicFile target = new AtomicFile(file);
+                FileOutputStream output = null;
+                try {
+                    output = target.startWrite();
+                    if (!bitmap.compress(Bitmap.CompressFormat.JPEG, 84, output)) throw new IOException("封面编码失败");
+                    target.finishWrite(output);
+                } catch (Exception error) {
+                    target.failWrite(output); throw error;
+                } finally { bitmap.recycle(); }
+            }
+            item.put("cover", "native-covers/" + id + ".jpg");
+        }
     }
 
     public Uri sibling(Uri uri, List<String> names) throws Exception {
@@ -438,11 +530,30 @@ public final class MusicLibrary {
 
     private void applyCue(Source cue, Map<String, Source> sources, List<JSONObject> result) throws Exception {
         List<CueParser.Entry> entries = CueParser.parse(decode(read(app.getContentResolver().openInputStream(cue.uri), 2 * 1024 * 1024)));
+        if (entries.isEmpty()) throw new IOException("CUE 没有有效的音轨");
+        String cuePath = cueLocation(cue);
+        String parent = cuePath.substring(0, cuePath.lastIndexOf('/'));
+        List<JSONObject> replacements = new ArrayList<>();
+        Set<String> replaced = new HashSet<>();
         for (int i = 0; i < entries.size(); i++) {
             CueParser.Entry entry = entries.get(i);
             Source audio = null;
-            for (Source source : sources.values()) if (source.folder.equals(cue.folder) && source.name.equalsIgnoreCase(entry.file)) { audio = source; break; }
-            if (audio == null) throw new IOException("CUE 引用的音频未找到");
+            String target = CueParser.resolvePath(parent, entry.file);
+            for (Source source : sources.values())
+                if (!target.isEmpty() && cueLocation(source).equalsIgnoreCase(target)) { audio = source; break; }
+            // Ripped albums are often flattened after the CUE was written; only allow a local basename fallback.
+            if (audio == null) {
+                String basename = entry.file.replace('\\', '/');
+                basename = basename.substring(basename.lastIndexOf('/') + 1);
+                for (Source source : sources.values()) {
+                    String path = cueLocation(source);
+                    if (source.name.equalsIgnoreCase(basename) && path.substring(0, path.lastIndexOf('/')).equalsIgnoreCase(parent)) {
+                        if (audio != null) throw new IOException("CUE 引用存在重名文件：" + entry.file);
+                        audio = source;
+                    }
+                }
+            }
+            if (audio == null) throw new IOException("CUE 引用的音频未找到：" + entry.file);
             JSONObject base = null;
             for (JSONObject song : result) if (song.optString("uri").equals(audio.uri.toString())) { base = song; break; }
             if (base == null) continue;
@@ -452,18 +563,32 @@ public final class MusicLibrary {
             String id = hash(identity(cue.uri) + "#" + entry.number);
             track.put("id", id); track.put("src", "native/" + id);
             track.put("title", entry.title); track.put("artist", entry.artist.isEmpty() ? base.optString("artist") : entry.artist);
+            track.put("originalArtist", entry.artist.isEmpty() ? base.optString("originalArtist", base.optString("artist")) : entry.artist);
             track.put("album", entry.album.isEmpty() ? base.optString("album") : entry.album);
             track.put("trackNumber", entry.number); track.put("cueStart", entry.startMs); track.put("cueEnd", end);
-            track.put("duration", (end - entry.startMs) / 1000d); result.add(track);
+            track.put("duration", (end - entry.startMs) / 1000d); replacements.add(track);
+            replaced.add(audio.uri.toString());
         }
-        Set<String> files = new HashSet<>();
-        for (CueParser.Entry entry : entries) files.add(entry.file.toLowerCase(Locale.ROOT));
-        result.removeIf(item -> !item.has("cueStart") && item.optString("folder").equals(cue.folder) && files.contains(item.optString("filename").toLowerCase(Locale.ROOT)));
+        result.removeIf(item -> !item.has("cueStart") && replaced.contains(item.optString("uri")));
+        result.addAll(replacements);
+    }
+
+    private String cueLocation(Source source) throws IOException {
+        if (DocumentsContract.isDocumentUri(app, source.uri) && !"com.android.externalstorage.documents".equals(source.uri.getAuthority())) {
+            // Provider document IDs may be opaque, so use the discovered tree-relative names.
+            String root = DocumentsContract.getTreeDocumentId(source.uri);
+            return "tree:" + source.uri.getAuthority() + ":" + root + "/" +
+                (source.folder.isEmpty() ? "" : source.folder + "/") + source.name;
+        }
+        return identity(source.uri).replace('\\', '/');
     }
 
     static String extension(String name) { int at = name.lastIndexOf('.'); return at < 0 ? "" : name.substring(at + 1).toLowerCase(Locale.ROOT); }
     static String hash(String text) throws Exception {
-        byte[] digest = MessageDigest.getInstance("SHA-256").digest(text.getBytes("UTF-8"));
+        return hash(text.getBytes("UTF-8"));
+    }
+    static String hash(byte[] bytes) throws Exception {
+        byte[] digest = MessageDigest.getInstance("SHA-256").digest(bytes);
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < 12; i++) builder.append(String.format(Locale.ROOT, "%02x", digest[i]));
         return builder.toString();

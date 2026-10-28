@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "idolmaster",
+  "engine": "semantic_exact_lookup",
+  "catalogue": "credits.json",
+  "consistency_review": "consistency-review.json",
+  "names": "encyclopedia-names.json",
+  "models_by_batch": {
+    "batch-01.json": "nexavlinks/deepseek-v4.1-flash",
+    "batch-02.json": "nexavlinks/gpt-6-luna",
+    "batch-03.json": "nexavlinks/deepseek-v4.1-flash",
+    "batch-04.json": "nexavlinks/deepseek-v4.1-flash",
+    "batch-05.json": "nexavlinks/gpt-6-luna",
+    "batch-06.json": "nexavlinks/deepseek-v4.1-flash",
+    "batch-07.json": "nexavlinks/deepseek-v4.1-flash",
+    "batch-08.json": "nexavlinks/gpt-6-luna",
+    "batch-09.json": "nexavlinks/deepseek-v4.1-flash"
+  }
+}

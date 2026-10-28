@@ -27,3 +27,4 @@ Thumbs.db
 # Personal music-library reports are not source fixtures.
 /歌手问题汇报_*/
 /artist-classification/output/
+/artist-classification/semantic/input/

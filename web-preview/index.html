@@ -11,6 +11,7 @@
   <script defer src="app.js"></script>
   <script defer src="avatar.js"></script>
   <script defer src="player-tools.js"></script>
+  <script defer src="classification.js"></script>
 </head>
 <body>
   <div id="m3x-concept">
@@ -43,12 +44,44 @@
         </section>
         <section class="m3x-panel" data-panel="library" aria-label="本地曲库">
           <div class="m3x-page-heading"><h2 class="m3x-heading">曲库 <small data-text="trackCount">10 首</small></h2><button type="button" class="m3x-icon" data-action="scan" aria-label="扫描歌曲"><i data-icon="scan"></i></button></div>
+          <button type="button" class="m3x-create-entry m3x-browser-only" data-page="create-library"><span><strong>管理曲库分类</strong><small>THE_IDOLMASTER · 使用已保留的分类</small></span><i data-icon="right"></i></button>
           <input class="m3x-search" type="search" placeholder="搜索歌曲、歌手、专辑" aria-label="搜索曲库">
-          <div class="m3x-filters" aria-label="曲库筛选"><button type="button" data-filter="all" aria-pressed="true">歌曲</button><button type="button" data-filter="albums" aria-pressed="false">专辑</button><button type="button" data-filter="artists" aria-pressed="false">歌手</button><button type="button" data-filter="folders" aria-pressed="false">文件夹</button><button type="button" data-filter="favorites" aria-pressed="false">收藏</button><button type="button" data-filter="playlists" aria-pressed="false">歌单</button><button type="button" class="m3x-icon" data-action="new-playlist" aria-label="新建歌单"><i data-icon="plus"></i></button></div>
-          <div class="m3x-library-controls"><button type="button" class="m3x-text-button" id="group-back" data-action="group-back" hidden><i data-icon="back"></i><span id="group-label"></span></button><label>排序<select data-setting="sort" aria-label="歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
-          <div class="m3x-track-list" data-list="library" aria-label="歌曲列表"></div>
-          <div class="m3x-scroll" id="library-groups" hidden></div>
-          <div class="m3x-playlist-list m3x-scroll" id="library-playlists" hidden></div>
+          <div class="m3x-filters" aria-label="曲库筛选"><button type="button" data-filter="all" aria-pressed="true">歌曲</button><button type="button" data-filter="characters" aria-pressed="false" hidden>角色</button><button type="button" data-filter="groups" aria-pressed="false" hidden>组合</button><button type="button" data-filter="artists" aria-pressed="false">歌手</button><button type="button" data-filter="albums" aria-pressed="false">专辑</button><button type="button" data-filter="folders" aria-pressed="false">文件夹</button></div>
+          <div class="m3x-library-controls"><button type="button" class="m3x-text-button" id="group-back" data-action="group-back" hidden><i data-icon="back"></i><span id="group-label"></span></button><label hidden>分类排序<select data-setting="groupSort" aria-label="分类排序"><option value="name">名称升序</option><option value="name-desc">名称降序</option><option value="count">歌曲最多</option></select></label><label>歌曲排序<select data-setting="sort" aria-label="歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
+          <p id="folder-location" class="m3x-caption" hidden></p>
+          <div id="library-browser" class="m3x-scroll">
+            <div id="library-groups" hidden></div>
+            <div class="m3x-track-list" data-list="library" aria-label="歌曲列表"></div>
+          </div>
+        </section>
+        <section class="m3x-panel" data-panel="create-library" aria-label="曲库分类" hidden>
+          <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="library" aria-label="返回曲库"><i data-icon="back"></i></button><h2>曲库分类</h2></div><span class="classification-confirmed">已确认</span></div>
+          <div id="classification-source" class="m3x-scroll">
+            <p class="m3x-section-label">01 / 音乐目录</p>
+            <h3 class="classification-library-name">THE_IDOLMASTER</h3>
+            <p class="classification-path">D:\BaiduNetdiskDownload\THE_IDOLMASTER</p>
+            <p class="m3x-caption">当前分类已保留，不重新识别、不改写文件标签。直接浏览歌曲，需要时再调整。</p>
+            <div class="classification-policy"><strong>保留当前结果</strong><p>角色 / 组合 / 歌手独立分类。日文名称沿用已核实的百科汉字名；未确认的名称保留原名，不直接翻译。</p></div>
+            <button type="button" class="m3x-primary" id="classification-load">打开分类结果</button>
+            <p id="classification-error" class="m3x-error" role="alert" hidden></p>
+          </div>
+          <div id="classification-workspace" hidden>
+            <div class="classification-overview"><span id="classification-summary"></span><button type="button" class="m3x-text-button" id="classification-return-player">继续播放</button></div>
+            <div class="m3x-filters" id="classification-tabs" aria-label="分类视角">
+              <button type="button" data-classification-kind="character" aria-pressed="true">角色</button>
+              <button type="button" data-classification-kind="group" aria-pressed="false">组合</button>
+              <button type="button" data-classification-kind="artist" aria-pressed="false">歌手</button>
+              <button type="button" data-classification-kind="tracks" aria-pressed="false">歌曲</button>
+            </div>
+            <input type="search" id="classification-search" class="classification-search" aria-label="搜索分类与歌曲" placeholder="搜索分类名称、原始歌手或歌曲">
+            <div class="classification-toolbar"><button type="button" class="m3x-text-button" id="classification-back" hidden>‹ 返回分类</button><span id="classification-count" class="m3x-caption"></span></div>
+            <div id="classification-results" class="m3x-scroll" aria-label="分类预览结果"></div>
+            <div class="classification-footer">
+              <p id="classification-status" class="m3x-caption" role="status"></p>
+              <div class="classification-save-actions"><button type="button" class="m3x-primary" id="classification-save">保存并应用到曲库</button><button type="button" class="m3x-text-button" id="classification-undo" hidden>撤销本次修改</button></div>
+              <details class="classification-backup"><summary>配置与备份</summary><div class="classification-footer-links"><button type="button" class="m3x-text-button" id="classification-export">导出已保存配置</button><button type="button" class="m3x-text-button" id="classification-reset">恢复保留的分类</button></div><p class="m3x-caption">只影响网页预览，不改音乐文件与 APK。</p></details>
+            </div>
+          </div>
         </section>
         <section class="m3x-panel" data-panel="queue" aria-label="播放队列" hidden>
           <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="player" aria-label="返回播放"><i data-icon="back"></i></button><h2>播放队列</h2></div>
@@ -65,6 +98,16 @@
           <div class="m3x-stats-summary"><div><strong id="listening-minutes">0</strong><small>累计听歌分钟</small></div><div><strong id="listening-count">0</strong><small>播放次数</small></div></div>
           <h3 class="m3x-section-label">常听歌曲</h3><div id="listening-ranking"></div>
         </section>
+        <section class="m3x-panel" data-panel="favorites" aria-label="我的收藏" hidden>
+          <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>我的收藏</h2></div><span class="m3x-caption"><span data-text="favoriteCount">0</span> 首</span></div>
+          <input id="favorites-search" class="m3x-search" type="search" placeholder="搜索收藏的歌曲" aria-label="搜索收藏">
+          <div class="m3x-library-controls"><label>歌曲排序<select data-setting="sort" aria-label="收藏歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
+          <div class="m3x-track-list" data-list="favorites" aria-label="收藏歌曲"></div>
+        </section>
+        <section class="m3x-panel" data-panel="playlists" aria-label="我的歌单" hidden>
+          <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>我的歌单</h2></div><button type="button" class="m3x-icon" data-action="new-playlist" aria-label="新建歌单"><i data-icon="plus"></i></button></div>
+          <div class="m3x-playlist-list m3x-scroll" id="profile-playlists"></div>
+        </section>
         <section class="m3x-panel" data-panel="playlist" aria-label="歌单详情" hidden>
           <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-action="back-playlists" aria-label="返回歌单"><i data-icon="back"></i></button><h2 data-text="playlistName"></h2></div><button type="button" class="m3x-icon" data-action="rename-playlist" aria-label="重命名歌单"><i data-icon="edit"></i></button></div>
           <div class="m3x-playlist-toolbar"><button type="button" class="m3x-text-button" data-action="play-playlist"><i data-icon="play"></i>播放全部</button><span data-text="playlistCount"></span></div>
@@ -77,11 +120,9 @@
             <div class="m3x-profile-name"><input id="nickname" type="text" maxlength="20" value="本地听众" aria-label="昵称" autocomplete="nickname"></div>
             <button type="button" class="m3x-icon" data-action="edit-profile" aria-label="修改昵称"><i data-icon="edit"></i></button>
           </div>
-          <div class="m3x-profile-stats">
-            <button type="button" data-action="open-favorites"><strong data-text="favoriteCount">0</strong><span>我的收藏</span></button>
-            <button type="button" data-action="open-library"><strong data-text="songCount">10</strong><span>本地歌曲</span></button>
-            <button type="button" data-action="open-playlists"><strong data-text="playlistTotal">0</strong><span>我的歌单</span></button>
-          </div>
+          <button type="button" class="m3x-menu-row" data-action="open-favorites"><span class="m3x-menu-icon"><i data-icon="heart"></i></span><span><strong>我的收藏</strong></span><small class="m3x-caption"><span data-text="favoriteCount">0</span> 首</small><i data-icon="right"></i></button>
+          <button type="button" class="m3x-menu-row" data-action="open-playlists"><span class="m3x-menu-icon"><i data-icon="add-list"></i></span><span><strong>我的歌单</strong></span><small class="m3x-caption"><span data-text="playlistTotal">0</span> 个</small><i data-icon="right"></i></button>
+          <button type="button" class="m3x-menu-row" data-action="open-library"><span class="m3x-menu-icon"><i data-icon="library"></i></span><span><strong>本地歌曲</strong></span><small class="m3x-caption"><span data-text="songCount">10</span> 首</small><i data-icon="right"></i></button>
           <button type="button" class="m3x-menu-row" data-page="settings"><span class="m3x-menu-icon"><i data-icon="settings"></i></span><span><strong>软件设置</strong></span><i data-icon="right"></i></button>
           <button type="button" class="m3x-menu-row" data-page="statistics"><span class="m3x-menu-icon"><i data-icon="disc"></i></span><span><strong>听歌统计</strong></span><i data-icon="right"></i></button>
           <div class="m3x-section-heading"><h3>最近播放</h3><span data-text="historyCount">0 首</span></div>
@@ -102,12 +143,14 @@
             <label class="m3x-setting"><span>播放速度</span><select id="playback-rate" aria-label="播放速度"><option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1.0×</option><option value="1.25">1.25×</option><option value="1.5">1.5×</option><option value="2">2.0×</option></select></label>
             <label class="m3x-setting"><span>变速保持音调</span><input type="checkbox" id="preserve-pitch" aria-label="变速保持音调" checked></label>
             <h3 class="m3x-section-label">音乐文件</h3>
+            <button type="button" class="m3x-setting m3x-setting-button m3x-browser-only" data-page="create-library"><span>曲库分类与配置</span><i data-icon="right"></i></button>
             <button type="button" class="m3x-folder-setting" data-action="choose-folder"><span>添加扫描目录<small id="music-folder"></small></span><i data-icon="plus"></i></button>
             <ul id="scan-directories" class="m3x-scan-directories" aria-label="已添加的扫描目录"></ul>
             <label class="m3x-setting" id="media-store-setting" hidden><span>包含 Android 媒体库</span><input type="checkbox" id="include-media-store" aria-label="包含 Android 媒体库"></label>
             <button type="button" class="m3x-setting m3x-setting-button" data-action="scan"><span>开始扫描</span><span class="m3x-caption" data-text="scanStatus" role="status">尚未扫描</span><i data-icon="scan"></i></button>
             <progress id="scan-progress" value="0" max="1" hidden aria-label="扫描进度"></progress>
             <button type="button" class="m3x-text-button" data-action="stop-scan" hidden>停止扫描</button>
+            <details id="scan-report" hidden><summary id="scan-report-summary">扫描明细</summary><ol id="scan-errors"></ol><button type="button" class="m3x-text-button" data-action="scan-report-export">导出完整扫描报告</button></details>
             <button type="button" class="m3x-setting m3x-setting-button" data-action="scan-options"><span>扫描筛选</span><i data-icon="right"></i></button>
             <button type="button" class="m3x-setting m3x-setting-button" data-action="hidden-songs"><span>隐藏的歌曲</span><span class="m3x-caption" data-text="hiddenCount">0 首</span><i data-icon="right"></i></button>
             <div class="m3x-setting"><span>本地曲库</span><span class="m3x-caption" data-text="librarySize"></span></div>
@@ -122,6 +165,18 @@
       </div>
       <div class="m3x-feedback" id="playback-status" role="status" hidden></div>
       <div id="toast" role="status" aria-live="polite" hidden></div>
+      <dialog id="classification-song-dialog" class="m3x-sheet-overlay" aria-label="调整歌曲归属">
+        <div class="m3x-sheet-scrim" aria-hidden="true"></div>
+        <section class="m3x-sheet">
+          <header class="m3x-sheet-header"><h2>调整歌曲归属</h2><button type="button" class="m3x-icon" data-close="classification-song-dialog" aria-label="关闭歌曲归属"><i data-icon="close"></i></button></header>
+          <p id="classification-song-title"></p>
+          <details class="classification-original"><summary>查看原始标签</summary><p id="classification-song-original" class="m3x-caption"></p></details>
+          <input type="search" id="classification-credit-search" class="classification-search" aria-label="搜索可选归属" placeholder="搜索角色、组合或歌手">
+          <p id="classification-selected" class="m3x-caption"></p>
+          <div id="classification-credit-list" class="m3x-scroll"></div>
+          <button type="button" class="m3x-primary" id="classification-song-apply">确认归属调整</button>
+        </section>
+      </dialog>
       <dialog id="output-dialog" class="m3x-sheet-overlay" aria-label="声音与硬件输出">
         <div class="m3x-sheet-scrim" aria-hidden="true"></div>
         <section class="m3x-sheet">

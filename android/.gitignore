@@ -2,6 +2,7 @@
 .tools/
 local.properties
 **/build/
+**/.cxx/
 node_modules/
 app/src/main/assets/player/
 captures/

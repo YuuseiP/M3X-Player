@@ -1,9 +1,15 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const babel = require("@babel/core");
+const { compileClassification } = require("./prepare-classification.cjs");
 const root = path.resolve(__dirname, "../web-preview");
 const output = path.join(__dirname, "app/src/main/assets/player");
+const version = fs.readFileSync(path.join(__dirname, "app/build.gradle"), "utf8").match(/versionName '([^']+)'/)[1];
 fs.mkdirSync(output, { recursive: true });
+const baselineFile = path.resolve(root, "../artist-classification/semantic/library-preview.json");
+const draftFile = path.join(root, ".classification-draft.json");
+const classification = compileClassification(fs.readFileSync(baselineFile), fs.existsSync(draftFile) ? JSON.parse(fs.readFileSync(draftFile, "utf8")) : null);
+fs.writeFileSync(path.join(output, "artist-classification.json"), JSON.stringify(classification));
 const polyfills = ["es.promise", "es.array.from", "es.array.find", "es.array.find-index", "es.array.includes", "es.array.flat", "es.array.flat-map",
   "es.array.iterator", "es.string.iterator", "es.object.assign", "es.object.entries", "es.object.values", "es.object.from-entries",
   "es.object.has-own", "es.string.pad-start", "es.string.pad-end", "es.string.match-all", "es.promise.all-settled", "es.global-this"];
@@ -38,7 +44,8 @@ for (const name of ["app.js", "avatar.js", "player-tools.js", "native-bridge.js"
 }
 let html = fs.readFileSync(path.join(root, "index.html"), "utf8")
   .replace('<link rel="icon" href="covers/01.jpg">', "")
-  .replace('<span class="m3x-caption">0.1</span>', '<span class="m3x-caption">0.2.0</span>')
+  .replace('<span class="m3x-caption">0.1</span>', `<span class="m3x-caption">${version}</span>`)
+  .replace('<script defer src="classification.js"></script>', "")
   .replace('浏览器原生音频', 'ExoPlayer · AudioTrack')
   .replace('<script defer src="tracks.js"></script>', '<script defer src="polyfills.js"></script><script defer src="native-bridge.js"></script><script>window.M3X_TRACKS=[];</script>')
   .replace('<script defer src="player-tools.js"></script>', '<script defer src="player-tools.js"></script><script defer src="native-tools.js"></script>');
@@ -71,6 +78,10 @@ css += `
 #m3x-concept .m3x-filters button{margin-right:18px}
 #m3x-concept .m3x-swatch{margin-right:10px}
 #m3x-concept .m3x-nav svg{margin-right:7px}
+#m3x-concept .m3x-menu-icon,#m3x-concept .m3x-avatar{display:flex;align-items:center;justify-content:center}
+#m3x-concept .m3x-menu-row>.m3x-menu-icon{margin-right:12px}
+#m3x-concept .m3x-profile-identity>.m3x-avatar{margin-right:10px}
+#m3x-concept .m3x-library-controls select{margin-left:6px}
 #m3x-concept .m3x-playlist-row img{margin-right:12px}
 #m3x-concept .m3x-peq-row{display:flex;align-items:center;padding:6px 0}
 #m3x-concept .m3x-peq-row span{width:20px;font-size:10px}

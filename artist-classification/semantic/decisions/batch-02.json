@@ -1,0 +1,2887 @@
+[
+  {
+    "id": "tag-9fd6271df3ebea3d",
+    "credits": [
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-9edcf048c8dcb2c3",
+    "credits": [
+      [
+        "group",
+        "315 STARS"
+      ],
+      [
+        "character",
+        "天道輝"
+      ],
+      [
+        "character",
+        "桜庭薫"
+      ],
+      [
+        "character",
+        "柏木翼"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "明確な企画集合名と構成キャラクター。",
+    "sources": []
+  },
+  {
+    "id": "tag-213e56fb863a11bf",
+    "credits": [
+      [
+        "artist",
+        "Aira"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "作曲者の個人名義。括弧内は所属表示。",
+    "sources": []
+  },
+  {
+    "id": "tag-1840c586ae813a7a",
+    "credits": [
+      [
+        "group",
+        "CINDERELLA GIRLS"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "作品内アイドル集合名。",
+    "sources": []
+  },
+  {
+    "id": "tag-a3e1dbcf905a3183",
+    "credits": [
+      [
+        "group",
+        "CINDERELLA GIRLS"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "本田未央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "集合名と括弧内に明示された役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-34a5f3d0599464a4",
+    "credits": [
+      [
+        "artist",
+        "Evan Call"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人作曲家名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-6e4de23473f7087d",
+    "credits": [
+      [
+        "group",
+        "IM@S ALLSTARS+"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "公式集合名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-0865f6ec1598ff17",
+    "credits": [
+      [
+        "group",
+        "LOVE LAIKA"
+      ],
+      [
+        "character",
+        "新田美波"
+      ],
+      [
+        "character",
+        "アナスタシア"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ユニット名と明示された二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-b78c83005519419b",
+    "credits": [
+      [
+        "artist",
+        "Moe Shop"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人音楽クリエイター名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-4c67ca8819b91eed",
+    "credits": [
+      [
+        "artist",
+        "ヒゲドライバー"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "明記されたリミックス制作者。",
+    "sources": []
+  },
+  {
+    "id": "tag-fd1c772b77525f0c",
+    "credits": [
+      [
+        "group",
+        "Sonic Heart (and Signal)"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "公式告知で283プロの新ユニットとして示された名義。",
+    "sources": [
+      "https://idolmaster-official.jp/news/01_17798"
+    ]
+  },
+  {
+    "id": "tag-8c525c319e3f25b1",
+    "credits": [
+      [
+        "group",
+        "THE IDOLM@STER CINDERELLA GIRLS for BEST5!"
+      ],
+      [
+        "character",
+        "イヴ・サンタクロース"
+      ],
+      [
+        "character",
+        "一ノ瀬志希"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ],
+      [
+        "character",
+        "高垣楓"
+      ],
+      [
+        "character",
+        "久川颯"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画ユニット名と列挙されたアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-3f411f46be4e33b0",
+    "credits": [
+      [
+        "group",
+        "THE IDOLM@STER CINDERELLA GIRLS!!"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "北条加蓮"
+      ],
+      [
+        "character",
+        "鷹富士茄子"
+      ],
+      [
+        "character",
+        "鷺沢文香"
+      ],
+      [
+        "character",
+        "一ノ瀬志希"
+      ],
+      [
+        "character",
+        "佐久間まゆ"
+      ],
+      [
+        "character",
+        "南条光"
+      ],
+      [
+        "character",
+        "喜多日菜子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "集合名義と括弧内に列挙された役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-e80a54d267ffac57",
+    "credits": [
+      [
+        "group",
+        "Team.Luna"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "シャイニーカラーズ公式企画内のチーム名。",
+    "sources": []
+  },
+  {
+    "id": "tag-95f84534c5c2793e",
+    "credits": [
+      [
+        "group",
+        "Various Artists"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "複数アーティストの包括表記で、個別名はない。",
+    "sources": []
+  },
+  {
+    "id": "tag-2edac545b91b2dc9",
+    "credits": [
+      [
+        "artist",
+        "r-906"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人音楽クリエイター名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-61b049d73839fabd",
+    "credits": [
+      [
+        "artist",
+        "きなみうみ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人音楽クリエイター名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-0d84748a99fe6c35",
+    "credits": [
+      [
+        "group",
+        "アイドルマスター スターリットシーズン"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ゲーム作品の集合アーティスト名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-bff337f6a6d214e2",
+    "credits": [
+      [
+        "character",
+        "アナスタシア"
+      ],
+      [
+        "character",
+        "神谷奈緒"
+      ],
+      [
+        "character",
+        "中野有香"
+      ],
+      [
+        "character",
+        "前川みく"
+      ],
+      [
+        "character",
+        "星輝子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-8a12521d931ce510",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "星井美希"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "全角カナの役名を正規化し、空のCVは無視した。",
+    "sources": []
+  },
+  {
+    "id": "tag-20cc406ac90e3b0f",
+    "credits": [
+      [
+        "group",
+        "イルミネーションスターズ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "シャイニーカラーズの公式ユニット名。",
+    "sources": []
+  },
+  {
+    "id": "tag-7fbadf594c04d6c8",
+    "credits": [
+      [
+        "character",
+        "イヴ・サンタクロース"
+      ],
+      [
+        "character",
+        "西園寺琴歌"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "新田美波"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-9b9a73bf8b77cf10",
+    "credits": [
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "全角カナ表記を対応する二人の役名に正規化。",
+    "sources": []
+  },
+  {
+    "id": "tag-a373c12f1b52ee43",
+    "credits": [
+      [
+        "character",
+        "島村卯月"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "全角カナ表記を対応するキャラクター役に正規化。",
+    "sources": []
+  },
+  {
+    "id": "tag-a929cd6d2dafbd34",
+    "credits": [
+      [
+        "group",
+        "シーズ"
+      ],
+      [
+        "group",
+        "イルミネーションスターズ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "公式ユニット二組の連名。",
+    "sources": []
+  },
+  {
+    "id": "tag-1511ea10db91fcaa",
+    "credits": [
+      [
+        "character",
+        "ナターリア"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-6af61c9089659390",
+    "credits": [
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "カナ表記とCVからキャラクター役を特定。",
+    "sources": []
+  },
+  {
+    "id": "tag-cb415f8b86614e0c",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CVと列挙された役名を個別に分類。",
+    "sources": []
+  },
+  {
+    "id": "tag-6954fdec9c358384",
+    "credits": [
+      [
+        "character",
+        "レトラ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "vα-liv内のアイドル名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-a2ff6833cfb380da",
+    "credits": [
+      [
+        "character",
+        "一ノ瀬志希"
+      ],
+      [
+        "character",
+        "宮本フレデリカ"
+      ],
+      [
+        "character",
+        "島原エレナ"
+      ],
+      [
+        "character",
+        "宮尾美也"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された四人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-6c431af40613b8c4",
+    "credits": [
+      [
+        "character",
+        "三峰結華"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内はキャラクターの演者表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-534b891324f8b18f",
+    "credits": [
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-54b76b06e3862f67",
+    "credits": [
+      [
+        "character",
+        "上条春菜"
+      ],
+      [
+        "character",
+        "荒木比奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-d30ea5e05871c1dc",
+    "credits": [
+      [
+        "character",
+        "中野有香"
+      ],
+      [
+        "character",
+        "水本ゆかり"
+      ],
+      [
+        "character",
+        "椎名法子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-7429feadc339150b",
+    "credits": [
+      [
+        "character",
+        "久川颯"
+      ],
+      [
+        "character",
+        "イヴ・サンタクロース"
+      ],
+      [
+        "character",
+        "白雪千夜"
+      ],
+      [
+        "character",
+        "神谷奈緒"
+      ],
+      [
+        "character",
+        "藤原肇"
+      ],
+      [
+        "character",
+        "依田芳乃"
+      ],
+      [
+        "character",
+        "赤城みりあ"
+      ],
+      [
+        "character",
+        "星輝子"
+      ],
+      [
+        "character",
+        "小早川紗枝"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された九人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-1a9af0697af94d47",
+    "credits": [
+      [
+        "character",
+        "伊吹翼"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-bb2ca6cd1bce422a",
+    "credits": [
+      [
+        "character",
+        "佐々木千枝"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-d6236305f03dbd44",
+    "credits": [
+      [
+        "character",
+        "佐久間まゆ"
+      ],
+      [
+        "character",
+        "五十嵐響子"
+      ],
+      [
+        "character",
+        "相葉夕美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-6a7d9cf16a1cfbef",
+    "credits": [
+      [
+        "artist",
+        "佐藤純一"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内は所属する音楽ユニット名。",
+    "sources": []
+  },
+  {
+    "id": "tag-5f0bdb4c677b7943",
+    "credits": [
+      [
+        "character",
+        "倉本千奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-829f5de7bae87a58",
+    "credits": [
+      [
+        "character",
+        "八宮めぐる"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-8408a308b3b17d72",
+    "credits": [
+      [
+        "group",
+        "凸レーション"
+      ],
+      [
+        "character",
+        "城ヶ崎莉嘉"
+      ],
+      [
+        "character",
+        "諸星きらり"
+      ],
+      [
+        "character",
+        "赤城みりあ"
+      ],
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "既存ユニット、列挙メンバーと追加共演者。",
+    "sources": []
+  },
+  {
+    "id": "tag-c49a7efef041bb12",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "AYATOMO"
+      ],
+      [
+        "artist",
+        "木村孝明"
+      ],
+      [
+        "character",
+        "十王星南"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者名義、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-5905c37b05a9cc85",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "AYATOMO"
+      ],
+      [
+        "artist",
+        "木村孝明"
+      ],
+      [
+        "character",
+        "葛城リーリヤ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者名義、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-862ce3dace99968b",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "group",
+        "Heart's Cry"
+      ],
+      [
+        "character",
+        "葛城リーリヤ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、音楽ユニット、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-c896c97b50e5b926",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "SHiNTA"
+      ],
+      [
+        "artist",
+        "松藤量平"
+      ],
+      [
+        "character",
+        "有村麻央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者二名、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-967fcfd33775757e",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "アオワイファイ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名と個人制作者名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-7b37c2543ffe3088",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "佐藤貴文"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名と個人制作者名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-597763a64b86e1f5",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "早川博隆"
+      ],
+      [
+        "artist",
+        "広島拓弥"
+      ],
+      [
+        "character",
+        "藤田ことね"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者二名、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-5f389e09a159981c",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "涼木シンジ"
+      ],
+      [
+        "character",
+        "十王星南"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-1d8d0abd14cce445",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "涼木シンジ"
+      ],
+      [
+        "character",
+        "葛城リーリヤ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-19175492c38cd261",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "花海佑芽"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名とキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-9cc971a332b1aa49",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "金山秀士"
+      ],
+      [
+        "character",
+        "藤田ことね"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-d8f414c2c4e38632",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "SHOW"
+      ],
+      [
+        "character",
+        "有村麻央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-56310a95965330d0",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "佐々木恵梨"
+      ],
+      [
+        "artist",
+        "鵜飼大幹"
+      ],
+      [
+        "artist",
+        "中村ヒロ"
+      ],
+      [
+        "character",
+        "篠澤広"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者三名、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-3737879833e32fd6",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "椿山日南子"
+      ],
+      [
+        "character",
+        "倉本千奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-dcbe32b59311ee7d",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "田中龍志"
+      ],
+      [
+        "artist",
+        "柿迫ヒカル"
+      ],
+      [
+        "artist",
+        "早川博隆"
+      ],
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名、制作者三名、キャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-252fd81a2f160382",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "藤田ことね"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "企画名とキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-89ab35497c6091f6",
+    "credits": [
+      [
+        "character",
+        "北条加蓮"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-246e26f7f4bf5295",
+    "credits": [
+      [
+        "artist",
+        "半田彬倫"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人音楽クリエイター名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-bdeaf2e3955b646d",
+    "credits": [
+      [
+        "character",
+        "双海亜美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "単独で明記されたアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-9573e2f432e1742b",
+    "credits": [
+      [
+        "character",
+        "双海真美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "単独で明記されたアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-3fa3dbce646cd837",
+    "credits": [
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "前川みく"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "小日向美穂"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-9f36028d7052aafa",
+    "credits": [
+      [
+        "character",
+        "和泉愛依"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内演者付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-ac35e7567c297090",
+    "credits": [
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-feced40dbcafeea8",
+    "credits": [
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-ecd6892a43275e64",
+    "credits": [
+      [
+        "character",
+        "堀裕子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-7987526f3fd1f04a",
+    "credits": [
+      [
+        "character",
+        "塩見周子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-23c072e5d9cd6e53",
+    "credits": [
+      [
+        "character",
+        "大和亜季"
+      ],
+      [
+        "character",
+        "佐藤心"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-36e70554819a1b3d",
+    "credits": [
+      [
+        "character",
+        "大崎甜花"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-735f71e6b851ae0c",
+    "credits": [
+      [
+        "character",
+        "大槻唯"
+      ],
+      [
+        "character",
+        "藤本里奈"
+      ],
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-8e46cf979915a904",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "春日未来"
+      ],
+      [
+        "character",
+        "最上静香"
+      ],
+      [
+        "character",
+        "伊吹翼"
+      ],
+      [
+        "character",
+        "白石紬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "役名とCVが並ぶ集合クレジット。確認済みの末尾省略名は白石紬。",
+    "sources": []
+  },
+  {
+    "id": "tag-a5ebb359a670a57e",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "日高愛"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-d775b67241539ed2",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "如月千早"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-7b652a4152e10c22",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された七つの役。",
+    "sources": []
+  },
+  {
+    "id": "tag-a94061df4a0deb9a",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "諸星きらり"
+      ],
+      [
+        "character",
+        "春日未来"
+      ],
+      [
+        "character",
+        "最上静香"
+      ],
+      [
+        "character",
+        "伊吹翼"
+      ],
+      [
+        "character",
+        "白石紬"
+      ],
+      [
+        "character",
+        "桜守歌織"
+      ],
+      [
+        "character",
+        "田中琴葉"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "明示された24人はいずれもアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-97c13ccc3e1336a3",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "春日未来"
+      ],
+      [
+        "character",
+        "田中琴葉"
+      ],
+      [
+        "character",
+        "大崎甘奈"
+      ],
+      [
+        "character",
+        "大崎甜花"
+      ],
+      [
+        "character",
+        "奥空心白"
+      ],
+      [
+        "character",
+        "詩花"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "明示されたアイドル役を個別に分類。",
+    "sources": []
+  },
+  {
+    "id": "tag-b12c2685d88adfd5",
+    "credits": [
+      [
+        "character",
+        "天道輝"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-f00910eefb49dfac",
+    "credits": [
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "水谷絵理"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された六つの役。",
+    "sources": []
+  },
+  {
+    "id": "tag-e6a756656b9ef205",
+    "credits": [
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-ac9bcb4474eb82d7",
+    "credits": [
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-6be5814da90cfab9",
+    "credits": [
+      [
+        "character",
+        "姫川友紀"
+      ],
+      [
+        "character",
+        "市原仁奈"
+      ],
+      [
+        "character",
+        "片桐早苗"
+      ],
+      [
+        "character",
+        "大槻唯"
+      ],
+      [
+        "character",
+        "相葉夕美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-8100e104e526e72b",
+    "credits": [
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "城ヶ崎莉嘉"
+      ],
+      [
+        "character",
+        "新田美波"
+      ],
+      [
+        "character",
+        "相葉夕美"
+      ],
+      [
+        "character",
+        "多田李衣菜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-f976b8bcad0b7867",
+    "credits": [
+      [
+        "artist",
+        "宮川弾"
+      ],
+      [
+        "artist",
+        "原口沙輔"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された二人の音楽制作者名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-2e685a83c45e252a",
+    "credits": [
+      [
+        "character",
+        "小宮果穂"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内演者付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-095dcce53616b633",
+    "credits": [
+      [
+        "character",
+        "小日向美穂"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "本田未央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-c656d84d787f8bef",
+    "credits": [
+      [
+        "artist",
+        "山崎光"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内は制作集団への所属表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-35b926d62f97c9f9",
+    "credits": [
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "小日向美穂"
+      ],
+      [
+        "character",
+        "五十嵐響子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-964b4fe6a74f2fbd",
+    "credits": [
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "神谷奈緒"
+      ],
+      [
+        "character",
+        "北条加蓮"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-62bb8bd45d0b7204",
+    "credits": [
+      [
+        "character",
+        "川島瑞樹"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-b2e631348ffd19e9",
+    "credits": [
+      [
+        "character",
+        "市原仁奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-97974cba4de165bb",
+    "credits": [
+      [
+        "character",
+        "幽谷霧子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内演者付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-bc69f9d18015e764",
+    "credits": [
+      [
+        "group",
+        "放課後クライマックスガールズ"
+      ],
+      [
+        "group",
+        "ストレイライト"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "公式ユニット二組の連名。",
+    "sources": []
+  },
+  {
+    "id": "tag-19fcdccb886ab8c5",
+    "credits": [
+      [
+        "character",
+        "日野茜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-09632d2e636ec923",
+    "credits": [
+      [
+        "character",
+        "日高愛"
+      ],
+      [
+        "character",
+        "水谷絵理"
+      ],
+      [
+        "character",
+        "秋月涼"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された三人はアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-838873ba406c7ac5",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-280f373f374c5d6d",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CVと列挙された役名を個別に分類。",
+    "sources": []
+  },
+  {
+    "id": "tag-409c4c52a4f10362",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された三人はアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-9f7e2f1b97518f3a",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された三人はアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-235237883bc44c81",
+    "credits": [
+      [
+        "character",
+        "星輝子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-de31b46a3ad45f64",
+    "credits": [
+      [
+        "character",
+        "最上静香"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-0bd7256851ad9877",
+    "credits": [
+      [
+        "character",
+        "月村手毬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-e8cd0f3ef5e3ab24",
+    "credits": [
+      [
+        "character",
+        "有村麻央"
+      ],
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "役名と演者名の表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-7ab2bc2a138739d0",
+    "credits": [
+      [
+        "character",
+        "望月杏奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-cf81e0b87041f428",
+    "credits": [
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "佐久間まゆ"
+      ],
+      [
+        "character",
+        "鷺沢文香"
+      ],
+      [
+        "character",
+        "輿水幸子"
+      ],
+      [
+        "character",
+        "新田美波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-1e67308d4d1602ed",
+    "credits": [
+      [
+        "character",
+        "杜野凛世"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-61198a0afeb1ffb2",
+    "credits": [
+      [
+        "artist",
+        "根緒亜紗里"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人名義で、括弧内はCVとしての役割表示のみ。",
+    "sources": []
+  },
+  {
+    "id": "tag-26377437fdc3ac43",
+    "credits": [
+      [
+        "artist",
+        "桑原佑介"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人名義のみでキャラクター役は指定されていない。",
+    "sources": []
+  },
+  {
+    "id": "tag-5fde8e368e95591b",
+    "credits": [
+      [
+        "character",
+        "森久保乃々"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-fe0e296d92aa6f07",
+    "credits": [
+      [
+        "character",
+        "樋口円香"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-c431e7328d49024c",
+    "credits": [
+      [
+        "character",
+        "櫻井桃華"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-6ba38b2cfe1e147a",
+    "credits": [
+      [
+        "character",
+        "櫻木真乃"
+      ],
+      [
+        "character",
+        "田中摩美々"
+      ],
+      [
+        "character",
+        "有栖川夏葉"
+      ],
+      [
+        "character",
+        "桑山千雪"
+      ],
+      [
+        "character",
+        "和泉愛依"
+      ],
+      [
+        "character",
+        "樋口円香"
+      ],
+      [
+        "character",
+        "緋田美琴"
+      ],
+      [
+        "character",
+        "鈴木羽那"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された八人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-32ca7f61254255e3",
+    "credits": [
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-99a10f676babfe42",
+    "credits": [
+      [
+        "artist",
+        "沼倉愛美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "声優個人名のみでキャラクター役は指定されていない。",
+    "sources": []
+  },
+  {
+    "id": "tag-409e675596948d57",
+    "credits": [
+      [
+        "character",
+        "浜口あやめ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-d385f1f08a5c935e",
+    "credits": [
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "森久保乃々"
+      ],
+      [
+        "character",
+        "大和亜季"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-d3e8cc62127d4283",
+    "credits": [
+      [
+        "character",
+        "灯里愛夏"
+      ],
+      [
+        "group",
+        "vα-liv"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個別アイドル役と企画ユニット名。",
+    "sources": []
+  },
+  {
+    "id": "tag-312e2c79b73d166a",
+    "credits": [
+      [
+        "artist",
+        "田中ひなの"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人名義で、括弧内は所属表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-eeb99e9b6720ee5d",
+    "credits": [
+      [
+        "artist",
+        "田熊知存"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内は所属する制作集団名。",
+    "sources": []
+  },
+  {
+    "id": "tag-94ff02b65c7587d9",
+    "credits": [
+      [
+        "character",
+        "白石紬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-e1bf75d5e981c0b2",
+    "credits": [
+      [
+        "artist",
+        "真島ゆろ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人音楽クリエイター名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-67b72f9b1fca42de",
+    "credits": [
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された三人はアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-505c5203066bb5e4",
+    "credits": [
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-d782d160050fef48",
+    "credits": [
+      [
+        "artist",
+        "稲垣敬也"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内は所属表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-d46c1a90991bd865",
+    "credits": [
+      [
+        "character",
+        "篠澤広"
+      ],
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "役名と演者名の表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-f86c84a6ab753e6f",
+    "credits": [
+      [
+        "character",
+        "結城晴"
+      ],
+      [
+        "character",
+        "的場梨沙"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-a34a20889222ad18",
+    "credits": [
+      [
+        "artist",
+        "美波"
+      ],
+      [
+        "artist",
+        "真船勝博"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "学園公式楽曲クレジットで美波が作詞・作曲・編曲者、真船勝博が編曲者と明記されている。",
+    "sources": [
+      "https://gakuen-label.idolmaster-official.jp/discography/ux77_l7suaev",
+      "https://idolmaster-official.jp/news/01_11523.html"
+    ]
+  },
+  {
+    "id": "tag-f0d7fc3a2ee83c5d",
+    "credits": [
+      [
+        "character",
+        "花海咲季"
+      ],
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "役名と演者名の表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-d4d42091564f1a17",
+    "credits": [
+      [
+        "character",
+        "芹沢あさひ"
+      ],
+      [
+        "character",
+        "黛冬優子"
+      ],
+      [
+        "character",
+        "和泉愛依"
+      ],
+      [
+        "character",
+        "七草にちか"
+      ],
+      [
+        "character",
+        "緋田美琴"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きで列挙された五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-56c2bf27beb8e7a9",
+    "credits": [
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CVと列挙された役名を個別に分類。",
+    "sources": []
+  },
+  {
+    "id": "tag-89a7b22dbadd91cf",
+    "credits": [
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-048b9a11dd368ffb",
+    "credits": [
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙されたアイドル役を個別に分類。",
+    "sources": []
+  },
+  {
+    "id": "tag-76ba3921c3210ea6",
+    "credits": [
+      [
+        "character",
+        "葛城リーリヤ"
+      ],
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "役名と演者名の表記。",
+    "sources": []
+  },
+  {
+    "id": "tag-ef86e00d9412941f",
+    "credits": [
+      [
+        "character",
+        "藤田ことね"
+      ],
+      [
+        "character",
+        "葛城リーリヤ"
+      ],
+      [
+        "character",
+        "花海佑芽"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-53ebd6c413158989",
+    "credits": [
+      [
+        "character",
+        "西城樹里"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-6ec901902d5412e0",
+    "credits": [
+      [
+        "artist",
+        "貝田由里子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人の声楽家・歌手名義のみ。",
+    "sources": []
+  },
+  {
+    "id": "tag-6767f73c53953075",
+    "credits": [
+      [
+        "character",
+        "輿水幸子"
+      ],
+      [
+        "character",
+        "塩見周子"
+      ],
+      [
+        "character",
+        "相葉夕美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-672153003c75a1f8",
+    "credits": [
+      [
+        "character",
+        "速水奏"
+      ],
+      [
+        "character",
+        "新田美波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-65800772cfd2970d",
+    "credits": [
+      [
+        "character",
+        "遊佐こずえ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内演者付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-07754bc57ce1dac2",
+    "credits": [
+      [
+        "artist",
+        "釘宮理恵"
+      ],
+      [
+        "artist",
+        "たかはし智秋"
+      ],
+      [
+        "artist",
+        "下田麻美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "声優名のみの連名であり、特定役の記載はない。",
+    "sources": []
+  },
+  {
+    "id": "tag-35b4c28ee4a89c24",
+    "credits": [
+      [
+        "artist",
+        "長谷川白紙"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "個人アーティスト名義。",
+    "sources": []
+  },
+  {
+    "id": "tag-375615012df1018f",
+    "credits": [
+      [
+        "character",
+        "音無小鳥"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "単独で明記されたアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-35668156db2d6249",
+    "credits": [
+      [
+        "character",
+        "風野灯織"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "括弧内演者付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-e16a8a17db960504",
+    "credits": [
+      [
+        "character",
+        "高垣楓"
+      ],
+      [
+        "character",
+        "三船美優"
+      ],
+      [
+        "character",
+        "大和亜季"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの三人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-8d1114d4b07f4886",
+    "credits": [
+      [
+        "character",
+        "高垣楓"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-2b43c2120033549c",
+    "credits": [
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの二人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-65800ae1362641ce",
+    "credits": [
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "列挙された六人はアイドル役。",
+    "sources": []
+  },
+  {
+    "id": "tag-23e14dd5949b3d91",
+    "credits": [
+      [
+        "character",
+        "鷺沢文香"
+      ],
+      [
+        "character",
+        "速水奏"
+      ],
+      [
+        "character",
+        "橘ありす"
+      ],
+      [
+        "character",
+        "塩見周子"
+      ],
+      [
+        "character",
+        "二宮飛鳥"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きの五人の役名。",
+    "sources": []
+  },
+  {
+    "id": "tag-e37056efcb275242",
+    "credits": [
+      [
+        "character",
+        "黛冬優子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CV付きのキャラクター役。",
+    "sources": []
+  },
+  {
+    "id": "tag-d3f02818ab627f52",
+    "credits": [
+      [
+        "group",
+        "CANDY ISLAND"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "三村かな子"
+      ],
+      [
+        "character",
+        "緒方智絵里"
+      ],
+      [
+        "character",
+        "輿水幸子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ユニット名、括弧内の構成役と共演者。",
+    "sources": []
+  },
+  {
+    "id": "tag-bd69329ad4de4199",
+    "credits": [
+      [
+        "group",
+        "new generations"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "本田未央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "公式ユニット名とカナ表記から特定した三人の役名。",
+    "sources": []
+  }
+]

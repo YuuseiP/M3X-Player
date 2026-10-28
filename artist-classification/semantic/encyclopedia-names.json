@@ -1,0 +1,809 @@
+{
+  "policy": "Encyclopedia-attested Chinese names only; no direct translation",
+  "mappings": [
+    {
+      "kind": "artist",
+      "original": "いよわ",
+      "name": "胃弱",
+      "sources": [
+        "https://moegirl.uk/index.php?title=Iyowa&variant=zh-tw"
+      ],
+      "evidence": "萌娘百科在いよわ条目别号中明确列出“胃弱”；采用已收录汉字别号，不声称是官方本名。"
+    },
+    {
+      "kind": "artist",
+      "original": "かめりあ",
+      "name": "大箭将也",
+      "sources": [
+        "https://moegirl.uk/index.php?title=大箭将也&variant=zh-sg"
+      ],
+      "evidence": "萌娘百科标题为大箭将也，首段明确其通常以かめりあ名义活动。"
+    },
+    {
+      "kind": "artist",
+      "original": "こっちのけんと",
+      "name": "菅生健人",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/菅生健人"
+      ],
+      "evidence": "中文维基百科以菅生健人为标题，并在别名中列出こっちのけんと；采用该百科的汉字名而非直译艺名。"
+    },
+    {
+      "kind": "artist",
+      "original": "さだまさし",
+      "name": "佐田雅志",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/佐田雅志",
+        "https://ja.wikipedia.org/wiki/さだまさし"
+      ],
+      "evidence": "中文维基百科标题为佐田雅志；日文维基说明さだまさし本名佐田雅志。"
+    },
+    {
+      "kind": "artist",
+      "original": "じん",
+      "name": "自然之敌P",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/Jin_(日本音樂家)"
+      ],
+      "evidence": "中文维基百科写Jin（日语：じん）也被称为自然之敌P，采用百科收录别名。"
+    },
+    {
+      "kind": "artist",
+      "original": "やくしまるえつこ",
+      "name": "药师丸悦子",
+      "sources": [
+        "https://moegirl.uk/药师丸悦子"
+      ],
+      "evidence": "萌娘百科标题和首段明确写药师丸悦子（日语：やくしまるえつこ）。"
+    },
+    {
+      "kind": "artist",
+      "original": "ナナホシ管弦楽団",
+      "name": "七星管弦乐团",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/瞄準月亮"
+      ],
+      "evidence": "中文维基百科瞄准月亮条目的作词栏明确写“七星管弦乐团（日语：ナナホシ管弦楽団）”。"
+    },
+    {
+      "kind": "artist",
+      "original": "ナユタン星人",
+      "name": "那由他星人",
+      "sources": [
+        "https://moegirl.uk/index.php?title=Nayutan星人&variant=zh-hk"
+      ],
+      "evidence": "萌娘百科ナユタン星人条目别号中列出“那由他星人”；采用已收录汉字别号。"
+    },
+    {
+      "kind": "artist",
+      "original": "天音ゆかり",
+      "name": "天音由香里",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/天音由香里"
+      ],
+      "evidence": "中文维基百科标题及原文名栏明确对应天音由香里与天音ゆかり。"
+    },
+    {
+      "kind": "artist",
+      "original": "星街すいせい",
+      "name": "星街彗星",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/星街彗星",
+        "https://ja.wikipedia.org/wiki/星街すいせい"
+      ],
+      "evidence": "中文维基百科以“星街彗星”为标题，日文维基也明确标注中文名星街彗星。"
+    },
+    {
+      "kind": "artist",
+      "original": "松崎しげる",
+      "name": "松崎茂",
+      "sources": [
+        "https://bkso.baidu.com/item/松崎茂/19825696",
+        "https://en.wikipedia.org/wiki/Shigeru_Matsuzaki"
+      ],
+      "evidence": "百度百科标题为松崎茂，列本名松崎茂幸和Shigeru Matsuzaki；英文维基将该歌手艺名列为松崎しげる。"
+    },
+    {
+      "kind": "artist",
+      "original": "湊みや",
+      "name": "凑美也",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/学园偶像大师"
+      ],
+      "evidence": "中文维基百科学园偶像大师的紫云清夏配音栏明确写凑美也（日语：湊みや）。"
+    },
+    {
+      "kind": "artist",
+      "original": "結城アイラ",
+      "name": "结城爱良",
+      "sources": [
+        "https://zh.wikipedia.org/zh-hans/結城愛良"
+      ],
+      "evidence": "中文维基百科标题及首段明确将结城爱良与結城アイラ对应。"
+    },
+    {
+      "kind": "artist",
+      "original": "長月あおい",
+      "name": "长月葵",
+      "sources": [
+        "https://moegirl.uk/index.php?title=长月葵&variant=zh"
+      ],
+      "evidence": "萌娘百科标题为长月葵，姓名栏为長月あおい，并列代表角色花海咲季。"
+    },
+    {
+      "kind": "character",
+      "original": "アナスタシア",
+      "name": "安娜斯塔西娅",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单列出“安娜斯塔西娅”这一译名。"
+    },
+    {
+      "kind": "character",
+      "original": "イヴ・サンタクロース",
+      "name": "伊芙·珊德克罗丝",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单列出“伊芙·珊德克罗丝”这一译名。"
+    },
+    {
+      "kind": "character",
+      "original": "ジュリア",
+      "name": "茱莉亚",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的百万现场角色名单列出“茱莉亚”这一译名。"
+    },
+    {
+      "kind": "character",
+      "original": "ナターリア",
+      "name": "娜塔莉亚",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表将ナターリア列为娜塔莉亚。"
+    },
+    {
+      "kind": "character",
+      "original": "ライラ",
+      "name": "莱拉",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单以“莱拉”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "レトラ",
+      "name": "蕾特拉",
+      "sources": [
+        "https://moegirl.icu/%E8%90%A8%E6%8B%89%C2%B7%E4%B8%BD%E7%89%B9%E6%8B%89%C2%B7%E5%A5%A5%E5%88%A9%E7%BB%B4%E6%8B%89%C2%B7%E5%AE%87%E7%94%B0%E5%B7%9D"
+      ],
+      "evidence": "萌娘百科条目正文将“蕾特拉”作为全名“萨拉·蕾特拉·奥利维拉·宇田川”中的名字部分，并列出日文名“レトラ”。"
+    },
+    {
+      "kind": "character",
+      "original": "一ノ瀬志希",
+      "name": "一之濑志希",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E4%B8%80%E4%B9%8B%E6%BF%91%E5%BF%97%E5%B8%8C&variant=zh"
+      ],
+      "evidence": "萌娘百科条目以“一之濑志希”为标题，正文标注本名“一ノ瀬志希”。"
+    },
+    {
+      "kind": "character",
+      "original": "七草にちか",
+      "name": "七草日花",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E9%96%83%E8%80%80%E8%89%B2%E5%BD%A9"
+      ],
+      "evidence": "中文维基《偶像大師 閃耀色彩》注释列出“七草日花”这一中文译名，对应原名七草にちか。"
+    },
+    {
+      "kind": "character",
+      "original": "三村かな子",
+      "name": "三村加奈子",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基灰姑娘女孩角色列表明确列出三村加奈子（三村かな子）。"
+    },
+    {
+      "kind": "character",
+      "original": "三浦あずさ",
+      "name": "三浦梓",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E4%B8%89%E6%B5%A6%E6%A2%93&variant=zh-hant"
+      ],
+      "evidence": "萌娘百科以“三浦梓”为条目名，并列本名“三浦あずさ”。"
+    },
+    {
+      "kind": "character",
+      "original": "佐久間まゆ",
+      "name": "佐久间麻由",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh",
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文角色表及萌娘百科角色总览使用“佐久间麻由”，对应日文名“佐久間まゆ”。"
+    },
+    {
+      "kind": "character",
+      "original": "八宮めぐる",
+      "name": "八宫巡",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E9%96%83%E8%80%80%E8%89%B2%E5%BD%A9"
+      ],
+      "evidence": "中文维基《偶像大師 閃耀色彩》角色介绍注释记载“八宫巡”为其中文译名之一，并注明另有“八宫缭”异译。"
+    },
+    {
+      "kind": "character",
+      "original": "八神マキノ",
+      "name": "八神牧野",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的角色名单以“八神牧野”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "前川みく",
+      "name": "前川未来",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表使用前川未来并括注原名前川みく；百科记录另有“前川未來”异体写法。"
+    },
+    {
+      "kind": "character",
+      "original": "古論クリス",
+      "name": "古论克里斯",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的角色名单以“古论克里斯”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "城ヶ崎美嘉",
+      "name": "城崎美嘉",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表使用城崎美嘉，并括注日文原名城ヶ崎美嘉。"
+    },
+    {
+      "kind": "character",
+      "original": "城ヶ崎莉嘉",
+      "name": "城崎莉嘉",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表使用城崎莉嘉，并括注日文原名城ヶ崎莉嘉。"
+    },
+    {
+      "kind": "character",
+      "original": "夢見りあむ",
+      "name": "梦见璃亚梦",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基《偶像大師 灰姑娘女孩角色列表》列出角色名“梦见璃亚梦”，对应日文原名夢見りあむ。"
+    },
+    {
+      "kind": "character",
+      "original": "天ヶ瀬冬馬",
+      "name": "天濑冬马",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的角色名单以“天濑冬马”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "宮本フレデリカ",
+      "name": "宫本芙蕾德莉卡",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的角色名单以“宫本芙蕾德莉卡”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "島原エレナ",
+      "name": "岛原埃琳娜",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的百万现场角色名单列出“岛原埃琳娜”这一译名。"
+    },
+    {
+      "kind": "character",
+      "original": "斑鳩ルカ",
+      "name": "斑鸠路加",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E9%96%83%E8%80%80%E8%89%B2%E5%BD%A9",
+        "https://moegirl.icu/zh-hans/%E6%96%91%E9%B8%A0%E8%B7%AF%E5%8A%A0"
+      ],
+      "evidence": "中文维基闪耀色彩条目标注汉化插件译名“斑鸠路加”；萌娘百科条目同用此名，记录“斑鸠琉花”为别号。"
+    },
+    {
+      "kind": "character",
+      "original": "桐生つかさ",
+      "name": "桐生司",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基《偶像大師 灰姑娘女孩角色列表》列出“桐生司”这一角色名。"
+    },
+    {
+      "kind": "character",
+      "original": "橘ありす",
+      "name": "橘爱丽丝",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表以橘爱丽丝为角色名，并列出日文原名橘ありす。"
+    },
+    {
+      "kind": "character",
+      "original": "水本ゆかり",
+      "name": "水本紫",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表以水本紫称呼角色，并括注日文原名水本ゆかり。"
+    },
+    {
+      "kind": "character",
+      "original": "浜口あやめ",
+      "name": "滨口菖蒲",
+      "sources": [
+        "https://moegirl.icu/%E6%BB%A8%E5%8F%A3%E8%8F%96%E8%92%B2"
+      ],
+      "evidence": "萌娘百科条目明确将“浜口あやめ”对应为“滨口菖蒲”。"
+    },
+    {
+      "kind": "character",
+      "original": "澁谷かのん",
+      "name": "涩谷香音",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E6%B6%A9%E8%B0%B7%E9%A6%99%E9%9F%B3&variant=zh"
+      ],
+      "evidence": "萌娘百科条目列明姓名“涩谷香音”及日文名“澁谷かのん”。"
+    },
+    {
+      "kind": "character",
+      "original": "白菊ほたる",
+      "name": "白菊萤",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的角色名单以“白菊萤”列出该角色。"
+    },
+    {
+      "kind": "character",
+      "original": "砂塚あきら",
+      "name": "砂冢明",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表使用砂冢明并括注日文原名砂塚あきら。"
+    },
+    {
+      "kind": "character",
+      "original": "芹沢あさひ",
+      "name": "芹泽朝日",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E9%96%83%E8%80%80%E8%89%B2%E5%BD%A9"
+      ],
+      "evidence": "中文维基《偶像大師 閃耀色彩》注释列出“芹泽朝日”这一中文译名，对应原名芹沢あさひ。"
+    },
+    {
+      "kind": "character",
+      "original": "葛城リーリヤ",
+      "name": "葛城莉莉娅",
+      "sources": [
+        "https://moegirl.uk/%E8%91%9B%E5%9F%8E%E8%8E%89%E8%8E%89%E5%A8%85",
+        "https://www.hpoi.net/charactar/51217"
+      ],
+      "evidence": "萌娘百科标注本名“葛城リーリヤ”及官方译名“葛城莉莉娅”；Hpoi也列明原名和中文名。"
+    },
+    {
+      "kind": "character",
+      "original": "藤田ことね",
+      "name": "藤田言音",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%AD%A6%E5%9B%AD%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88"
+      ],
+      "evidence": "中文维基百科称最新中文译名为藤田言音，并明确对照藤田ことね；曾用译名为藤田琴音。"
+    },
+    {
+      "kind": "character",
+      "original": "諸星きらり",
+      "name": "诸星煌梨",
+      "sources": [
+        "https://moegirl.uk/index.php?title=偶像大师系列&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单以“诸星煌梨”列出该角色；中文维基另用“诸星琪拉莉”，本配置选用前者。"
+    },
+    {
+      "kind": "character",
+      "original": "赤城みりあ",
+      "name": "赤城米莉亚",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E7%81%B0%E5%A7%91%E5%A8%98%E5%A5%B3%E5%AD%A9%E8%A7%92%E8%89%B2%E5%88%97%E8%A1%A8"
+      ],
+      "evidence": "中文维基角色列表明确使用赤城米莉亚并括注日文原名。"
+    },
+    {
+      "kind": "character",
+      "original": "辻野あかり",
+      "name": "辻野朱里",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E8%BE%BB%E9%87%8E%E6%9C%B1%E9%87%8C&variant=zh-hant"
+      ],
+      "evidence": "萌娘百科角色条目标题为辻野朱里，正文列出日文原名辻野あかり。"
+    },
+    {
+      "kind": "character",
+      "original": "遊佐こずえ",
+      "name": "游佐梢",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单列出“游佐梢”这一译名。"
+    },
+    {
+      "kind": "character",
+      "original": "郁田はるき",
+      "name": "郁田阳希",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB_%E9%96%83%E8%80%80%E8%89%B2%E5%BD%A9"
+      ],
+      "evidence": "中文维基《偶像大師 閃耀色彩》注释列出“郁田阳希”这一中文译名，对应原名郁田はるき。"
+    },
+    {
+      "kind": "character",
+      "original": "高槻やよい",
+      "name": "高槻弥生",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%AB%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览列出角色“高槻弥生”，对应日文原名高槻やよい。"
+    },
+    {
+      "kind": "character",
+      "original": "黒埼ちとせ",
+      "name": "黑埼千岁",
+      "sources": [
+        "https://moegirl.uk/index.php?title=%E5%81%B6%E5%83%8F%E5%A4%A7%E5%B8%88%E7%B3%BB%E5%88%97&variant=zh"
+      ],
+      "evidence": "萌娘百科偶像大师系列总览的灰姑娘女孩角色名单列出“黑埼千岁”这一译名。"
+    },
+    {
+      "kind": "group",
+      "original": "ももいろクローバーZ",
+      "name": "桃色幸运草Z",
+      "sources": [
+        "https://zh.wikipedia.org/zh-cn/桃色幸運草Z"
+      ],
+      "evidence": "中文维基百科首段明确列桃色幸运草Z（日语：ももいろクローバーZ），身份为女子偶像组合。"
+    },
+    {
+      "kind": "group",
+      "original": "シャイニーカラーズ",
+      "name": "闪耀色彩",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/偶像大師_閃耀色彩"
+      ],
+      "evidence": "中文维基百科标题与日文原名的副标题对应闪耀色彩与シャイニーカラーズ；仅更名现有集合署名。"
+    },
+    {
+      "kind": "group",
+      "original": "シンデレラガールズ",
+      "name": "灰姑娘女孩",
+      "sources": [
+        "https://zh.wikipedia.org/zh-cn/偶像大师_灰姑娘女孩"
+      ],
+      "evidence": "中文维基百科作品标题与日文原名的副标题明确对应灰姑娘女孩与シンデレラガールズ。"
+    },
+    {
+      "kind": "group",
+      "original": "ミリオンライブ！",
+      "name": "百万现场！",
+      "sources": [
+        "https://moegirl.uk/偶像大师_MILLION_LIVE"
+      ],
+      "evidence": "萌娘百科标题为偶像大师 百万现场，原名列アイドルマスター ミリオンライブ！；使用其已收录副标题。"
+    },
+    {
+      "kind": "group",
+      "original": "太鼓の達人",
+      "name": "太鼓之达人",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/太鼓之達人系列"
+      ],
+      "evidence": "中文维基百科收录太鼓之达人系列并列太鼓の達人原名；只改现有集合署名。"
+    },
+    {
+      "kind": "group",
+      "original": "学園アイドルマスター",
+      "name": "学园偶像大师",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/学园偶像大师"
+      ],
+      "evidence": "中文维基百科标题及首段明确对应学园偶像大师与学園アイドルマスター；仅重命名现有集合署名，不扩展成员。"
+    },
+    {
+      "kind": "group",
+      "original": "放課後クライマックスガールズ",
+      "name": "放学后顶点女孩",
+      "sources": [
+        "https://zh.wikipedia.org/wiki/偶像大師_閃耀色彩"
+      ],
+      "evidence": "中文维基百科角色表明确将组合“放学后顶点女孩”与放課後クライマックスガールズ对应。"
+    },
+    {
+      "kind": "group",
+      "original": "東京フィルハーモニー交響楽団",
+      "name": "东京爱乐交响乐团",
+      "sources": [
+        "https://zh.wikipedia.org/zh-hans/爱乐乐团"
+      ],
+      "evidence": "中文维基百科爱乐乐团列表明确写东京爱乐交响乐团（東京フィルハーモニー交響楽団）。"
+    }
+  ],
+  "unresolved": [
+    {
+      "kind": "artist",
+      "original": "朝倉さや",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "大澤めい",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "光増ハジメ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "河原レオ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "涼木シンジ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "坪井リヒト",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "柿迫ヒカル",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "松隈ケンタ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "田中ひなの",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "雪乃イト",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "真島ゆろ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "中村ヒロ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "アオワイファイ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "アッシュ井上",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "ウ山あまね",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "きなみうみ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "サツキ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "ツミキ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "トリ音",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "にほしか",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "ねりきり",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "ヒゲドライバー",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "フロクロ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "フワリ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "ミフメイ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "artist",
+      "original": "やしきん",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "塊魂シリーズ SOUND TEAM",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "凸レーション",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "CINDERELLA GIRLS for あんきら",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "アルストロメリア",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "アンティーカ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "イルミネーションスターズ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "コメティック",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "ザ・ふたりトラベラー",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "シーズ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "ストレイライト",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "なつなな",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "ノクチル",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "パソコン音楽クラブ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "ハレトキドキ",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    },
+    {
+      "kind": "group",
+      "original": "プロジェクトルミナス",
+      "reason": "本轮未逐条核验到可引用的中文百科汉字名；暂保留原名，不按读音翻译。",
+      "sources": []
+    }
+  ],
+  "research_model": "nexavlinks/gpt-6-luna (characters); parent agent (artists/groups)"
+}

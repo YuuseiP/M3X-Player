@@ -5,3 +5,5 @@ test-output/
 scanned-covers/
 .library.json
 .library.tmp
+.classification-draft.json
+.classification-draft.tmp

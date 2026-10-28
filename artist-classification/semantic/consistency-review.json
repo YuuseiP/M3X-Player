@@ -1,0 +1,383 @@
+{
+  "model": "nexavlinks/gpt-6-luna",
+  "checked_ids": [
+    "tag-06c97eabefc1b8fd",
+    "tag-1ae09d145a0910fe",
+    "tag-1ca3120e648abb76",
+    "tag-1ff6f12244d96baa",
+    "tag-305569212a347adb",
+    "tag-326035f2a3a86c64",
+    "tag-3c11de94fc952673",
+    "tag-43dc65bca510718b",
+    "tag-4fc31c746175c376",
+    "tag-5d43874ba8a110b6",
+    "tag-60cfbac728a203de",
+    "tag-6f7e31652e038905",
+    "tag-70f1aef35c097a9e",
+    "tag-7d7d5e1ed1e45a4f",
+    "tag-80eef504f5f71ac9",
+    "tag-83e3304a61ccd345",
+    "tag-862ce3dace99968b",
+    "tag-8a597972db442fdf",
+    "tag-8c29d0e6fe87aabc",
+    "tag-954571e018acb136",
+    "tag-995a0cf0ee155e71",
+    "tag-9ee02bea1d353d8b",
+    "tag-a7e7aa039da0a4aa",
+    "tag-a929cd6d2dafbd34",
+    "tag-bc69f9d18015e764",
+    "tag-beb348dc2be2050e",
+    "tag-c9ad433e99143c8d",
+    "tag-d0b418e608761b97",
+    "tag-d5960c1ffd4833fd",
+    "tag-d5f82403a7d3358b",
+    "tag-db1029a517f77a37",
+    "tag-e42c0860631c5743",
+    "tag-ea6bc0b84f64b59f",
+    "tag-f4e6ce4fcbe956b4",
+    "tag-f9f176bcc9d0f6d5",
+    "tag-fb7976b94eb3d743",
+    "tag-fc827e914f542cb6"
+  ],
+  "changed_ids": [
+    "tag-06c97eabefc1b8fd",
+    "tag-1ae09d145a0910fe",
+    "tag-1ca3120e648abb76",
+    "tag-305569212a347adb",
+    "tag-326035f2a3a86c64",
+    "tag-4fc31c746175c376",
+    "tag-6f7e31652e038905",
+    "tag-80eef504f5f71ac9",
+    "tag-83e3304a61ccd345",
+    "tag-954571e018acb136",
+    "tag-995a0cf0ee155e71",
+    "tag-9ee02bea1d353d8b",
+    "tag-a7e7aa039da0a4aa",
+    "tag-beb348dc2be2050e",
+    "tag-d0b418e608761b97",
+    "tag-d5f82403a7d3358b",
+    "tag-db1029a517f77a37",
+    "tag-e42c0860631c5743",
+    "tag-f4e6ce4fcbe956b4",
+    "tag-f9f176bcc9d0f6d5",
+    "tag-fb7976b94eb3d743",
+    "tag-fc827e914f542cb6"
+  ],
+  "decisions": [
+    {
+      "id": "tag-06c97eabefc1b8fd",
+      "action": "changed",
+      "reason": "SHHis (シーズ) is the official Japanese name of the Shiny Colors unit.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/"
+      ]
+    },
+    {
+      "id": "tag-1ae09d145a0910fe",
+      "action": "changed",
+      "reason": "PAS TASTA’s official site describes it as a multi-member J-pop project; keep it collective.",
+      "sources": [
+        "https://pastasta.net/"
+      ]
+    },
+    {
+      "id": "tag-1ca3120e648abb76",
+      "action": "changed",
+      "reason": "Official L’Antica unit page gives its Japanese name as アンティーカ.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/"
+      ]
+    },
+    {
+      "id": "tag-1ff6f12244d96baa",
+      "action": "kept",
+      "reason": "Both named Shiny Colors units are correctly classified as groups and already use Japanese canonical names.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/",
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/"
+      ]
+    },
+    {
+      "id": "tag-305569212a347adb",
+      "action": "changed",
+      "reason": "Straylight is officially named ストレイライト.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-326035f2a3a86c64",
+      "action": "changed",
+      "reason": "Official soundtrack announcement credits 塊魂 feat. suis as a featured project and names the guest separately.",
+      "sources": [
+        "https://gamemusic.bn-ent.net/news/1064"
+      ]
+    },
+    {
+      "id": "tag-3c11de94fc952673",
+      "action": "kept",
+      "reason": "シーズ and アルストロメリア are named Shiny Colors units; both group credits use Japanese names.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/",
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-43dc65bca510718b",
+      "action": "kept",
+      "reason": "Both enumerated names are Shiny Colors group units, not individual artists.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-4fc31c746175c376",
+      "action": "changed",
+      "reason": "chelmico is an official rap unit; retain it as a collective, without expanding members.",
+      "sources": [
+        "https://kakubarhythm.com/artists/chelmico"
+      ]
+    },
+    {
+      "id": "tag-5d43874ba8a110b6",
+      "action": "kept",
+      "reason": "The paired entries are two named Shiny Colors units, so group classification is correct.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-60cfbac728a203de",
+      "action": "kept",
+      "reason": "アルストロメリア is the official Japanese name of a Shiny Colors unit.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-6f7e31652e038905",
+      "action": "changed",
+      "reason": "Official Cinderella Girls discography styles the unit as ＊(Asterisk).",
+      "sources": [
+        "https://cinderellagirls.idolmaster-official.jp/discography/cocc-17026/"
+      ]
+    },
+    {
+      "id": "tag-70f1aef35c097a9e",
+      "action": "kept",
+      "reason": "All four enumerated credits are Shiny Colors units; keeping them as groups avoids expanding rosters.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/",
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-7d7d5e1ed1e45a4f",
+      "action": "kept",
+      "reason": "アンティーカ and ストレイライト are correctly typed as Shiny Colors units.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/",
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-80eef504f5f71ac9",
+      "action": "unresolved",
+      "reason": "Official source confirms ＊(Asterisk); no reliable evidence equates なつなな with ナツナナ, so preserve its literal alias.",
+      "sources": [
+        "https://cinderellagirls.idolmaster-official.jp/discography/cocc-17026/"
+      ]
+    },
+    {
+      "id": "tag-83e3304a61ccd345",
+      "action": "changed",
+      "reason": "HoneyWorks is a creator collective; do not expand its roster.",
+      "sources": [
+        "https://honeyworks.jp/"
+      ]
+    },
+    {
+      "id": "tag-862ce3dace99968b",
+      "action": "kept",
+      "reason": "Heart’s Cry is a creator/music group; the existing group classification is correct.",
+      "sources": [
+        "https://granzellamusic.jp/artist/gzma_10004/"
+      ]
+    },
+    {
+      "id": "tag-8a597972db442fdf",
+      "action": "kept",
+      "reason": "All four listed names are Shiny Colors units and already use their Japanese names.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/",
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-8c29d0e6fe87aabc",
+      "action": "kept",
+      "reason": "ストレイライト is already the Japanese canonical unit name and group kind.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-954571e018acb136",
+      "action": "changed",
+      "reason": "Normalized Straylight and L’Antica to the official Japanese unit names.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/",
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/"
+      ]
+    },
+    {
+      "id": "tag-995a0cf0ee155e71",
+      "action": "changed",
+      "reason": "Official pages establish the Japanese canonical names for L’Antica and Straylight.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/",
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-9ee02bea1d353d8b",
+      "action": "changed",
+      "reason": "HoneyWorks is a creator collective/project, not an individual artist.",
+      "sources": [
+        "https://honeyworks.jp/"
+      ]
+    },
+    {
+      "id": "tag-a7e7aa039da0a4aa",
+      "action": "changed",
+      "reason": "ALSTROEMERIA is the official English alias of アルストロメリア.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-a929cd6d2dafbd34",
+      "action": "kept",
+      "reason": "シーズ and イルミネーションスターズ are correctly represented as two group units.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/"
+      ]
+    },
+    {
+      "id": "tag-bc69f9d18015e764",
+      "action": "kept",
+      "reason": "放課後クライマックスガールズ and ストレイライト are both unit group credits.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/straylight/"
+      ]
+    },
+    {
+      "id": "tag-beb348dc2be2050e",
+      "action": "unresolved",
+      "reason": "Individual credit, but no evidence established that Kyo and lowercase kyo are the same person; retain spelling.",
+      "sources": []
+    },
+    {
+      "id": "tag-c9ad433e99143c8d",
+      "action": "kept",
+      "reason": "アルストロメリア and コメティック are both collective unit names, not individuals.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-d0b418e608761b97",
+      "action": "unresolved",
+      "reason": "No reliable evidence equated 奈須野新平 with Shinpei Nasuno; retain the Japanese spelling.",
+      "sources": []
+    },
+    {
+      "id": "tag-d5960c1ffd4833fd",
+      "action": "kept",
+      "reason": "All three listed names are collective Shiny Colors units and use Japanese canonical spellings.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/shhis/",
+        "https://shinycolors.idolmaster-official.jp/idol/alstroemeria/"
+      ]
+    },
+    {
+      "id": "tag-d5f82403a7d3358b",
+      "action": "unresolved",
+      "reason": "Official source confirms ＊(Asterisk); no reliable evidence equates ナツナナ with なつなな, so preserve its literal alias.",
+      "sources": [
+        "https://cinderellagirls.idolmaster-official.jp/discography/cocc-17026/"
+      ]
+    },
+    {
+      "id": "tag-db1029a517f77a37",
+      "action": "changed",
+      "reason": "Official soundtrack announcement uses 塊魂 feat. 花譜 as a project credit, separately naming the guest.",
+      "sources": [
+        "https://gamemusic.bn-ent.net/news/1064"
+      ]
+    },
+    {
+      "id": "tag-e42c0860631c5743",
+      "action": "changed",
+      "reason": "Heart’s Cry is a formed creator/music group, not an individual.",
+      "sources": [
+        "https://granzellamusic.jp/artist/gzma_10004/"
+      ]
+    },
+    {
+      "id": "tag-ea6bc0b84f64b59f",
+      "action": "kept",
+      "reason": "アンティーカ is a Shiny Colors unit and is correctly classified as a group.",
+      "sources": [
+        "https://shinycolors.idolmaster-official.jp/idol/lantica/"
+      ]
+    },
+    {
+      "id": "tag-f4e6ce4fcbe956b4",
+      "action": "changed",
+      "reason": "Official soundtrack announcement uses 塊魂 feat. 朝倉さや as a project credit, separately naming the guest.",
+      "sources": [
+        "https://gamemusic.bn-ent.net/news/1064"
+      ]
+    },
+    {
+      "id": "tag-f9f176bcc9d0f6d5",
+      "action": "unresolved",
+      "reason": "Individual credit, but no evidence established that lowercase kyo and Kyo are the same person; retain spelling.",
+      "sources": []
+    },
+    {
+      "id": "tag-fb7976b94eb3d743",
+      "action": "unresolved",
+      "reason": "No reliable evidence equated Shinpei Nasuno with 奈須野新平; retain the Latin spelling.",
+      "sources": []
+    },
+    {
+      "id": "tag-fc827e914f542cb6",
+      "action": "changed",
+      "reason": "Official Cinderella Girls discography styles the unit as ＊(Asterisk).",
+      "sources": [
+        "https://cinderellagirls.idolmaster-official.jp/discography/cocc-17026/"
+      ]
+    }
+  ],
+  "classification_corrected_ids": [
+    "tag-06c97eabefc1b8fd",
+    "tag-1ae09d145a0910fe",
+    "tag-1ca3120e648abb76",
+    "tag-305569212a347adb",
+    "tag-326035f2a3a86c64",
+    "tag-4fc31c746175c376",
+    "tag-6f7e31652e038905",
+    "tag-83e3304a61ccd345",
+    "tag-954571e018acb136",
+    "tag-995a0cf0ee155e71",
+    "tag-9ee02bea1d353d8b",
+    "tag-a7e7aa039da0a4aa",
+    "tag-db1029a517f77a37",
+    "tag-e42c0860631c5743",
+    "tag-f4e6ce4fcbe956b4",
+    "tag-fc827e914f542cb6"
+  ],
+  "change_count_note": "changed_ids includes status/reason/source changes; classification_corrected_ids records substantive credit corrections reported by the reviewer."
+}

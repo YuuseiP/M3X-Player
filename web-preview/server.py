@@ -9,6 +9,7 @@ import subprocess
 from urllib.parse import urlsplit, parse_qs, unquote
 
 from library import MusicLibrary
+from classification import BASELINE, ClassificationPreview
 
 ROOT = Path(__file__).resolve().parent
 
@@ -32,6 +33,11 @@ def byte_range(header, size):
 
 
 class PreviewHandler(SimpleHTTPRequestHandler):
+    def classification(self):
+        if not hasattr(self.server, "classification"):
+            self.server.classification = ClassificationPreview()
+        return self.server.classification
+
     def json_response(self, data, status=200):
         body = json.dumps(data, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -46,7 +52,14 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             return self.json_response({"error": "仅允许本机访问"}, 403)
         url = urlsplit(self.path)
         try:
+            if url.path == "/api/classification":
+                return self.json_response(self.classification().snapshot())
+            if url.path == "/api/classification/library":
+                return self.json_response(self.classification().library_snapshot())
             if url.path == "/api/library":
+                preview = getattr(self.server, "classification", None)
+                if preview and preview.active:
+                    return self.json_response(preview.library_snapshot())
                 return self.json_response(self.server.library.snapshot())
             if url.path == "/api/scan-status":
                 with self.server.library.lock:
@@ -56,9 +69,11 @@ class PreviewHandler(SimpleHTTPRequestHandler):
                 return self.json_response(self.server.library.folders(path))
             if url.path == "/api/track":
                 track_id = parse_qs(url.query).get("id", [""])[0]
+                if track_id.startswith("track-"):
+                    return self.json_response(self.classification().details(track_id, self.server.library))
                 return self.json_response(self.server.library.details(track_id))
         except (ValueError, OSError, KeyError, StopIteration, subprocess.SubprocessError):
-            message = "无法读取歌曲信息，请检查原文件" if url.path == "/api/track" else "无法打开文件夹，请检查路径和访问权限"
+            message = "无法读取歌曲信息，请检查原文件" if url.path == "/api/track" else "无法读取分类配置，请检查配置与草稿" if url.path == "/api/classification" else "无法打开文件夹，请检查路径和访问权限"
             return self.json_response({"error": message}, 400)
         return super().do_GET()
 
@@ -70,14 +85,24 @@ class PreviewHandler(SimpleHTTPRequestHandler):
             return self.json_response({"error": "不允许来自其他页面的操作"}, 403)
         try:
             length = int(self.headers.get("Content-Length", 0))
-            if not 0 < length <= 8192 or self.headers.get_content_type() != "application/json":
+            path = urlsplit(self.path).path
+            limit = 4 * 1024 * 1024 if path == "/api/classification" else 8192
+            if not 0 < length <= limit or self.headers.get_content_type() != "application/json":
                 raise ValueError("请求格式不正确")
             body = json.loads(self.rfile.read(length))
             if not isinstance(body, dict):
                 raise ValueError("请求格式不正确")
-            path = urlsplit(self.path).path
-            if path == "/api/folder":
+            if path == "/api/classification":
+                if self.server.library.snapshot().get("scan", {}).get("running"):
+                    raise ValueError("正在扫描歌曲，请等扫描完成后再应用分类")
+                preview = self.classification()
+                edits = preview.save(body)
+                return self.json_response({"edits": edits, "library": preview.library_snapshot()})
+            elif path == "/api/folder":
                 self.server.library.set_folder(body.get("folder"))
+                preview = getattr(self.server, "classification", None)
+                if preview and preview.active:
+                    preview.store(preview.edits, False)
             elif path == "/api/scan":
                 self.server.library.start_scan()
             elif path == "/api/scan-cancel":
@@ -88,10 +113,14 @@ class PreviewHandler(SimpleHTTPRequestHandler):
                 return self.json_response({"error": "没有此操作"}, 404)
             return self.json_response(self.server.library.snapshot())
         except (ValueError, OSError) as error:
-            return self.json_response({"error": str(error) if isinstance(error, ValueError) else "无法保存目录设置"}, 400)
+            message = str(error) if isinstance(error, ValueError) else "无法保存分类配置，原配置未更改" if path == "/api/classification" else "无法保存目录设置"
+            return self.json_response({"error": message}, 400)
 
     def translate_path(self, path):
         route = unquote(urlsplit(path).path)
+        if route.startswith("/classification/audio/"):
+            source = self.classification().audio_path(route.rsplit("/", 1)[-1])
+            return str(source) if source else str(ROOT / ".missing-track")
         if route.startswith("/library/audio/"):
             source = self.server.library.audio_path(route.rsplit("/", 1)[-1])
             return str(source) if source else str(ROOT / ".missing-track")
@@ -144,6 +173,8 @@ if __name__ == "__main__":
     ThreadingHTTPServer.allow_reuse_address = False
     with ThreadingHTTPServer(("127.0.0.1", 18765), handler) as server:
         server.library = MusicLibrary(ROOT)
+        if BASELINE.exists():
+            server.classification = ClassificationPreview()
         print("M3X Player preview: http://127.0.0.1:18765/", flush=True)
         try:
             server.serve_forever()

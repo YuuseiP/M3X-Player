@@ -4,6 +4,16 @@ import java.util.*;
 import java.util.regex.*;
 
 public final class CueParser {
+    static String resolvePath(String folder, String reference) {
+        String path = reference.replace('\\', '/');
+        if (path.startsWith("/") || path.contains(":")) return "";
+        Deque<String> parts = new ArrayDeque<>();
+        for (String part : (folder + "/" + path).split("/")) {
+            if (part.equals("..")) { if (parts.isEmpty()) return ""; parts.removeLast(); }
+            else if (!part.isEmpty() && !part.equals(".")) parts.addLast(part);
+        }
+        return String.join("/", parts);
+    }
     public static final class Entry {
         public String file = "", title = "", artist = "", album = "";
         public int number;

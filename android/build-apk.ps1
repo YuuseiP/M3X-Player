@@ -27,16 +27,20 @@ try {
     }
     & npm.cmd run assets
     if ($LASTEXITCODE -ne 0) { throw '构建 Android 7.1 界面失败' }
+    & '.\prepare-flac.ps1'
     $tasks = @(':app:assembleRelease')
     if ($Test) { $tasks += ':app:testDebugUnitTest' }
     & '.\.tools\gradle-8.9\bin\gradle.bat' @tasks '--console=plain'
     if ($LASTEXITCODE -ne 0) { throw 'APK 构建失败' }
     $dist = Join-Path (Split-Path $PSScriptRoot -Parent) 'dist'
     New-Item -ItemType Directory -Force $dist | Out-Null
-    $apk = Join-Path $dist 'Cheng-M3X-0.2.0.apk'
+    $version = [regex]::Match((Get-Content -Raw -Encoding UTF8 '.\app\build.gradle'), "versionName '([^']+)'").Groups[1].Value
+    if (-not $version) { throw '无法读取 APK 版本号' }
+    $name = "Cheng-M3X-$version.apk"
+    $apk = Join-Path $dist $name
     Copy-Item -LiteralPath '.\app\build\outputs\apk\release\app-release.apk' -Destination $apk -Force
     $hash = (Get-FileHash -LiteralPath $apk -Algorithm SHA256).Hash.ToLowerInvariant()
-    [IO.File]::WriteAllText("$apk.sha256", "$hash  Cheng-M3X-0.2.0.apk`n", [Text.Encoding]::ASCII)
+    [IO.File]::WriteAllText("$apk.sha256", "$hash  $name`n", [Text.Encoding]::ASCII)
     Write-Output "APK: $apk"
     Write-Output "SHA256: $hash"
 } finally { Pop-Location }

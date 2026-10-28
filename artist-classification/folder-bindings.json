@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "bindings": [
+    {
+      "folder": "D:\\BaiduNetdiskDownload\\THE_IDOLMASTER",
+      "config": "semantic/profile.json"
+    }
+  ]
+}

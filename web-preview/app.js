@@ -34,6 +34,7 @@
     queueCleared: saved.queueCleared === true,
     hidden: new Set(Array.isArray(saved.hidden) ? saved.hidden.filter(id => typeof id === "string") : []),
     sort: ["original", "title", "artist", "album", "duration", "duration-desc", "added", "year"].includes(saved.sort) ? saved.sort : "original",
+    groupSort: ["name", "name-desc", "count"].includes(saved.groupSort) ? saved.groupSort : "name",
     filenameTitle: saved.filenameTitle === true, showCovers: saved.showCovers !== false,
     avatar: typeof saved.avatar === "string" && saved.avatar.startsWith("data:image/jpeg;base64,") ? saved.avatar : "",
     nickname: typeof saved.nickname === "string" && saved.nickname.trim() ? saved.nickname.trim().slice(0, 20) : "本地听众",
@@ -41,13 +42,14 @@
     startPage: ["library", "player", "profile"].includes(saved.startPage) ? saved.startPage : "library",
     rememberPosition: saved.rememberPosition !== false,
     page: ["library", "player", "profile"].includes(saved.startPage) ? saved.startPage : "library",
-    query: "", filter: "all", groupKey: null, playlistId: "", playlistTarget: "", sheetOpen: false, sheetTab: "signal"
+    query: "", favoriteQuery: "", filter: "all", groupKey: null, playlistId: "", playlistTarget: "", sheetOpen: false, sheetTab: "signal"
   };
   let pendingSeek = state.rememberPosition && Number.isFinite(saved.position) ? Math.max(0, Math.min(saved.position, tracks[state.index]?.duration || 0)) : 0;
   let dragging = false;
   let toastTimer;
   let playlistAction = "create";
   let scanTimer;
+  let renderedScanReport = "";
   let renderedScanSources = "";
   let menuIndex = state.index;
   let renderedTrack = null;
@@ -110,7 +112,7 @@
         index: state.index, trackId: tracks[state.index]?.id, layout: state.layout, mode: state.mode,
         favorites: [...state.favorites], history: state.history, nickname: state.nickname,
         playlists: state.playlists, avatar: state.avatar, queue: state.queue, queueCleared: state.queueCleared,
-        hidden: [...state.hidden], sort: state.sort, filenameTitle: state.filenameTitle, showCovers: state.showCovers,
+        hidden: [...state.hidden], sort: state.sort, groupSort: state.groupSort, filenameTitle: state.filenameTitle, showCovers: state.showCovers,
         theme: state.theme, startPage: state.startPage, rememberPosition: state.rememberPosition,
         position: state.rememberPosition ? (audio.readyState ? audio.currentTime : pendingSeek) : 0
       }));
@@ -127,7 +129,22 @@
     return state.queue.some(id => indexById.has(id)) ? indices : tracks.map((_, index) => index).filter(index => !state.hidden.has(tracks[index].id));
   }
   const displayTitle = track => state.filenameTitle ? track.filename || track.title : track.title;
-  const groupValue = track => state.filter === "albums" ? track.album : state.filter === "artists" ? track.artist : track.folder || ".";
+  const folderPath = track => (track.folder || "").replace(/\\/g, "/").replace(/^\.\/|\/$/g, "").replace(/^\.$/, "");
+  const matchesQuery = (track, query) => (track.title + " " + track.artist + " " + (track.originalArtist || "") + " " + track.album + " " + (track.filename || "") + " " + (track.folder || "")).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+  const favoriteIndices = () => sortedIndices(tracks.map((_, index) => index).filter(index =>
+    state.favorites.has(tracks[index].id) && !state.hidden.has(tracks[index].id) && matchesQuery(tracks[index], state.favoriteQuery)));
+  function groupValues(track) {
+    if (state.filter === "folders") {
+      const prefix = state.groupKey ? state.groupKey + "/" : "";
+      const child = folderPath(track).slice(prefix.length).split("/")[0];
+      return child ? [prefix + child] : [];
+    }
+    const kind = { characters: "character", groups: "group", artists: "artist" }[state.filter];
+    if (library?.classification && kind) return (track.credits || []).filter(item => item.kind === kind).map(item => item.id);
+    return [state.filter === "albums" ? track.album : state.filter === "artists" ? track.artist : track.folder || "."];
+  }
+  const groupLabel = key => state.filter === "folders" ? (key || "").split("/").pop() :
+    library?.classification?.entities.find(item => item.id === key)?.name || (key === "." ? "根目录" : key || "");
   function sortedIndices(indices) {
     return [...indices].sort((a, b) => {
       const left = tracks[a], right = tracks[b];
@@ -139,39 +156,62 @@
       return String(state.sort === "title" ? displayTitle(left) : left.artist).localeCompare(String(state.sort === "title" ? displayTitle(right) : right.artist), "zh-Hans", { numeric: true }) || a - b;
     });
   }
-  function libraryIndices() {
+  function libraryIndices(includeSubfolders = false) {
     const query = state.query.trim().toLocaleLowerCase();
     return sortedIndices(tracks.map((_, index) => index).filter(index => {
       const track = tracks[index];
-      return !state.hidden.has(track.id) && (state.filter !== "favorites" || state.favorites.has(track.id)) &&
-        (state.groupKey === null || groupValue(track) === state.groupKey) &&
-        (track.title + " " + track.artist + " " + track.album + " " + (track.filename || "") + " " + (track.folder || "")).toLocaleLowerCase().includes(query);
+      const currentFolder = state.groupKey || "";
+      const inGroup = state.filter === "folders" ?
+        folderPath(track) === currentFolder || (includeSubfolders && (!currentFolder || folderPath(track).startsWith(currentFolder + "/"))) :
+        state.groupKey === null || groupValues(track).includes(state.groupKey);
+      return !state.hidden.has(track.id) && inGroup && matchesQuery(track, query);
     }));
   }
   function renderGroups() {
-    const grouping = ["albums", "artists", "folders"].includes(state.filter);
+    const grouping = ["albums", "artists", "characters", "groups", "folders"].includes(state.filter);
     const groups = document.getElementById("library-groups");
     const groupBack = document.getElementById("group-back");
-    groups.hidden = !grouping || state.groupKey !== null;
-    screen.querySelector('[data-list="library"]').hidden = state.filter === "playlists" || (grouping && state.groupKey === null);
-    groupBack.hidden = state.groupKey === null;
-    document.getElementById("group-label").textContent = state.groupKey === "." ? "根目录" : state.groupKey || "";
-    groups.replaceChildren();
-    if (!grouping || state.groupKey !== null) return;
+    const folders = state.filter === "folders";
     const grouped = new Map();
-    for (const index of libraryIndices()) {
-      const key = groupValue(tracks[index]);
-      if (!grouped.has(key)) grouped.set(key, []);
-      grouped.get(key).push(index);
+    if (grouping && (folders || state.groupKey === null)) {
+      for (const index of libraryIndices(folders)) {
+        for (const key of groupValues(tracks[index])) {
+          if (!grouped.has(key)) grouped.set(key, []);
+          grouped.get(key).push(index);
+        }
+      }
     }
-    for (const [key, indices] of [...grouped].sort((a, b) => a[0].localeCompare(b[0], "zh-Hans", { numeric: true }))) {
+    const browsingGroups = grouping && (folders ? grouped.size > 0 : state.groupKey === null);
+    const hasSongs = folders && libraryIndices().length > 0;
+    groups.hidden = !browsingGroups;
+    screen.querySelector('[data-setting="sort"]').closest("label").hidden = browsingGroups && !hasSongs;
+    screen.querySelector('[data-setting="groupSort"]').closest("label").hidden = !browsingGroups;
+    screen.querySelector('[data-list="library"]').hidden = browsingGroups && !hasSongs;
+    groupBack.hidden = state.groupKey === null;
+    document.getElementById("group-label").textContent = folders ? "上一级" : groupLabel(state.groupKey);
+    const location = document.getElementById("folder-location");
+    location.hidden = !folders;
+    location.textContent = state.groupKey ? state.groupKey.split("/").join(" / ") : (library?.folder || "").split(/[\\/]/).pop() || "曲库根目录";
+    location.title = location.textContent;
+    screen.querySelector(".m3x-library-controls").classList.toggle("has-mixed-folders", browsingGroups && hasSongs);
+    groups.replaceChildren();
+    if (!browsingGroups) return;
+    const ordered = [...grouped].sort((a, b) => {
+      const nameOrder = groupLabel(a[0]).localeCompare(groupLabel(b[0]), "zh-Hans", { numeric: true });
+      if (state.groupSort === "count") return b[1].length - a[1].length || nameOrder;
+      return state.groupSort === "name-desc" ? -nameOrder : nameOrder;
+    });
+    for (const [key, indices] of ordered) {
       const button = document.createElement("button"); button.type = "button";
       button.className = "m3x-playlist-row"; button.dataset.group = key;
-      const cover = document.createElement("img"); cover.src = tracks[indices[0]].cover; cover.alt = ""; cover.hidden = !state.showCovers;
+      const cover = document.createElement(folders ? "span" : "img");
+      if (folders) { cover.className = "m3x-folder-icon"; cover.innerHTML = icon("folder"); }
+      else { cover.src = tracks[indices[0]].cover; cover.alt = ""; cover.hidden = !state.showCovers; }
       const info = document.createElement("span");
-      const name = document.createElement("strong"); name.textContent = key === "." ? "根目录" : key;
+      const name = document.createElement("strong"); name.textContent = groupLabel(key);
       const count = document.createElement("small"); count.textContent = indices.length + " 首";
       info.append(name, count); button.append(cover, info); groups.append(button);
+      if (folders) button.insertAdjacentHTML("beforeend", icon("right"));
     }
     if (!grouped.size) {
       const empty = document.createElement("p"); empty.className = "m3x-empty"; empty.textContent = "没有匹配的音乐"; groups.append(empty);
@@ -195,15 +235,14 @@
     renderProgress();
   }
   function renderLists() {
-    const query = state.query.trim().toLocaleLowerCase();
     root.querySelectorAll("[data-list]").forEach(list => {
       const nodes = [];
       const queue = queueIndices();
       const indices = list.dataset.list === "recent" ? state.history.map(id => tracks.findIndex(track => track.id === id)).filter(index => index !== -1) :
         list.dataset.list === "upcoming" ? [...queue.slice(queue.indexOf(state.index) + 1), ...queue.slice(0, Math.max(0, queue.indexOf(state.index)))] :
         list.dataset.list === "playlist" ? (state.playlists.find(item => item.id === state.playlistId)?.trackIds || []).map(id => tracks.findIndex(track => track.id === id)).filter(index => index !== -1) :
-        list.dataset.list === "queue" ? queueIndices() : libraryIndices();
-      const limit = window.M3X_NATIVE ? listLimits[list.dataset.list] || 150 : indices.length;
+        list.dataset.list === "queue" ? queueIndices() : list.dataset.list === "favorites" ? favoriteIndices() : libraryIndices();
+      const limit = listLimits[list.dataset.list] || 150;
       indices.slice(0, limit).forEach(index => {
         const track = tracks[index];
         if (state.hidden.has(track.id)) return;
@@ -239,9 +278,9 @@
         const resolution = document.createElement("small");
         resolution.textContent = quality(track);
         artist.append(resolution);
-        details.textContent = time(track.duration);
+        details.textContent = track.duration > 0 ? time(track.duration) : "—";
         button.append(cover, info, details);
-        if (["playlist", "queue", "library", "recent"].includes(list.dataset.list)) {
+        if (["playlist", "queue", "library", "recent", "favorites"].includes(list.dataset.list)) {
           const row = document.createElement("div");
           row.className = "m3x-track-row";
           const remove = document.createElement("button");
@@ -262,7 +301,7 @@
         const empty = document.createElement("div");
         empty.className = "m3x-empty";
         empty.textContent = list.dataset.list === "recent" ? "暂无播放记录" : list.dataset.list === "playlist" ? "歌单暂无歌曲" :
-          state.filter === "favorites" && !query ? "暂无收藏" : "没有匹配的歌曲";
+          list.dataset.list === "favorites" && !state.favoriteQuery.trim() ? "暂无收藏，播放歌曲时点亮爱心即可添加" : "没有匹配的歌曲";
         if (window.M3X_NATIVE && list.dataset.list === "library" && !tracks.length) {
           const choose = document.createElement("button"); choose.type = "button"; choose.className = "m3x-text-button";
           choose.dataset.action = "choose-folder"; choose.textContent = "选择音乐目录"; empty.append(choose);
@@ -274,7 +313,7 @@
   }
   function renderProfile() {
     if (document.activeElement !== nickname) nickname.value = state.nickname;
-    text("favoriteCount", tracks.filter(track => state.favorites.has(track.id)).length);
+    text("favoriteCount", tracks.filter(track => state.favorites.has(track.id) && !state.hidden.has(track.id)).length);
     text("historyCount", state.history.filter(id => tracks.some(track => track.id === id)).length + " 首");
     text("songCount", tracks.length);
     text("playlistTotal", state.playlists.length);
@@ -290,7 +329,7 @@
     screen.dataset.layout = state.layout;
     screen.querySelectorAll("[data-panel]").forEach(panel => { panel.hidden = panel.dataset.panel !== state.page; });
     screen.querySelectorAll(".m3x-nav [data-page]").forEach(button => {
-      const section = ["settings", "statistics"].includes(state.page) ? "profile" : ["queue", "lyrics"].includes(state.page) ? "player" : state.page === "playlist" ? "library" : state.page;
+      const section = ["settings", "statistics", "favorites", "playlists", "playlist"].includes(state.page) ? "profile" : ["queue", "lyrics"].includes(state.page) ? "player" : state.page === "create-library" ? "library" : state.page;
       if (button.dataset.page === section) button.setAttribute("aria-current", "page");
       else button.removeAttribute("aria-current");
     });
@@ -319,6 +358,10 @@
     mode.innerHTML = icon(["sequential", "shuffle", "repeat"][state.mode]);
     mode.setAttribute("aria-label", "播放模式：" + modes[state.mode]);
     screen.querySelectorAll("[data-filter]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.filter === state.filter)));
+    screen.querySelectorAll('[data-filter="characters"], [data-filter="groups"]').forEach(button => { button.hidden = !library?.classification; });
+    const createEntry = screen.querySelector(".m3x-create-entry");
+    createEntry.querySelector("strong").textContent = library?.classification ? "管理曲库分类" : "创建曲库";
+    createEntry.querySelector("small").textContent = library?.classification ? "THE_IDOLMASTER · 当前分类已应用" : "THE_IDOLMASTER · 使用已保留的分类";
     screen.querySelectorAll("[data-setting]").forEach(input => {
       if (input.type === "checkbox") input.checked = state[input.dataset.setting];
       else input.value = state[input.dataset.setting];
@@ -330,8 +373,6 @@
     renderPlayback();
     positionDialogs();
     renderGroups();
-    document.getElementById("library-playlists").hidden = state.filter !== "playlists";
-    screen.querySelector(".m3x-library-controls").hidden = state.filter === "playlists";
     window.dispatchEvent(new CustomEvent("m3x-render", { detail: { page: state.page } }));
     if (renderedTrack !== track?.id) {
       renderedTrack = track?.id;
@@ -339,7 +380,7 @@
     }
   }
   function renderPlaylists() {
-    const container = document.getElementById("library-playlists");
+    const container = document.getElementById("profile-playlists");
     const choices = document.getElementById("playlist-choices");
     container.replaceChildren();
     choices.replaceChildren();
@@ -365,7 +406,7 @@
       }
     }
     if (!state.playlists.length) {
-      const empty = document.createElement("p"); empty.className = "m3x-empty"; empty.textContent = "暂无歌单";
+      const empty = document.createElement("p"); empty.className = "m3x-empty"; empty.textContent = "还没有歌单，点击右上角 + 创建";
       container.append(empty);
     }
   }
@@ -470,8 +511,9 @@
   }
   function renderScan() {
     const scan = library?.scan;
+    const previewClassification = Boolean(library?.classification) && !window.M3X_NATIVE;
     const directories = library?.directories || (library?.folder ? [{ path: library.folder }] : []);
-    document.getElementById("music-folder").textContent = `${directories.length} 个目录 · 点击开始扫描后生效`;
+    document.getElementById("music-folder").textContent = previewClassification ? "THE_IDOLMASTER · 分类已应用，无需重新扫描" : `${directories.length} 个目录 · 点击开始扫描后生效`;
     const sourcesKey = JSON.stringify([directories, Boolean(scan?.running)]);
     if (sourcesKey !== renderedScanSources) {
       const list = document.getElementById("scan-directories");
@@ -497,13 +539,39 @@
     mediaStore.disabled = Boolean(scan?.running);
     const rate = scan?.rate > 0 ? ` · ${Math.round(scan.rate)} 首/秒` : "";
     const message = scan?.running ? (scan.phase === "discovering" ? "正在读取目录…" : `扫描中 ${scan.processed} / ${scan.total}${rate}`) : scan?.error || (scan?.cancelled ? "扫描已停止" : scan?.lastScan ? `已扫描 ${tracks.length} 首${rate}` : "尚未扫描");
-    text("scanStatus", message);
+    text("scanStatus", previewClassification ? "已使用保存的分类" : message);
+    if (window.M3X_NATIVE && library?.classification?.builtin) {
+      const summary = document.getElementById("builtin-classification");
+      if (summary) summary.textContent = `内置分类 · 已匹配 ${library.classification.matched} 首 · 其余保留原始歌手`;
+    }
     const progress = document.getElementById("scan-progress");
     progress.hidden = !scan?.running;
     progress.max = scan?.total || 1; progress.value = scan?.processed || 0;
-    screen.querySelectorAll('[data-action="scan"]').forEach(button => { button.disabled = Boolean(scan?.running); });
+    screen.querySelectorAll('[data-action="scan"]').forEach(button => { button.disabled = Boolean(scan?.running); button.hidden = previewClassification; });
     screen.querySelectorAll('[data-action="choose-folder"], [data-action="scan-options"]').forEach(button => { button.disabled = Boolean(scan?.running); });
+    screen.querySelector('[data-action="scan-options"]').hidden = previewClassification;
     screen.querySelector('[data-action="stop-scan"]').hidden = !scan?.running;
+    const report = document.getElementById("scan-report");
+    report.hidden = Boolean(scan?.running) || !(scan?.errors?.length || scan?.reportError || scan?.error);
+    const reportKey = JSON.stringify([scan?.errors, scan?.reportError, scan?.error, scan?.failed, scan?.cueFailed, scan?.unsupported]);
+    if (reportKey !== renderedScanReport) {
+      renderedScanReport = reportKey;
+      document.getElementById("scan-report-summary").textContent = `音频失败 ${scan?.failed || 0} · CUE 警告 ${scan?.cueFailed || 0} · 不支持 ${scan?.unsupported || 0}`;
+      const list = document.getElementById("scan-errors");
+      list.textContent = "";
+      for (const error of scan?.errors || []) {
+        const row = document.createElement("li");
+        const label = { audio: "音频", cue: "CUE", unsupported: "不支持" }[error.kind] || "扫描";
+        row.textContent = typeof error === "string" ? error : `${label} · ${error.path}\n${error.message}`;
+        list.append(row);
+      }
+      if (scan?.reportError) {
+        const row = document.createElement("li"); row.textContent = scan.reportError; list.append(row);
+      }
+      if (scan?.error) {
+        const row = document.createElement("li"); row.textContent = scan.error; list.append(row);
+      }
+    }
   }
   function applyLibrary(data) {
     const previous = tracks[state.index];
@@ -531,7 +599,7 @@
         library = await api("/api/library");
         renderScan();
         applyLibrary(library);
-        toast(library.scan.error || (library.scan.cancelled ? "扫描已停止，保留原曲库" : `扫描完成 · ${tracks.length} 首${library.scan.failed ? " · 跳过 " + library.scan.failed + " 个无法读取的文件" : ""}`));
+        toast(library.scan.error || (library.scan.cancelled ? "扫描已停止，保留原曲库" : `扫描完成 · ${tracks.length} 首 · 音频失败 ${library.scan.failed || 0} · CUE 警告 ${library.scan.cueFailed || 0} · 不支持 ${library.scan.unsupported || 0}`));
       }
     } catch { toast("扫描服务连接失败"); }
   }
@@ -648,6 +716,7 @@
       state.hidden.delete(button.dataset.restore); renderHidden();
     } else if (button.dataset.group !== undefined) {
       state.groupKey = button.dataset.group;
+      document.getElementById("library-browser").scrollTop = 0;
     } else if (button.dataset.folder) {
       void browseFolder(button.dataset.folder); return;
     } else if (button.dataset.removeRoot !== undefined) {
@@ -676,6 +745,7 @@
     } else if (button.dataset.track !== undefined) {
       if (!["queue", "upcoming"].includes(button.dataset.context)) {
         state.queue = button.dataset.context === "library" ? libraryIndices().map(index => tracks[index].id) :
+          button.dataset.context === "favorites" ? favoriteIndices().map(index => tracks[index].id) :
           button.dataset.context === "playlist" ? (state.playlists.find(item => item.id === state.playlistId)?.trackIds || []).filter(id => indexById.has(id) && !state.hidden.has(id)) :
           [...screen.querySelectorAll('[data-list="' + button.dataset.context + '"] [data-track]')].map(item => tracks[Number(item.dataset.track)].id);
         state.queueCleared = false;
@@ -687,7 +757,8 @@
       state.filter = button.dataset.filter;
       state.groupKey = null;
     } else if (action === "group-back") {
-      state.groupKey = null;
+      state.groupKey = state.filter === "folders" ? state.groupKey?.split("/").slice(0, -1).join("/") || null : null;
+      document.getElementById("library-browser").scrollTop = 0;
     } else if (action === "song-menu") {
       openSongMenu(state.index); return;
     } else if (action === "song-info" || action === "play-next" || action === "menu-add-playlist" || action === "hide-song") {
@@ -704,7 +775,19 @@
     } else if (action === "clear-queue") {
       state.queue = []; state.queueCleared = true; audio.pause(); toast("队列已清空");
     } else if (action === "locate-current") {
+      const position = queueIndices().indexOf(state.index);
+      if (position < 0) { toast("当前歌曲不在队列中"); return; }
+      listLimits.queue = Math.max(listLimits.queue || 150, position + 1);
+      renderLists();
       screen.querySelector('[data-list="queue"] [aria-current="true"]')?.scrollIntoView({ block: "center" }); return;
+    } else if (action === "scan-report-export") {
+      if (window.M3X_NATIVE) window.nativeCommand("scan-report-export");
+      else {
+        const url = URL.createObjectURL(new Blob([JSON.stringify(library.scan, null, 2)], { type: "application/json" }));
+        const link = document.createElement("a"); link.href = url; link.download = "澄-扫描报告.json"; link.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+      return;
     } else if (action === "stop-scan") {
       void api("/api/scan-cancel", {}).then(() => toast("正在停止扫描")).catch(() => toast("无法停止扫描")); return;
     } else if (action === "scan-options") {
@@ -712,8 +795,13 @@
       document.getElementById("excluded-folders").value = (library?.options?.excludedFolders || []).join("\n");
       document.getElementById("scan-options-error").hidden = true;
       openDialog(document.getElementById("scan-options-dialog")); return;
-    } else if (["open-favorites", "open-library", "open-playlists", "back-playlists"].includes(action)) {
-      openLibrary(action === "open-favorites" ? "favorites" : ["open-playlists", "back-playlists"].includes(action) ? "playlists" : "all");
+    } else if (action === "open-library") {
+      openLibrary("all");
+    } else if (action === "open-favorites") {
+      state.page = "favorites"; state.favoriteQuery = "";
+      document.getElementById("favorites-search").value = "";
+    } else if (action === "open-playlists" || action === "back-playlists") {
+      state.page = "playlists";
     } else if (action === "edit-profile") {
       nickname.focus(); nickname.select(); return;
     } else if (action === "avatar") {
@@ -768,6 +856,11 @@
     renderGroups();
     announce("找到 " + screen.querySelectorAll('[data-list="library"] [data-track]').length + " 首歌曲");
   });
+  document.getElementById("favorites-search").addEventListener("input", event => {
+    state.favoriteQuery = event.target.value;
+    renderLists();
+    announce("找到 " + favoriteIndices().length + " 首收藏歌曲");
+  });
   nickname.addEventListener("input", () => {
     const value = nickname.value.trim().slice(0, 20);
     if (!value) return;
@@ -802,7 +895,12 @@
   document.getElementById("select-folder").addEventListener("click", async () => {
     if (!browsingFolder) return;
     try {
+      const wasClassified = Boolean(library?.classification);
       library = await api("/api/folder", { folder: browsingFolder.path });
+      if (wasClassified) {
+        state.filter = "all"; state.groupKey = null; state.query = ""; search.value = "";
+        applyLibrary(library);
+      }
       renderScan(); closeDialog(folderDialog);
       toast("目录已保存，点击开始扫描后更新曲库");
     } catch (error) {
@@ -912,13 +1010,40 @@
   window.addEventListener("pagehide", () => persist());
   if (tracks[state.index]) audio.src = tracks[state.index].src;
   render();
+  screen.querySelectorAll(".m3x-browser-only").forEach(element => { element.hidden = Boolean(window.M3X_NATIVE); });
   renderScan();
   if (library?.scan.running) scanTimer = setTimeout(pollScan, 700);
   window.M3X_UI = {
     toast, openDialog, closeDialog,
+    back() {
+      if (state.page === "library") {
+        if (state.groupKey === null) return false;
+        state.groupKey = state.filter === "folders" ? state.groupKey?.split("/").slice(0, -1).join("/") || null : null;
+        document.getElementById("library-browser").scrollTop = 0;
+      } else {
+        state.page = { playlist: "playlists", favorites: "profile", playlists: "profile", settings: "profile",
+          statistics: "profile", queue: "player", lyrics: "player" }[state.page] || "library";
+      }
+      render(); persist(); return true;
+    },
     currentTrack: () => tracks[state.index], tracks,
     play, next: () => loadTrack(nextIndex(), true),
     previous: () => loadTrack(previousIndex(), true),
+    previewLibrary(data, showLibrary = false) {
+      if (showLibrary || !tracks[0]?.classificationPreview) {
+        state.filter = "all"; state.groupKey = null; state.query = ""; search.value = "";
+      }
+      if (showLibrary) state.page = "library";
+      library = data; applyLibrary(data); renderScan();
+    },
+    updateTrack(id, data) {
+      const track = tracks[indexById.get(id)];
+      if (!track) return;
+      for (const key of ["duration", "sampleRate", "bits", "channels", "codec", "cover", "bitrate", "year", "trackNumber", "discNumber", "replayGain"]) {
+        if (data[key] !== undefined) track[key] = data[key];
+      }
+      render();
+    },
     showTrack: id => { const index = tracks.findIndex(track => track.id === id); if (index >= 0) { state.page = "player"; loadTrack(index, true); } },
     saveAvatar(data) {
       const previous = state.avatar; state.avatar = data;

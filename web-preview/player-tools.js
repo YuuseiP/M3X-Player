@@ -197,6 +197,7 @@
         const data = await response.json();
         if (requestId !== id) return;
         details = data; renderLyrics(data.lyrics);
+        if (track.classificationPreview) ui.updateTrack(track.id, data);
       } catch {
         if (requestId !== id) return;
         renderLyrics("");

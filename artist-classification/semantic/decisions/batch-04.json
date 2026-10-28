@@ -1,0 +1,2759 @@
+[
+  {
+    "id": "tag-c86ef41e2a61283d",
+    "credits": [
+      [
+        "group",
+        "vα-liv"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "#ヴイアラ 与 vα-liv 是同一项目的官方简称与正式名，合并为一个组合。",
+    "sources": [
+      "https://idolmaster-official.jp/va-liv"
+    ]
+  },
+  {
+    "id": "tag-f32531b7912eb531",
+    "credits": [
+      [
+        "group",
+        "765PRO ALLSTARS"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "765PRO ALLSTARS 是系列正式组合名。",
+    "sources": []
+  },
+  {
+    "id": "tag-f89d0b1466c6fdba",
+    "credits": [
+      [
+        "artist",
+        "大澤めい"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "大澤めい 是个人创作者，BNSI 是括号中的工作室归属。",
+    "sources": []
+  },
+  {
+    "id": "tag-c654ab5fa2956f27",
+    "credits": [
+      [
+        "group",
+        "CINDERELLA GIRLS"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "本田未央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CINDERELLA GIRLS 集体名后括号明确列出三名演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-4f814265f5431194",
+    "credits": [
+      [
+        "artist",
+        "Clémentine"
+      ],
+      [
+        "group",
+        "塊魂シリーズ SOUND TEAM"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "Clémentine 是个人歌手，塊魂シリーズ SOUND TEAM 是游戏音乐团队。",
+    "sources": []
+  },
+  {
+    "id": "tag-bb7e05179e483d04",
+    "credits": [
+      [
+        "artist",
+        "GAK-amazuti-"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "GAK-amazuti- 是个人混音者名义，不是角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-9bbe4c9757cfd42b",
+    "credits": [
+      [
+        "artist",
+        "James Landino"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "James Landino 是个人混音者。",
+    "sources": []
+  },
+  {
+    "id": "tag-d8d3b3b402914e11",
+    "credits": [
+      [
+        "artist",
+        "LindaAI-CUE"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "LindaAI-CUE 是个人创作者，BNSI 是所属说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-7e1359156f7c95db",
+    "credits": [
+      [
+        "group",
+        "No 1 feel alone"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "No 1 feel alone 是 Shiny Colors 官方双人组合。",
+    "sources": [
+      "https://prtimes.jp/main/html/rd/p/000002170.000051316.html"
+    ]
+  },
+  {
+    "id": "tag-58b2cf155cd9ab31",
+    "credits": [
+      [
+        "artist",
+        "R・O・N"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "R・O・N 是个人作曲者名义，符号属于其艺名。",
+    "sources": []
+  },
+  {
+    "id": "tag-954571e018acb136",
+    "credits": [
+      [
+        "group",
+        "ストレイライト"
+      ],
+      [
+        "group",
+        "アンティーカ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "Normalized Straylight and L’Antica to the official Japanese unit names.",
+    "sources": [
+      "https://shinycolors.idolmaster-official.jp/idol/straylight/",
+      "https://shinycolors.idolmaster-official.jp/idol/lantica/"
+    ]
+  },
+  {
+    "id": "tag-11a8ba4323483d91",
+    "credits": [
+      [
+        "group",
+        "THE IDOLM@STER CINDERELLA GIRLS for BEST5!"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "北条加蓮"
+      ],
+      [
+        "character",
+        "鷹富士茄子"
+      ],
+      [
+        "character",
+        "鷺沢文香"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "总选 BEST5 组合名后括号明确列出五名演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-a9752a693308e8be",
+    "credits": [
+      [
+        "group",
+        "CINDERELLA GIRLS!!"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "鷺沢文香"
+      ],
+      [
+        "character",
+        "高垣楓"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "緒方智絵里"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "姫川友紀"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "CINDERELLA GIRLS!! 集体名义后明确列出九名角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-729e8cd06bfdb51d",
+    "credits": [
+      [
+        "group",
+        "Team.Stella"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "Team.Stella 是 Shiny Colors 的正式企划组合，整体保留为 group。",
+    "sources": [
+      "https://shinycolors.lantis.jp/releaseinfo/laca-15861/"
+    ]
+  },
+  {
+    "id": "tag-21e13d6c03048a0c",
+    "credits": [
+      [
+        "artist",
+        "YUKI FUNAKOSHI"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "YUKI FUNAKOSHI 是个人创作者，Digz, Inc. Group 是所属说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-83954345c471ea92",
+    "credits": [
+      [
+        "group",
+        "vα-liv"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "vα-liv 是 876PRO 的正式企划组合名。",
+    "sources": []
+  },
+  {
+    "id": "tag-059a837c3ac194bd",
+    "credits": [
+      [
+        "artist",
+        "さだまさし"
+      ],
+      [
+        "group",
+        "塊魂シリーズ SOUND TEAM"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "さだまさし 是个人歌手，另一个是游戏音乐团队。",
+    "sources": []
+  },
+  {
+    "id": "tag-1635d223a866150d",
+    "credits": [
+      [
+        "character",
+        "赤城みりあ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "アカギミリア 是赤城みりあ 的全角片假名写法，括号标注其声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-6f6d93463f7a346d",
+    "credits": [
+      [
+        "character",
+        "アナスタシア"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "× 连接两名角色，均带明确 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-c9ad433e99143c8d",
+    "credits": [
+      [
+        "group",
+        "アルストロメリア"
+      ],
+      [
+        "group",
+        "コメティック"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "逗号分隔的两个名称都是 Shiny Colors 正式组合。",
+    "sources": []
+  },
+  {
+    "id": "tag-d4279dadc09f107d",
+    "credits": [
+      [
+        "group",
+        "イルミネーションスターズ"
+      ],
+      [
+        "group",
+        "放課後クライマックスガールズ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "逗号分隔的两个名称都是 Shiny Colors 正式组合。",
+    "sources": []
+  },
+  {
+    "id": "tag-c3df13aed356c936",
+    "credits": [
+      [
+        "character",
+        "緒方智絵里"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "オガタチエサト 是緒方智絵里 的全角片假名写法。",
+    "sources": []
+  },
+  {
+    "id": "tag-446ea2d869bd8eab",
+    "credits": [
+      [
+        "character",
+        "輿水幸子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "コシミズサチコ 是輿水幸子 的全角片假名写法。",
+    "sources": []
+  },
+  {
+    "id": "tag-a9449eb722066b1f",
+    "credits": [
+      [
+        "group",
+        "シャイニーカラーズ"
+      ],
+      [
+        "character",
+        "有栖川夏葉"
+      ],
+      [
+        "character",
+        "黛冬優子"
+      ],
+      [
+        "character",
+        "浅倉透"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "シャイニーカラーズ 集体名后括号明确列出三名演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-92badbb0cdee3c9f",
+    "credits": [
+      [
+        "character",
+        "ジュリア"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ジュリア 后括号标注其声优愛美。",
+    "sources": []
+  },
+  {
+    "id": "tag-4c8f99167b7a29d7",
+    "credits": [
+      [
+        "character",
+        "ナターリア"
+      ],
+      [
+        "character",
+        "ライラ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-009f8c48f3ae4bb8",
+    "credits": [
+      [
+        "artist",
+        "ヒゲドライバー"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ヒゲドライバー 是音乐创作者名义，不是角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-9a87ef74a7313da0",
+    "credits": [
+      [
+        "character",
+        "星輝子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ホシテルコ 是星輝子 的全角片假名写法。",
+    "sources": []
+  },
+  {
+    "id": "tag-5205c9e0a00fdec3",
+    "credits": [
+      [
+        "character",
+        "一ノ瀬志希"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "一ノ瀬志希 后括号标注其声优藍原ことみ。",
+    "sources": []
+  },
+  {
+    "id": "tag-1f519dc2015015a0",
+    "credits": [
+      [
+        "character",
+        "一ノ瀬志希"
+      ],
+      [
+        "character",
+        "黒埼ちとせ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两位角色分别带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-d5039ade264a003c",
+    "credits": [
+      [
+        "character",
+        "三村かな子"
+      ],
+      [
+        "character",
+        "十時愛梨"
+      ],
+      [
+        "character",
+        "森久保乃々"
+      ],
+      [
+        "character",
+        "椎名法子"
+      ],
+      [
+        "character",
+        "及川雫"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均以角色名加 CV 列出。",
+    "sources": []
+  },
+  {
+    "id": "tag-4fc7a560eb3a7f5a",
+    "credits": [
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "菊地真"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-79944554bb5f3528",
+    "credits": [
+      [
+        "character",
+        "上水流宇宙"
+      ],
+      [
+        "group",
+        "vα-liv"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "上水流宇宙 是 vα-liv 的角色，项目名也同时出现在 credit 中。",
+    "sources": []
+  },
+  {
+    "id": "tag-8e6dad3d685b35da",
+    "credits": [
+      [
+        "artist",
+        "中鶴潤一"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "中鶴潤一 是个人创作者，BNSI 是所属说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-8341cd8a20bce041",
+    "credits": [
+      [
+        "character",
+        "久川颯"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ],
+      [
+        "character",
+        "夢見りあむ"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "大石泉"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-33b6d061781de533",
+    "credits": [
+      [
+        "artist",
+        "伊藤翼"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "伊藤 翼 在此为个人创作者名义。",
+    "sources": []
+  },
+  {
+    "id": "tag-10c48cbf028528b3",
+    "credits": [
+      [
+        "character",
+        "佐久間まゆ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "佐久間まゆ 后括号标注其声优牧野由依。",
+    "sources": []
+  },
+  {
+    "id": "tag-9efb99e50fe68aec",
+    "credits": [
+      [
+        "character",
+        "佐城雪美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "佐城雪美 后括号标注其声优中澤ミナ。",
+    "sources": []
+  },
+  {
+    "id": "tag-1f571f8ec437adf4",
+    "credits": [
+      [
+        "artist",
+        "佐藤貴文"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "佐藤貴文 是个人创作者，BNSI 是所属说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-06c065035b266a05",
+    "credits": [
+      [
+        "character",
+        "倉本千奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "倉本千奈 后括号标注其声优伊藤舞音。",
+    "sources": []
+  },
+  {
+    "id": "tag-599dc47a6145f329",
+    "credits": [
+      [
+        "character",
+        "八宮めぐる"
+      ],
+      [
+        "character",
+        "三峰結華"
+      ],
+      [
+        "character",
+        "小宮果穂"
+      ],
+      [
+        "character",
+        "大崎甜花"
+      ],
+      [
+        "character",
+        "黛冬優子"
+      ],
+      [
+        "character",
+        "福丸小糸"
+      ],
+      [
+        "character",
+        "緋田美琴"
+      ],
+      [
+        "character",
+        "郁田はるき"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "八名 Shiny Colors 角色均以角色名加声优列出。",
+    "sources": []
+  },
+  {
+    "id": "tag-8b4ec39b33819519",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 是学马企划的集体名义，单独出现时保留为 group。",
+    "sources": []
+  },
+  {
+    "id": "tag-b970d48580dc4ef3",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "AYATOMO"
+      ],
+      [
+        "artist",
+        "木村孝明"
+      ],
+      [
+        "character",
+        "月村手毬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 是集体名，AYATOMO 与木村孝明 是创作者，月村手毬 是 Solo 演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-05be33c0d430336f",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "AYATOMO"
+      ],
+      [
+        "artist",
+        "木村孝明"
+      ],
+      [
+        "character",
+        "雨夜燕"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 集体、两名创作者与雨夜燕 的 Solo 演唱并列。",
+    "sources": []
+  },
+  {
+    "id": "tag-3840d96fc1bbec56",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "MOMONADY"
+      ],
+      [
+        "artist",
+        "YUKI FUNAKOSHI"
+      ],
+      [
+        "character",
+        "十王星南"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两名个人创作者加十王星南 的演唱，初星学園 为企划集体。",
+    "sources": []
+  },
+  {
+    "id": "tag-602ddfdf866f3694",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "Shuntaro"
+      ],
+      [
+        "character",
+        "雨夜燕"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "Shuntaro 是作曲家，雨夜燕 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-10951dc66af8fced",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "サツキ"
+      ],
+      [
+        "character",
+        "花海佑芽"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "サツキ 是个人创作者，花海佑芽 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-2d8cba591ff3d093",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "倉本千奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 集体后只有仓本千奈 一个演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-1239e75cffe8fe2f",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "有村麻央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 是企划集体，有村麻央 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-fd6adc78cccc97ee",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "涼木シンジ"
+      ],
+      [
+        "character",
+        "月村手毬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "涼木シンジ 是创作者，月村手毬 是 Solo 演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-879932564772b64d",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "涼木シンジ"
+      ],
+      [
+        "character",
+        "雨夜燕"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "涼木シンジ 是创作者，雨夜燕 是 Solo 演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-3335bebc14093ac3",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "花海咲季"
+      ],
+      [
+        "character",
+        "月村手毬"
+      ],
+      [
+        "character",
+        "藤田ことね"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 集体后明确列出三名演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-cf51bf2c97886ff2",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "DÉ DÉ MOUSE"
+      ],
+      [
+        "character",
+        "有村麻央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "DE DE MOUSE 是个人制作人，有村麻央 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-e9569a549fa95a70",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "YUC'e"
+      ],
+      [
+        "character",
+        "花海佑芽"
+      ],
+      [
+        "character",
+        "秦谷美鈴"
+      ],
+      [
+        "character",
+        "十王星南"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "YUC'e 是个人创作者，后三项为明确列出的演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-dd6cddafb11544ef",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "倉本千奈"
+      ],
+      [
+        "character",
+        "篠澤広"
+      ],
+      [
+        "character",
+        "月村手毬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 集体后列出三名演唱角色，Remix 说明不改变演唱者。",
+    "sources": []
+  },
+  {
+    "id": "tag-81647fcca391b8ef",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "瀬尾祥太郎"
+      ],
+      [
+        "character",
+        "藤田ことね"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "瀬尾祥太郎 是个人作曲家，藤田ことね 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-ed3f50fd682ac332",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "初星学園 是企划集体，紫雲清夏 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-99b92648f591fc04",
+    "credits": [
+      [
+        "group",
+        "初星学園"
+      ],
+      [
+        "artist",
+        "須藤幽玄"
+      ],
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "須藤幽玄 是作曲家，姫崎莉波 是演唱角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-99eab8aede353913",
+    "credits": [
+      [
+        "character",
+        "十時愛梨"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "十時愛梨 后括号标注其声优原田ひとみ。",
+    "sources": []
+  },
+  {
+    "id": "tag-745b3aa7d087fd90",
+    "credits": [
+      [
+        "artist",
+        "原一博"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "原 一博 是个人作曲者。",
+    "sources": []
+  },
+  {
+    "id": "tag-b4f27040597992b6",
+    "credits": [
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "双海姐妹分别以角色名加同一名声优列出，记为两名角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-9cd83a6cab08630f",
+    "credits": [
+      [
+        "character",
+        "双葉杏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "双葉 杏 后括号标注其声优五十嵐裕美。",
+    "sources": []
+  },
+  {
+    "id": "tag-d42b4eea231e25ff",
+    "credits": [
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "三村かな子"
+      ],
+      [
+        "character",
+        "城ヶ崎莉嘉"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "前川みく"
+      ],
+      [
+        "character",
+        "諸星きらり"
+      ],
+      [
+        "character",
+        "多田李衣菜"
+      ],
+      [
+        "character",
+        "赤城みりあ"
+      ],
+      [
+        "character",
+        "新田美波"
+      ],
+      [
+        "character",
+        "緒方智絵里"
+      ],
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "木村夏樹"
+      ],
+      [
+        "character",
+        "白坂小梅"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "十三名 Cinderella Girls 角色以顿号完整列出。",
+    "sources": []
+  },
+  {
+    "id": "tag-7f87148986562ee2",
+    "credits": [
+      [
+        "character",
+        "喜多日菜子"
+      ],
+      [
+        "character",
+        "喜多見柚"
+      ],
+      [
+        "character",
+        "南条光"
+      ],
+      [
+        "character",
+        "日野茜"
+      ],
+      [
+        "character",
+        "姫川友紀"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-ed89a9a3c4cc7afe",
+    "credits": [
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-726e101bfa1ad71b",
+    "credits": [
+      [
+        "character",
+        "城ヶ崎美嘉"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ],
+      [
+        "character",
+        "アナスタシア"
+      ],
+      [
+        "character",
+        "藤原肇"
+      ],
+      [
+        "character",
+        "乙倉悠貴"
+      ],
+      [
+        "character",
+        "黒埼ちとせ"
+      ],
+      [
+        "character",
+        "白雪千夜"
+      ],
+      [
+        "character",
+        "久川颯"
+      ],
+      [
+        "character",
+        "久川凪"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "九名角色均以角色名加 CV 列出。",
+    "sources": []
+  },
+  {
+    "id": "tag-9a82250c65cb73fa",
+    "credits": [
+      [
+        "character",
+        "堀裕子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "堀裕子 后括号标注其声优鈴木絵理。",
+    "sources": []
+  },
+  {
+    "id": "tag-4e169a501a1d6909",
+    "credits": [
+      [
+        "character",
+        "塩見周子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "塩見周子 后括号标注其声优ルゥティン。",
+    "sources": []
+  },
+  {
+    "id": "tag-f80dbac7941bc179",
+    "credits": [
+      [
+        "character",
+        "大崎甘奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "大崎甘奈 后括号标注其声优黒木ほの香。",
+    "sources": []
+  },
+  {
+    "id": "tag-56b3ec138012dba9",
+    "credits": [
+      [
+        "character",
+        "大崎甜花"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "角色名明确为大崎甜花；括号中的声优与官方不符，但不足以改变角色判定。",
+    "sources": []
+  },
+  {
+    "id": "tag-682b1b3abc6487ab",
+    "credits": [
+      [
+        "artist",
+        "大橋彩香"
+      ],
+      [
+        "artist",
+        "福原綾香"
+      ],
+      [
+        "artist",
+        "原紗友里"
+      ],
+      [
+        "artist",
+        "三宅麻理恵"
+      ],
+      [
+        "artist",
+        "黒沢ともよ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "ENSEMBLE 字段列出五名真实声优，均按个人艺术家归类。",
+    "sources": []
+  },
+  {
+    "id": "tag-a273753235cbf8a6",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "春日未来"
+      ],
+      [
+        "character",
+        "天道輝"
+      ],
+      [
+        "character",
+        "櫻木真乃"
+      ],
+      [
+        "character",
+        "花海咲季"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "& 前后及逗号分隔的六项都是明确的跨企划角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-2dbd8a0a8cefee91",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "斜杠分隔的七项均为角色加 CV。",
+    "sources": []
+  },
+  {
+    "id": "tag-ffd40dd2e2d4197b",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "如月千早"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-35ef4a2749d46f5e",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "四个顿号分隔项都是明确角色名。",
+    "sources": []
+  },
+  {
+    "id": "tag-a4bc59fe6ed3edb7",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ],
+      [
+        "character",
+        "双海真美"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ],
+      [
+        "character",
+        "白瀬咲耶"
+      ],
+      [
+        "character",
+        "小宮果穂"
+      ],
+      [
+        "character",
+        "杜野凛世"
+      ],
+      [
+        "character",
+        "大崎甘奈"
+      ],
+      [
+        "character",
+        "大崎甜花"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "十八名角色以顿号列出，双海姐妹分别计。",
+    "sources": []
+  },
+  {
+    "id": "tag-c56e3a0d2a5507b9",
+    "credits": [
+      [
+        "character",
+        "天海春香"
+      ],
+      [
+        "character",
+        "菊地真"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个顿号分隔项都是明确角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-b570fca88c11a324",
+    "credits": [
+      [
+        "group",
+        "太鼓の達人"
+      ],
+      [
+        "artist",
+        "Bandai Namco Game Music"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "太鼓の達人 是游戏系列集体名，Bandai Namco Game Music 是音乐品牌。",
+    "sources": []
+  },
+  {
+    "id": "tag-d27a2fa3ca611de6",
+    "credits": [
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-9b166ba181a19def",
+    "credits": [
+      [
+        "character",
+        "如月千早"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个顿号分隔项都是明确角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-21672142560606fb",
+    "credits": [
+      [
+        "character",
+        "姫崎莉波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "姫崎莉波 后括号标注其声优薄井友里。",
+    "sources": []
+  },
+  {
+    "id": "tag-ac1769626618ae23",
+    "credits": [
+      [
+        "character",
+        "姫川友紀"
+      ],
+      [
+        "character",
+        "中野有香"
+      ],
+      [
+        "character",
+        "堀裕子"
+      ],
+      [
+        "character",
+        "上条春菜"
+      ],
+      [
+        "character",
+        "白雪千夜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-3fcd4528f2633128",
+    "credits": [
+      [
+        "character",
+        "安部菜々"
+      ],
+      [
+        "character",
+        "佐藤心"
+      ],
+      [
+        "character",
+        "赤城みりあ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均以角色名加声优列出。",
+    "sources": []
+  },
+  {
+    "id": "tag-d0fb6c07c771c1f3",
+    "credits": [
+      [
+        "character",
+        "宮本フレデリカ"
+      ],
+      [
+        "character",
+        "一ノ瀬志希"
+      ],
+      [
+        "character",
+        "櫻井桃華"
+      ],
+      [
+        "character",
+        "中野有香"
+      ],
+      [
+        "character",
+        "五十嵐響子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-6002c2b8579af610",
+    "credits": [
+      [
+        "character",
+        "小宮果穂"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "小宮果穂 后括号标注其声优河野ひより。",
+    "sources": []
+  },
+  {
+    "id": "tag-3745bc4c4cd7a48f",
+    "credits": [
+      [
+        "character",
+        "小早川紗枝"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "小早川紗枝 后括号标注其声优立花理香。",
+    "sources": []
+  },
+  {
+    "id": "tag-f66853030811c1a1",
+    "credits": [
+      [
+        "artist",
+        "岩崎隆一"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "岩崎隆一 是个人作曲者。",
+    "sources": []
+  },
+  {
+    "id": "tag-4701632597e794f5",
+    "credits": [
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "小日向美穂"
+      ],
+      [
+        "character",
+        "佐久間まゆ"
+      ],
+      [
+        "character",
+        "櫻井桃華"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-adee7eb3465326bf",
+    "credits": [
+      [
+        "character",
+        "島村卯月"
+      ],
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "双葉杏"
+      ],
+      [
+        "character",
+        "諸星きらり"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-60c54afae84c93dd",
+    "credits": [
+      [
+        "character",
+        "川島瑞樹"
+      ],
+      [
+        "character",
+        "白坂小梅"
+      ],
+      [
+        "character",
+        "アナスタシア"
+      ],
+      [
+        "character",
+        "神谷奈緒"
+      ],
+      [
+        "character",
+        "北条加蓮"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-fe1302ba9f93de76",
+    "credits": [
+      [
+        "character",
+        "市原仁奈"
+      ],
+      [
+        "character",
+        "三船美優"
+      ],
+      [
+        "character",
+        "及川雫"
+      ],
+      [
+        "character",
+        "向井拓海"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "四名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-244a8607a3569106",
+    "credits": [
+      [
+        "character",
+        "御手洗翔太"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "御手洗翔太 是 SideM 角色，括号标注其声优松岡禎丞。",
+    "sources": []
+  },
+  {
+    "id": "tag-8fec78e76662f3ca",
+    "credits": [
+      [
+        "group",
+        "放課後クライマックスガールズ"
+      ],
+      [
+        "group",
+        "ノクチル"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "× 连接的是 Shiny Colors 的兩個正式组合。",
+    "sources": []
+  },
+  {
+    "id": "tag-d08e34635dccbb08",
+    "credits": [
+      [
+        "character",
+        "日野茜"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ],
+      [
+        "character",
+        "本田未央"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-cb060ab1e2e3b62c",
+    "credits": [
+      [
+        "character",
+        "早坂美玲"
+      ],
+      [
+        "character",
+        "森久保乃々"
+      ],
+      [
+        "character",
+        "星輝子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-05f26f061ea38a7f",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-e51396f47305f3fc",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-badac7248e88deaa",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "四条貴音"
+      ],
+      [
+        "character",
+        "我那覇響"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个顿号分隔项都是明确角色，对应 Project LUMINOUS 三人。",
+    "sources": []
+  },
+  {
+    "id": "tag-3ab9d5740ed4f752",
+    "credits": [
+      [
+        "character",
+        "星井美希"
+      ],
+      [
+        "character",
+        "高槻やよい"
+      ],
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个顿号分隔项都是明确角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-df43ea0a9b5a4489",
+    "credits": [
+      [
+        "character",
+        "星輝子"
+      ],
+      [
+        "character",
+        "白雪千夜"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "五十嵐響子"
+      ],
+      [
+        "character",
+        "多田李衣菜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-eaef5696b6164ee1",
+    "credits": [
+      [
+        "character",
+        "最上静香"
+      ],
+      [
+        "character",
+        "ジュリア"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注，M@STER VERSION 不改变演唱归属。",
+    "sources": []
+  },
+  {
+    "id": "tag-8e8c43df84fefccb",
+    "credits": [
+      [
+        "character",
+        "月村手毬"
+      ],
+      [
+        "character",
+        "倉本千奈"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "feat. 前后分别是学马角色，括号内为声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-fd39f41e0dbd7383",
+    "credits": [
+      [
+        "character",
+        "有村麻央"
+      ],
+      [
+        "character",
+        "篠澤広"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "feat. 前后分别是学马角色，括号内为声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-4bf76f8a46efe686",
+    "credits": [
+      [
+        "character",
+        "望月聖"
+      ],
+      [
+        "character",
+        "佐久間まゆ"
+      ],
+      [
+        "character",
+        "緒方智絵里"
+      ],
+      [
+        "character",
+        "依田芳乃"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-2b59d3361f15a175",
+    "credits": [
+      [
+        "character",
+        "本田未央"
+      ],
+      [
+        "character",
+        "日野茜"
+      ],
+      [
+        "character",
+        "高森藍子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-fbc0e6de034f04ea",
+    "credits": [
+      [
+        "artist",
+        "東優太"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "東 優太 是个人创作者名义。",
+    "sources": []
+  },
+  {
+    "id": "tag-6aea86ae1233f426",
+    "credits": [
+      [
+        "character",
+        "桐生つかさ"
+      ],
+      [
+        "character",
+        "木村夏樹"
+      ],
+      [
+        "character",
+        "白雪千夜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-277f6e3c9caa2b2a",
+    "credits": [
+      [
+        "character",
+        "桑山千雪"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "桑山千雪 后括号标注其声优前川涼子。",
+    "sources": []
+  },
+  {
+    "id": "tag-bbe34b18399ba4e5",
+    "credits": [
+      [
+        "artist",
+        "森本練"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "森本練 是个人作曲者。",
+    "sources": []
+  },
+  {
+    "id": "tag-61ae01c55e921a00",
+    "credits": [
+      [
+        "artist",
+        "橘亮祐"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "橘 亮祐 是个人作曲者。",
+    "sources": []
+  },
+  {
+    "id": "tag-9b9bd1733381bc08",
+    "credits": [
+      [
+        "character",
+        "櫻井桃華"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "櫻井桃華 后括号标注其声优照井春佳。",
+    "sources": []
+  },
+  {
+    "id": "tag-50f259a1133a534a",
+    "credits": [
+      [
+        "character",
+        "水本ゆかり"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "水本ゆかり 后括号标注其声优藤田茜。",
+    "sources": []
+  },
+  {
+    "id": "tag-c8647f70eb21bf73",
+    "credits": [
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-dbcd576378b45b7e",
+    "credits": [
+      [
+        "character",
+        "浅倉透"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "浅倉 透 后括号标注其声优和久井優。",
+    "sources": []
+  },
+  {
+    "id": "tag-498034c82ab8f57b",
+    "credits": [
+      [
+        "character",
+        "浜口あやめ"
+      ],
+      [
+        "character",
+        "脇山珠美"
+      ],
+      [
+        "character",
+        "道明寺歌鈴"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-61da2a5f6f7c2866",
+    "credits": [
+      [
+        "character",
+        "渋谷凛"
+      ],
+      [
+        "character",
+        "高垣楓"
+      ],
+      [
+        "character",
+        "神崎蘭子"
+      ],
+      [
+        "character",
+        "多田李衣菜"
+      ],
+      [
+        "character",
+        "新田美波"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-c8899ab36309bba6",
+    "credits": [
+      [
+        "character",
+        "片桐早苗"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "片桐早苗 后括号标注其声优和氣あず未。",
+    "sources": []
+  },
+  {
+    "id": "tag-ba07d25bf19f1386",
+    "credits": [
+      [
+        "character",
+        "田中摩美々"
+      ],
+      [
+        "character",
+        "白瀬咲耶"
+      ],
+      [
+        "character",
+        "杜野凛世"
+      ],
+      [
+        "character",
+        "大崎甜花"
+      ],
+      [
+        "character",
+        "和泉愛依"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "逗号与 & 分隔的五项都是角色加 CV。",
+    "sources": []
+  },
+  {
+    "id": "tag-90f399e518a6c466",
+    "credits": [
+      [
+        "character",
+        "白坂小梅"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "白坂小梅 后括号标注其声优桜咲千依。",
+    "sources": []
+  },
+  {
+    "id": "tag-dde16c76ba067132",
+    "credits": [
+      [
+        "character",
+        "白雪千夜"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "白雪千夜 是括号中声优对应的角色，标题的 Solo Remix 只是版本说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-5a6d4d9361d5db77",
+    "credits": [
+      [
+        "artist",
+        "石濱翔"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "石濱 翔 是个人作曲家，MONACA 是所属说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-02477b2dc3d89dce",
+    "credits": [
+      [
+        "character",
+        "神谷奈緒"
+      ],
+      [
+        "character",
+        "北条加蓮"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-b9c33bb31ccfd98b",
+    "credits": [
+      [
+        "character",
+        "秋月律子"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "菊地真"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-87f9179126bbde66",
+    "credits": [
+      [
+        "group",
+        "竜宮小町"
+      ],
+      [
+        "character",
+        "水瀬伊織"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "双海亜美"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "竜宮小町 是组合，方括号明确列出三名角色成员。",
+    "sources": []
+  },
+  {
+    "id": "tag-273312396389b099",
+    "credits": [
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "紫雲清夏 后括号标注其声优湊みや。",
+    "sources": []
+  },
+  {
+    "id": "tag-424f7a510b601063",
+    "credits": [
+      [
+        "character",
+        "結城晴"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "結城晴 后括号标注其声优小市眞琴。",
+    "sources": []
+  },
+  {
+    "id": "tag-b6193ad2ee33bf80",
+    "credits": [
+      [
+        "character",
+        "花海佑芽"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "花海佑芽 后括号标注其声优松田彩音。",
+    "sources": []
+  },
+  {
+    "id": "tag-e344a5c42693c2d1",
+    "credits": [
+      [
+        "character",
+        "花海咲季"
+      ],
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "feat. 前后分别是学马角色，括号内为声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-76c8694905724e7e",
+    "credits": [
+      [
+        "character",
+        "芹沢あさひ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "芹沢あさひ 后括号标注其声优田中有紀。",
+    "sources": []
+  },
+  {
+    "id": "tag-eba15ee76ac69a60",
+    "credits": [
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ],
+      [
+        "character",
+        "秋月律子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个顿号分隔项都是明确角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-7fc7e03098e39abb",
+    "credits": [
+      [
+        "character",
+        "萩原雪歩"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "萩原雪歩 后括号标注其声优落合祐里香。",
+    "sources": []
+  },
+  {
+    "id": "tag-e8f04b07299c5390",
+    "credits": [
+      [
+        "character",
+        "萩原雪歩"
+      ],
+      [
+        "character",
+        "菊地真"
+      ],
+      [
+        "character",
+        "三浦あずさ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "三个顿号分隔项都是明确角色。",
+    "sources": []
+  },
+  {
+    "id": "tag-8a52b80fbcf4f8e2",
+    "credits": [
+      [
+        "character",
+        "葛城リーリヤ"
+      ],
+      [
+        "character",
+        "紫雲清夏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "feat. 前后分别是学马角色，括号内为声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-e19d34343c3afd84",
+    "credits": [
+      [
+        "character",
+        "藤田ことね"
+      ],
+      [
+        "character",
+        "月村手毬"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "feat. 前后分别是学马角色，括号内为声优。",
+    "sources": []
+  },
+  {
+    "id": "tag-4701ce07cfadc06f",
+    "credits": [
+      [
+        "character",
+        "西城樹里"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "西城樹里 后括号标注其声优永井真里子。",
+    "sources": []
+  },
+  {
+    "id": "tag-dfdc86e637b8b8de",
+    "credits": [
+      [
+        "character",
+        "赤城みりあ"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "赤城みりあ 后括号标注其声优黒沢ともよ。",
+    "sources": []
+  },
+  {
+    "id": "tag-5a73ce9c4a28f428",
+    "credits": [
+      [
+        "character",
+        "輿水幸子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "輿水幸子 后括号标注其声优竹達彩奈。",
+    "sources": []
+  },
+  {
+    "id": "tag-46153cb73a239f8a",
+    "credits": [
+      [
+        "character",
+        "速水奏"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "速水奏 后括号标注其声优飯田友子。",
+    "sources": []
+  },
+  {
+    "id": "tag-0800a75da071e5fb",
+    "credits": [
+      [
+        "character",
+        "道明寺歌鈴"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "道明寺歌鈴 后括号标注其声优新田ひより，标题的 Solo Remix 只是版本说明。",
+    "sources": []
+  },
+  {
+    "id": "tag-80c1c5007af5032a",
+    "credits": [
+      [
+        "character",
+        "藤原肇"
+      ],
+      [
+        "artist",
+        "椎名豪"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "藤原 肇役 明确表示声优所演角色，椎名豪 是个人作曲家。",
+    "sources": []
+  },
+  {
+    "id": "tag-06225f9638450397",
+    "credits": [
+      [
+        "character",
+        "関裕美"
+      ],
+      [
+        "character",
+        "森久保乃々"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-fd39256773888343",
+    "credits": [
+      [
+        "character",
+        "音無小鳥"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "音無小鳥 后括号标注其声优滝田樹里。",
+    "sources": []
+  },
+  {
+    "id": "tag-1c6d97c5647dba6f",
+    "credits": [
+      [
+        "character",
+        "風野灯織"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "風野灯織 后括号标注其声优近藤玲奈。",
+    "sources": []
+  },
+  {
+    "id": "tag-4e1885f2b4464683",
+    "credits": [
+      [
+        "character",
+        "高垣楓"
+      ],
+      [
+        "character",
+        "川島瑞樹"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "两个角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-3583f981113c74af",
+    "credits": [
+      [
+        "character",
+        "高森藍子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "高森藍子 后括号标注其声优金子有希。",
+    "sources": []
+  },
+  {
+    "id": "tag-f62dc80222552673",
+    "credits": [
+      [
+        "character",
+        "高槻やよい"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "高槻やよい 后括号标注其声优仁後真耶子。",
+    "sources": []
+  },
+  {
+    "id": "tag-2d6d2482e7ee235d",
+    "credits": [
+      [
+        "character",
+        "鷹城恭二"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "鷹城恭二 是 SideM 角色，括号标注其声优梅原裕一郎。",
+    "sources": []
+  },
+  {
+    "id": "tag-ba9033ff7404a4a5",
+    "credits": [
+      [
+        "character",
+        "鷺沢文香"
+      ],
+      [
+        "character",
+        "佐城雪美"
+      ],
+      [
+        "character",
+        "鷹富士茄子"
+      ],
+      [
+        "character",
+        "小早川紗枝"
+      ],
+      [
+        "character",
+        "藤原肇"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "五名角色均带 CV 标注。",
+    "sources": []
+  },
+  {
+    "id": "tag-337d068aadb79723",
+    "credits": [
+      [
+        "character",
+        "黛冬優子"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "黛冬優子 后括号标注其声优幸村恵理。",
+    "sources": []
+  },
+  {
+    "id": "tag-eff94296b5ee277f",
+    "credits": [
+      [
+        "group",
+        "CINDERELLA PROJECT"
+      ]
+    ],
+    "status": "resolved",
+    "reason": "全角书写的 ＣＩＮＤＥＲＥＬＬＡ　ＰＲＯＪＥＣＴ 是动画的正式组合名 CINDERELLA PROJECT。",
+    "sources": []
+  }
+]

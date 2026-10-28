@@ -103,10 +103,10 @@ public final class MainActivity extends Activity {
 
     void document(String action, JSONObject data) {
         documentAction = action; documentData = data;
-        boolean export = action.equals("backup-export") || action.equals("peq-export") || action.equals("clip-export");
+        boolean export = action.equals("backup-export") || action.equals("peq-export") || action.equals("clip-export") || action.equals("scan-report-export");
         Intent intent = new Intent(export ? Intent.ACTION_CREATE_DOCUMENT : Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE);
         intent.setType(action.equals("clip-export") ? "audio/wav" : action.startsWith("peq") ? "text/plain" : "application/json");
-        if (export) intent.putExtra(Intent.EXTRA_TITLE, action.equals("clip-export") ? "澄-片段.wav" : action.startsWith("peq") ? "澄-均衡器.txt" : "澄-音乐资料.json");
+        if (export) intent.putExtra(Intent.EXTRA_TITLE, action.equals("scan-report-export") ? "澄-扫描报告.json" : action.equals("clip-export") ? "澄-片段.wav" : action.startsWith("peq") ? "澄-均衡器.txt" : "澄-音乐资料.json");
         startActivityForResult(intent, export ? EXPORT : IMPORT);
     }
 
@@ -177,7 +177,7 @@ public final class MainActivity extends Activity {
         return super.onKeyDown(code, event);
     }
     @Override public void onBackPressed() {
-        web.evaluateJavascript("(function(){var a=document.querySelectorAll('dialog[open]'),d=a[a.length-1];if(d){if(window.M3X_UI)M3X_UI.closeDialog(d,true);else d.close();return true;}var p=document.querySelector('[data-panel]:not([hidden])');if(p&&p.dataset.panel!=='library'){document.querySelector('.m3x-nav [data-page=\"library\"]').click();return true;}return false;})()", result -> { if (!"true".equals(result)) moveTaskToBack(true); });
+        web.evaluateJavascript("(function(){var a=document.querySelectorAll('dialog[open]'),d=a[a.length-1];if(d){if(window.M3X_UI)M3X_UI.closeDialog(d,true);else d.close();return true;}return window.M3X_UI?M3X_UI.back():false;})()", result -> { if (!"true".equals(result)) moveTaskToBack(true); });
     }
     @Override protected void onDestroy() { if (web != null) { web.removeJavascriptInterface("M3XNative"); web.destroy(); } super.onDestroy(); }
 
@@ -238,7 +238,7 @@ public final class MainActivity extends Activity {
                             android.widget.ScrollView scroll = new android.widget.ScrollView(MainActivity.this); scroll.addView(text);
                             new AlertDialog.Builder(MainActivity.this).setTitle("开源许可").setView(scroll).setPositiveButton("关闭", null).show(); break;
                         }
-                        case "backup-export": case "backup-import": case "peq-import": case "peq-export": case "clip-export": document(name, data); break;
+                        case "backup-export": case "backup-import": case "peq-import": case "peq-export": case "clip-export": case "scan-report-export": document(name, data); break;
                         case "clear-cache":
                             if (service.player.getPlayWhenReady()) throw new IOException("请先暂停播放，再清理缓存");
                             for (File directory : new File[]{app.library.artwork, new File(getCacheDir(), "decoded")}) {

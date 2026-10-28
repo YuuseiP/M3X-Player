@@ -1,12 +1,12 @@
 # 澄 · M3X Player
 
-面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和独立的歌手署名分类工具。当前版本为 **0.2.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
+面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和内置的歌手署名分类配置。当前版本为 **0.4.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
 
-本项目不是山灵官方产品。面向 Android 7.1 / API 25；已有模拟器验收记录，尚未完成 M3X 实体设备与 DAC 输出验证。
+本项目不是山灵官方产品。面向 Android 7.1 / API 25；0.4.0 已在 M3X 真机验证 FLAC 软解、扫描恢复和 96kHz PCM DIRECT 系统输出，尚未完成实听、DAC 模拟输出测量与长期播放验证。
 
 ## 下载与安装
 
-从本仓库的 [Releases](../../releases) 下载 `Cheng-M3X-0.2.0.apk` 和对应的 `.apk.sha256` 文件。仓库当前为私有，下载需要有仓库访问权限。
+从 [0.4.0 Release](../../releases/tag/v0.4.0) 下载 `Cheng-M3X-0.4.0.apk`、`.apk.sha256` 校验文件与 `verification-0.4.0.json` 验证记录；本机构建输出位于 `dist/`。历史版本保留在 [Releases](../../releases) 中。仓库当前为私有，下载需要有仓库访问权限。
 
 1. 将 APK 复制到设备，使用文件管理器打开并按系统提示允许安装。
 2. 首次启动授予读取音乐的权限，或在「我的 → 设置 → 添加扫描目录」授权音乐文件夹。
@@ -15,14 +15,15 @@
 在下载目录校验 APK：
 
 ```powershell
-$expected = ((Get-Content -Raw -Encoding UTF8 '.\Cheng-M3X-0.2.0.apk.sha256').Trim() -split '\s+')[0]
-$actual = (Get-FileHash -LiteralPath '.\Cheng-M3X-0.2.0.apk' -Algorithm SHA256).Hash
+$expected = ((Get-Content -Raw -Encoding UTF8 '.\Cheng-M3X-0.4.0.apk.sha256').Trim() -split '\s+')[0]
+$actual = (Get-FileHash -LiteralPath '.\Cheng-M3X-0.4.0.apk' -Algorithm SHA256).Hash
 if ($actual -ne $expected) { throw 'APK SHA-256 mismatch' }
 ```
 
 ## 主要功能
 
-- 本地曲库：MediaStore、多目录 SAF 授权、歌曲/专辑/歌手/文件夹分类、搜索、收藏、歌单、队列和 CUE 虚拟分轨。
+- 本地曲库：MediaStore、多目录 SAF 授权、歌曲/角色/组合/歌手/专辑分类、逐层文件夹、搜索、收藏、歌单、队列和 CUE 虚拟分轨。
+- 内置分类：保留已确认的 4,235 首歌曲归属与百科汉字名，离线匹配设备上的音乐；收藏和歌单集中在「我的」横向栏目中。
 - 原生播放：Media3 / ExoPlayer 后台服务、媒体通知、音频焦点、系统媒体键、倍速、睡眠定时和播放统计。
 - 声音处理：十段 EQ、32 段参数 EQ、ReplayGain、AutoEQ 参数导入、混响、压限和手动重采样。
 - 扩展功能：LRC 歌词、WebDAV / DLNA 浏览播放、片段导出、倒放，以及设置与歌单备份。
@@ -36,7 +37,7 @@ if ($actual -ne $expected) { throw 'APK SHA-256 mismatch' }
 | --- | --- |
 | `android/` | Android Java 源码、共享页面构建、签名打包脚本、JVM 与设备测试 |
 | `web-preview/` | HTML/CSS/JavaScript 界面、本机 Python 曲库服务与网页测试 |
-| `artist-classification/` | 从 JSON 报告快照分类歌手、组合、角色及声优，不改写音频文件 |
+| `artist-classification/` | 模型语义署名配置、按文件夹精确查表及本地分类试听，不改写音频或标签 |
 | `M3X-Player-Design-Draft.md` | 产品与界面设计草案 |
 | `M3X-Specifications.md` | 整理时的目标设备规格 |
 | `RELEASE_NOTES.md` | 本次发布说明 |
@@ -57,7 +58,7 @@ python '.\web-preview\server.py'
 
 ## Android 构建
 
-需要 Windows PowerShell、JDK 17 或 21、Node.js/npm、Python 3.11+，以及已安装 Android 35 平台和 Build Tools 34.0.0 的 Android SDK。`setup-tools.py` 下载 Gradle 8.9 并生成本机 SDK 路径配置，不负责安装完整 SDK。
+需要 Windows PowerShell、JDK 17 或 21、Node.js/npm、Python 3.11+，以及已安装 Android 35 平台和 Build Tools 34.0.0 的 Android SDK。FLAC 模块还需要 NDK 27.2.12479018 和 CMake 3.22.1；接受 SDK 许可后可由 Gradle 安装。`setup-tools.py` 下载 Gradle 8.9 并生成本机 SDK 路径配置，不负责安装完整 SDK。
 
 在项目根目录运行：
 
@@ -67,7 +68,7 @@ python '.\setup-tools.py'
 .\build-apk.ps1 -Test
 ```
 
-脚本安装锁定的 npm 依赖、生成旧 WebView 页面、执行 JVM 测试，并将签名 APK 和 SHA-256 写入根目录 `dist/`。首次构建会生成自己的本地签名。
+脚本安装锁定的 npm 依赖、下载并校验 libFLAC 1.4.3、生成旧 WebView 页面、执行 JVM 测试，并将签名 APK 和 SHA-256 写入根目录 `dist/`。首次构建会生成自己的本地签名。
 
 **`.signing/` 与 `local-signing.properties` 只保存在本机，必须自行备份。** 自行生成的密钥不能覆盖安装本仓库已发布 APK；发布更新必须沿用原签名，不能将私钥上传到仓库。设备测试命令见 [Android README](android/README.md)。
 
@@ -89,7 +90,7 @@ python -m unittest discover -s '.\artist-classification' -p 'test_*.py'
 - DSF/DFF 使用 PCM 转换缓存，不是原生 DSD、DoP 或 DST 解码。
 - 当前 DSP 处理链为 PCM16 输入/输出；尚未验证采样级无缝播放。
 - 未实现 USB 独占/UAC、厂商 Direct/DAC 控制、MQA 或跨音源节奏分析过渡。
-- M3X 真机、真实 NAS/USB DAC、长期后台播放、功耗与长曲处理性能仍待验收。
+- 整张 microSD/SAF 曲库重扫、真实 NAS/USB DAC、长期后台播放、功耗与长曲处理性能仍待验收；本版真机验证范围见 Release 附带的验证记录。
 
 ## 依赖与资源
 

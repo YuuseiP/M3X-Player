@@ -9,6 +9,8 @@ final class NativeDocuments {
     static void perform(MainActivity activity, String action, Uri uri, JSONObject data) throws Exception {
         PlayerApp app = PlayerApp.instance;
         switch (action) {
+            case "scan-report-export":
+                write(activity, uri, app.library.scanStatus().getJSONObject("scan").toString(2).getBytes("UTF-8")); break;
             case "backup-export": {
                 JSONObject backup = json("schema", 1, "application", "cn.yuusei.m3x", "ui", app.settings("ui"), "audio", app.settings("audio"), "tools", app.settings("tools"));
                 write(activity, uri, backup.toString(2).getBytes("UTF-8")); break;

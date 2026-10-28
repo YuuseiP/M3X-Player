@@ -35,6 +35,7 @@ public final class PlaybackService extends MediaSessionService {
     private long fileRequest;
     private String error = "", conversion = "";
     private int outputRate, outputEncoding, audioTracks;
+    private String decoderName = "";
     private long lastStats, listenedMs, lastSave;
     private boolean counted;
     private boolean destroyed;
@@ -119,7 +120,7 @@ public final class PlaybackService extends MediaSessionService {
                 else processor = null;
                 return sink.build();
             }
-        }.setEnableDecoderFallback(true);
+        }.setEnableDecoderFallback(true).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         ResolvingDataSource.Factory sources = new ResolvingDataSource.Factory(new DefaultDataSource.Factory(this, new OkHttpDataSource.Factory(NativeNetwork.HTTP)),
             spec -> spec.withAdditionalHeaders(NativeNetwork.headers(spec.uri.toString())));
         player = new ExoPlayer.Builder(this, renderers).setMediaSourceFactory(new DefaultMediaSourceFactory(sources)).build();
@@ -165,8 +166,14 @@ public final class PlaybackService extends MediaSessionService {
             }
         });
         final ExoPlayer engine = player;
-        outputRate = 0; outputEncoding = 0; audioTracks = 0;
+        outputRate = 0; outputEncoding = 0; audioTracks = 0; decoderName = "";
         player.addAnalyticsListener(new AnalyticsListener() {
+            @Override public void onAudioDecoderInitialized(EventTime time, String name, long timestampMs, long durationMs) {
+                if (player == engine) decoderName = name;
+            }
+            @Override public void onAudioDecoderReleased(EventTime time, String name) {
+                if (player == engine && decoderName.equals(name)) decoderName = "";
+            }
             @Override public void onAudioTrackInitialized(EventTime time, AudioSink.AudioTrackConfig config) {
                 if (player != engine) return;
                 audioTracks++; outputRate = config.sampleRate; outputEncoding = config.encoding;
@@ -330,7 +337,7 @@ public final class PlaybackService extends MediaSessionService {
             List<MediaItem> items = new ArrayList<>(); for (int i = 0; i < player.getMediaItemCount(); i++) {
                 JSONObject track = app.library.track(player.getMediaItemAt(i).mediaId); if (track != null) items.add(media(track));
             }
-            int index = Math.max(0, player.getCurrentMediaItemIndex()); long position = player.getCurrentPosition(); boolean playing = player.getPlayWhenReady();
+            int index = Math.max(0, Math.min(items.size() - 1, player.getCurrentMediaItemIndex())); long position = player.getCurrentPosition(); boolean playing = player.getPlayWhenReady();
             if (old.optBoolean("reverse") != next.optBoolean("reverse")) position = 0;
             player.release(); buildPlayer(); session.setPlayer(sessionPlayer()); player.setMediaItems(items, index, position); syncQueue(app.settings("ui"));
             conversionPlay = playing;
@@ -404,7 +411,7 @@ public final class PlaybackService extends MediaSessionService {
             "duration", player.getDuration() > 0 ? player.getDuration() / 1000d : track == null ? 0 : track.optDouble("duration"),
             "paused", !player.getPlayWhenReady(), "playing", player.isPlaying(), "ready", player.getPlaybackState() == Player.STATE_READY,
             "error", error, "conversion", conversion, "settings", settings, "stats", stats, "outputRate", outputRate,
-            "outputEncoding", outputEncoding, "route", route, "sleepRemaining", sleepDeadline == 0 ? 0 : Math.max(0, sleepDeadline - SystemClock.elapsedRealtime()),
+            "outputEncoding", outputEncoding, "decoder", decoderName, "route", route, "sleepRemaining", sleepDeadline == 0 ? 0 : Math.max(0, sleepDeadline - SystemClock.elapsedRealtime()),
             "sleepFinish", sleepFinish, "sleepWaiting", sleepExpired);
     }
     @Override public MediaSession onGetSession(MediaSession.ControllerInfo controller) { return session; }

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#eaece4">
+  <title>IM@S · 歌手分类试听</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="分类预览首页"><span class="brand-mark">iM</span><span>偶像的另一种索引<small>IM@S / LOCAL COLLECTION</small></span></a>
+      <div class="section-label">BROWSE BY / 浏览方式</div>
+      <nav id="kinds" aria-label="分类方式">
+        <button data-kind="character" aria-pressed="true"><span>01</span>角色<strong>—</strong></button>
+        <button data-kind="group" aria-pressed="false"><span>02</span>组合 / 集合署名<strong>—</strong></button>
+        <button data-kind="artist" aria-pressed="false"><span>03</span>其他署名<strong>—</strong></button>
+        <button data-kind="original" aria-pressed="false"><span>04</span>原始署名<strong>—</strong></button>
+      </nav>
+      <div class="directory-heading"><label for="entity-search">分类目录</label><span id="entity-count"></span></div>
+      <input id="entity-search" type="search" placeholder="搜索角色或署名…" autocomplete="off">
+      <div id="entities" class="entities" aria-label="分类目录"></div>
+      <div class="sidebar-note"><span class="status-dot"></span>仅本地 · 不修改标签<br><span>不创建 CV 分类，保留原始署名</span></div>
+    </aside>
+    <main>
+      <header class="topbar"><span>THE IDOLM@STER <b>/</b> 分类试听室</span><span class="local-label"><span class="status-dot"></span>LOCAL FILES</span></header>
+      <section class="intro">
+        <div class="eyebrow">SAME SONGS. A CLEARER COLLECTION.</div>
+        <h1>从名字，找到歌。</h1>
+        <p>把不同的署名，收拢到同一个角色。合唱不必二选一，组合也保留自己的位置。</p>
+        <div id="totals" class="totals">正在读取本地分类结果…</div>
+        <div class="intro-art" aria-hidden="true"><div class="record"></div><div class="record-label">IM@S<br><small>COLLECTION<br>VOL. 01</small></div><span>ONE SONG.<br>MANY VOICES.</span></div>
+      </section>
+      <section class="workspace">
+        <div class="scope-row"><label for="project">来源文件夹</label><select id="project"><option value="">全部子文件夹</option></select><button id="all-tracks" class="text-button">浏览全部歌曲 ↗</button></div>
+        <div class="collection-heading"><div><div id="kind-label" class="eyebrow">CHARACTER / 角色</div><h2 id="selection-title">正在载入</h2><p id="selection-description"></p></div><button id="play-selection" class="primary" disabled>▶ 播放此分类</button></div>
+        <div class="toolbar">
+          <input id="track-search" type="search" aria-label="搜索当前分类中的歌曲" placeholder="搜索曲名、专辑、原始署名…">
+          <label><input id="show-original" type="checkbox" checked>对照原始署名</label>
+          <label><input id="review-only" type="checkbox">仅含复核项</label>
+        </div>
+        <div class="list-heading"><span id="result-count">—</span><span>点击分类标签，可跳到同一首歌的其他归属</span></div>
+        <div id="tracks" class="tracks" aria-label="歌曲列表"></div>
+        <button id="load-more" class="load-more" hidden>显示更多歌曲</button>
+        <p id="empty" class="empty" hidden>这里暂时没有匹配的歌曲。试试其他分类或清空筛选。</p>
+      </section>
+      <footer><p id="classification-method">基于已保存的本地扫描快照；不是重新扫描。</p><p>分类名优先采用百科收录的汉字名，不按读音自行翻译；未确认的保留原名。原始署名与音乐标签不变，组合不自动展开成员。</p><p id="source-root"></p><p id="load-error" role="alert" hidden></p></footer>
+    </main>
+  </div>
+  <section class="player" aria-label="音乐播放器">
+    <div class="now-icon" aria-hidden="true">♪</div>
+    <div class="now-info"><strong id="now-title">选一首歌，听听分类后的曲库</strong><span id="now-artist">播放原文件 · 音量由系统控制</span></div>
+    <div class="transport"><button id="previous" aria-label="上一首">Ⅰ◀</button><button id="play" class="play-toggle" aria-label="播放" disabled>▶</button><button id="next" aria-label="下一首">▶Ⅰ</button></div>
+    <div class="progress"><span id="elapsed">0:00</span><input id="seek" type="range" aria-label="播放进度" min="0" max="100" value="0" step="0.1" disabled><span id="duration">0:00</span></div>
+    <span id="now-format" class="format-label">LOCAL AUDIO</span>
+    <p id="play-error" role="status" hidden></p>
+  </section>
+  <audio id="audio" preload="none"></audio>
+</body>
+</html>

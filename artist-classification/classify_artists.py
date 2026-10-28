@@ -1,9 +1,9 @@
-"""Classify a report snapshot only. Never open or rewrite source audio files."""
+"""Apply folder-bound artist profiles to a JSON snapshot, never to audio tags."""
 import argparse
 from collections import Counter, defaultdict
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import re
 import unicodedata
 
@@ -14,52 +14,46 @@ SYNTAX = str.maketrans({
     "\uff1a": ":", "\uff0e": ".", "\uff0c": ",", "\uff1b": ";",
     "\uff0f": "/", "\uff06": "&",
 })
-STRONG = re.compile(r"[,、]|\bfeat(?:uring)?\.?\s*", re.IGNORECASE)
-WEAK = re.compile(r"[/;&]")
-CV = re.compile(r"([^()\[\]{},、/;&]+?)\s*\(\s*CV\s*[.:]\s*([^()]+)\)", re.IGNORECASE)
-EMBEDDED_CV = re.compile(
-    r"([^()\[\]{},、/;&]+?)\s*\(\s*CV\s*[.:]\s*([^()]+)\)", re.IGNORECASE
-)
-KINDS = ("character", "voice_actor", "group", "artist", "album_artist", "original")
+SEPARATORS = re.compile(r"[,、/;&×]|\b(?:feat(?:uring)?|with)\b\.?\s*", re.IGNORECASE)
+FROM = re.compile(r"\s+from\s+", re.IGNORECASE)
+CV = re.compile(r"([^()\[\]{},、/;&×]+?)\s*\(\s*CV\s*[.:]\s*[^()]+\)",
+                re.IGNORECASE)
+KINDS = ("character", "group", "artist", "album_artist", "original")
 KIND_LABELS = dict(zip(KINDS, (
-    "\u89d2\u8272", "\u58f0\u4f18", "\u56e2\u4f53", "\u5176\u4ed6\u7f72\u540d\uff08\u7c7b\u578b\u672a\u5b9a\uff09",
+    "\u89d2\u8272", "\u56e2\u4f53", "\u5176\u4ed6\u7f72\u540d",
     "\u4e13\u8f91\u827a\u672f\u5bb6", "\u539f\u59cb\u7f72\u540d")))
 ISSUE_LABELS = {
-    "album_artist_field_conflict": "\u4e13\u8f91\u827a\u672f\u5bb6\u540c\u4e49\u5b57\u6bb5\u503c\u51b2\u7a81",
-    "album_tags_unavailable": "\u672a\u66b4\u9732\u6807\u7b7e\uff0c\u65e0\u6cd5\u5224\u5b9a\u4e13\u8f91\u827a\u672f\u5bb6",
-    "ambiguous_separator": "\u5206\u9694\u7b26\u5b58\u7591\uff0c\u4fdd\u7559\u6574\u4f53",
-    "complex_cv": "CV \u5185\u5bb9\u542b\u540d\u5355\u6216\u6765\u6e90\u8bf4\u660e\uff0c\u6682\u4e0d\u63d0\u53d6",
-    "empty_list_member": "\u540d\u5355\u4e2d\u5b58\u5728\u7a7a\u9879",
-    "group_type_proposal": "\u62ec\u53f7\u5217\u51fa\u6210\u5458\uff0c\u5916\u5c42\u56e2\u4f53\u7c7b\u578b\u5f85\u786e\u8ba4",
-    "missing_album_artist": "\u5df2\u8bfb\u6807\u7b7e\u4e2d\u65e0\u4e13\u8f91\u827a\u672f\u5bb6",
-    "missing_artist": "\u5df2\u8bfb\u6807\u7b7e\u4e2d\u65e0\u6b4c\u624b",
+    "album_artist_field_conflict": "\u4e13\u8f91\u827a\u672f\u5bb6\u5b57\u6bb5\u51b2\u7a81",
+    "album_tags_unavailable": "\u672a\u66b4\u9732\u4e13\u8f91\u6807\u7b7e",
+    "empty_list_member": "\u540d\u5355\u6709\u7a7a\u9879",
+    "group_type_candidate": "\u65b0\u56e2\u540d\u5f85\u52a0\u5165\u914d\u7f6e",
+    "missing_album_artist": "\u7f3a\u5c11\u4e13\u8f91\u827a\u672f\u5bb6",
+    "missing_artist": "\u7f3a\u5c11\u6b4c\u624b",
+    "new_character": "\u660e\u786e CV \u65b0\u89d2\u8272\uff0c\u672a\u5199\u5165\u56fa\u5b9a\u540d\u5355",
     "placeholder_artist": "\u5360\u4f4d\u6587\u672c\uff0c\u4e0d\u751f\u6210\u4eba\u7269",
-    "possible_truncated_name": "\u540d\u5355\u672b\u5c3e\u7591\u4f3c\u622a\u65ad\uff0c\u4e0d\u8865\u731c",
-    "role_actor_conflict": "\u65e0 CV \u62ec\u53f7\u4e0e\u5feb\u7167\u4e2d\u7684\u89d2\u8272\u58f0\u4f18\u5bf9\u5e94\u51b2\u7a81",
+    "possible_truncated_name": "\u7591\u4f3c\u622a\u65ad\u59d3\u540d\uff0c\u4e0d\u8865\u731c",
     "source_tags_unavailable": "\u539f\u8bfb\u53d6\u5668\u672a\u66b4\u9732\u6807\u7b7e",
-    "unbalanced_brackets": "\u62ec\u53f7\u4e0d\u95ed\u5408\uff0c\u4fdd\u7559\u6574\u4f53",
-    "unresolved_parenthesis": "\u62ec\u53f7\u542b\u4e49\u672a\u786e\u8ba4\uff0c\u4fdd\u7559\u6574\u4f53",
-    "unresolved_role_parenthesis": "\u89d2\u8272\u62ec\u53f7\u5185\u5bb9\u5f85\u786e\u8ba4",
-    "untyped_list_member": "\u540d\u5355\u5305\u542b\u8eab\u4efd\u7c7b\u578b\u672a\u5b9a\u7684\u7f72\u540d",
+    "unbalanced_brackets": "\u62ec\u53f7\u4e0d\u95ed\u5408",
+    "unresolved_group_members": "\u56e2\u540d\u4fdd\u7559\uff0c\u4e0d\u63a8\u65ad\u672a\u786e\u8ba4\u6210\u5458",
+    "unresolved_parenthesis": "\u672a\u77e5\u62ec\u53f7\u7f72\u540d\u4fdd\u7559",
+    "untyped_list_member": "\u540d\u5355\u542b\u672a\u786e\u8ba4\u7f72\u540d",
 }
 
 
-def simple_actor(name):
-    return not (STRONG.search(name) or WEAK.search(name)
-                or re.search(r"\b(?:from|with)\b", name, re.IGNORECASE))
-
-
-def identity(kind, name):
-    return kind + "-" + hashlib.sha256((kind + "\0" + name).encode()).hexdigest()[:16]
+def identity(kind, name, scope=""):
+    value = kind + "\0" + name
+    if scope:
+        value = scope + "\0" + value
+    return kind + "-" + hashlib.sha256(value.encode()).hexdigest()[:16]
 
 
 def candidate_key(name):
-    """Lossy comparison is for review proposals, never an identity key."""
+    """Match only against a profile's frozen character catalogue."""
     return re.sub(r"\s+", "", unicodedata.normalize("NFKC", name))
 
 
-def split_top(text, separators):
-    """Split outside matched brackets; retain source slices and empty tokens."""
+def split_top(text, separators, protected=()):
+    """Split outside matched brackets, retaining source slices and empty tokens."""
     syntax = text.translate(SYNTAX)
     stack, parts, start, pos = [], [], 0, 0
     closing = {")": "(", "]": "[", "}": "{"}
@@ -70,7 +64,7 @@ def split_top(text, separators):
         elif char in closing:
             if not stack or stack.pop() != closing[char]:
                 return [text], False
-        elif not stack:
+        elif not stack and not any(start <= pos < end for start, end in protected):
             match = separators.match(syntax, pos)
             if match:
                 parts.append(text[start:pos])
@@ -83,170 +77,210 @@ def split_top(text, separators):
 
 
 def outer_credit(text):
-    syntax = text.translate(SYNTAX).strip()
-    at = next((i for i, char in enumerate(syntax) if char in "(["), -1)
-    if at <= 0:
+    """Return the final top-level annotation, including names like *(Asterisk)."""
+    syntax = text.strip().translate(SYNTAX)
+    if not split_top(syntax, SEPARATORS)[1]:
         return None
-    _, balanced = split_top(syntax, STRONG)
-    closing = ")" if syntax[at] == "(" else "]"
-    if not balanced or not syntax.endswith(closing):
-        return None
-    depth = 0
-    for i in range(at, len(syntax)):
-        if syntax[i] == syntax[at]:
+    depth, at = 0, None
+    for i, char in enumerate(syntax):
+        if char in "([":
+            if depth == 0:
+                at = i
             depth += 1
-        elif syntax[i] == closing:
+        elif char in ")]":
             depth -= 1
-            if depth == 0 and i != len(syntax) - 1:
-                return None
-    return syntax[:at].strip(), syntax[at + 1:-1].strip()
+            if depth == 0 and i == len(syntax) - 1 and at:
+                return syntax[:at].strip(), syntax[at + 1:i].strip()
+    return None
 
 
 class Classifier:
-    def __init__(self, records, rules):
-        self.groups = set(rules["groups"])
+    def __init__(self, rules=None):
         self.rules = rules
-        self.pairs = defaultdict(set)
-        self.actors = set()
-        # Only explicit CV syntax establishes the snapshot's relationship evidence.
-        for record in records:
-            for raw in record["artist"]:
-                parts, balanced = split_top(raw, re.compile(STRONG.pattern + "|" + WEAK.pattern,
-                                                           re.IGNORECASE))
-                if not balanced:
-                    continue
-                for part in parts:
-                    for match in EMBEDDED_CV.finditer(part.translate(SYNTAX)):
-                        role, actor = (item.strip() for item in match.groups())
-                        if simple_actor(actor):
-                            self.pairs[role].add(actor)
-                            self.actors.add(actor)
-        self.role_candidates = defaultdict(set)
-        self.actor_candidates = defaultdict(set)
-        for role in self.pairs:
-            self.role_candidates[candidate_key(role)].add(role)
-        for actor in self.actors:
-            self.actor_candidates[candidate_key(actor)].add(actor)
+        self.scope = rules["id"] if rules else ""
+        self.groups = set(rules["groups"]) if rules else set()
+        self.characters = {candidate_key(name): name for name in rules["characters"]} if rules else {}
+        self.protected = [re.compile(re.escape(name.translate(SYNTAX))) for name in self.groups]
+        if rules:
+            self.protected += [re.compile(re.escape(name.translate(SYNTAX)))
+                               for name in rules["credit_overrides"]]
+            self.protected += [
+                re.compile(r"\s*".join(re.escape(c) for c in item["text"] if not c.isspace()))
+                for item in rules["shared_prefix_shorthands"]]
 
     def credit(self, kind, name, raw, method):
-        name = self.rules["approved_aliases"].get(kind, {}).get(name, name)
-        return {"kind": kind, "name": name, "entity_id": identity(kind, name),
+        return {"kind": kind, "name": name, "entity_id": identity(kind, name, self.scope),
                 "raw": raw, "method": method}
+
+    def literal(self, raw, issues=()):
+        name = raw.strip()
+        return ([self.credit("artist", name, raw, "literal")] if name else [], list(issues))
 
     def atomic(self, raw):
         name = raw.strip()
-        syntax = name.translate(SYNTAX)
         if not name:
             return [], ["empty_list_member"]
-        if name in self.rules["placeholders"]:
-            return [], ["placeholder_artist"]
-        # Explicit, reviewable shorthand expansion precedes slash handling.
-        for shorthand in self.rules["shared_prefix_shorthands"]:
-            match = re.fullmatch(r"(.+?)(\s*\(\s*CV\s*[.:]\s*[^()]+\))?",
-                                 syntax, re.IGNORECASE)
-            base, suffix = match.groups() if match else (syntax, None)
-            if candidate_key(base) == candidate_key(shorthand["text"]):
-                credits, issues = [], []
-                for member in shorthand["members"]:
-                    found, pending = self.atomic(member + (suffix or ""))
-                    credits.extend(found)
-                    issues.extend(pending)
-                for credit in credits:
-                    credit.update(raw=raw, method="configured_shorthand")
-                return credits, issues
-        match = CV.fullmatch(syntax)
-        if match:
-            role, actor = (part.strip() for part in match.groups())
-            if not simple_actor(actor):
-                return [self.credit("artist", name, raw, "literal")], ["complex_cv"]
-            return [self.credit("character", role, raw, "explicit_cv"),
-                    self.credit("voice_actor", actor, raw, "explicit_cv")], []
+        override = self.rules["credit_overrides"].get(name)
+        if override is not None:
+            return [self.credit(c["kind"], c["name"], raw, "configured_override")
+                    for c in override["credits"]], override.get("issues", [])
+        # Whole names are protected before punctuation is treated as a separator.
         if name in self.groups:
             return [self.credit("group", name, raw, "configured_group")], []
-        if candidate_key(name) in self.role_candidates:
-            return [self.credit("character", name, raw, "observed_role_name")], []
-        if candidate_key(name) in self.actor_candidates:
-            return [self.credit("voice_actor", name, raw, "observed_cv_name")], []
-        return [self.credit("artist", name, raw, "literal_untyped")], []
+        role = self.characters.get(candidate_key(name))
+        if role:
+            return [self.credit("character", role, raw, "configured_character")], []
+        if name in self.rules["placeholders"]:
+            return [], ["placeholder_artist"]
+        annotation = outer_credit(name)
+        base = annotation[0] if annotation and re.match(r"CV\s*[.:]", annotation[1], re.I) else name
+        for shorthand in self.rules["shared_prefix_shorthands"]:
+            if candidate_key(base) == candidate_key(shorthand["text"]):
+                return [self.credit("character", member, raw, "configured_shorthand")
+                        for member in shorthand["members"]], []
+        match = CV.fullmatch(name.translate(SYNTAX))
+        if match and not SEPARATORS.search(match[1]):
+            role = match[1].strip()
+            canonical = self.characters.get(candidate_key(role))
+            return [self.credit("character", canonical or role, raw, "explicit_cv_ignored")], (
+                [] if canonical else ["new_character"])
+        return None
 
-    def parse_piece(self, raw):
-        literal, literal_issues = self.atomic(raw)
-        if literal_issues or not literal or all(c["kind"] != "artist" for c in literal):
-            return literal, literal_issues
+    def parse(self, raw):
+        if not self.rules:
+            return self.literal(raw)
+        atomic = self.atomic(raw)
+        if atomic is not None:
+            return atomic
+        # Protect groups, approved whole names and shorthands inside credit lists.
+        protected = [m.span() for pattern in self.protected
+                     for m in pattern.finditer(raw.translate(SYNTAX))]
+        parts, balanced = split_top(raw, SEPARATORS, protected)
+        if not balanced:
+            return self.literal(raw, ["unbalanced_brackets"])
+        if len(parts) > 1:
+            results = [self.parse(part) for part in parts]
+            credits = [c for found, _ in results for c in found]
+            issues = [i for _, pending in results for i in pending]
+            if any(c["kind"] == "artist" for c in credits):
+                issues.append("untyped_list_member")
+            return credits, sorted(set(issues))
+        attribution, _ = split_top(raw, FROM)
+        if len(attribution) == 2:
+            found, issues = self.parse(attribution[0])
+            if found and all(c["kind"] == "character" for c in found):
+                for credit in found:
+                    credit.update(raw=raw, method="character_source_annotation_ignored")
+                return found, issues
         annotation = outer_credit(raw)
         if annotation:
             prefix, body = annotation
-            roles = self.role_candidates.get(candidate_key(prefix), set())
-            if roles:
-                expected = {candidate_key(actor) for role in roles for actor in self.pairs[role]}
-                if candidate_key(body) in expected:
-                    return [self.credit("character", prefix, raw, "supported_implicit_cv"),
-                            self.credit("voice_actor", body, raw, "supported_implicit_cv")], []
-                reason = ("role_actor_conflict" if candidate_key(body) in self.actor_candidates
-                          else "unresolved_role_parenthesis")
-                return literal, [reason]
-            members, balanced = split_top(body, STRONG)
-            if balanced and (len(members) > 1 or prefix in self.groups):
-                credits, issues = [], []
-                for member in members:
-                    found, pending = self.parse_piece(member)
-                    credits.extend(found)
-                    issues.extend(pending)
-                if credits and not issues and all(c["kind"] != "artist" for c in credits):
-                    return [self.credit("group", prefix, raw, "explicit_member_list")] + credits, (
-                        [] if prefix in self.groups else ["group_type_proposal"])
-            return literal, ["unresolved_parenthesis"]
-        weak, balanced = split_top(raw, WEAK)
-        if balanced and len(weak) > 1:
-            results = [self.atomic(part) for part in weak]
-            if all(credits and not issues and all(c["kind"] != "artist" for c in credits)
-                   for credits, issues in results):
-                return [credit for credits, _ in results for credit in credits], []
-            return literal, ["ambiguous_separator"]
+            role = self.characters.get(candidate_key(prefix))
+            if role:
+                return [self.credit("character", role, raw, "character_annotation_ignored")], []
+            members, pending = self.parse(body)
+            typed = members and all(c["kind"] in ("character", "group") for c in members)
+            if prefix in self.groups:
+                group = self.credit("group", prefix, raw, "explicit_member_list")
+                return ([group] + members, pending) if typed else (
+                    [group], ["unresolved_group_members"])
+            return self.literal(raw, ["group_type_candidate" if typed else "unresolved_parenthesis"])
         name = raw.strip()
         if raw != raw.rstrip() and len(name) >= 2 and any(
-                role.startswith(name) and role != name for role in self.pairs):
-            return literal, ["possible_truncated_name"]
-        return self.atomic(raw)
+                role.startswith(name) and role != name for role in self.characters.values()):
+            return self.literal(raw, ["possible_truncated_name"])
+        return self.literal(raw)
 
-    def parse(self, raw):
-        parts, balanced = split_top(raw, STRONG)
-        if not balanced:
-            return [self.credit("artist", raw.strip(), raw, "unresolved")], ["unbalanced_brackets"]
-        credits, issues = [], []
-        for part in parts:
-            found, pending = self.parse_piece(part)
-            credits.extend(found)
-            issues.extend(pending)
-        if len(parts) > 1 and any(c["method"] == "literal_untyped" for c in credits):
-            issues.append("untyped_list_member")
-        return credits, sorted(set(issues))
+
+def absolute_folder(value):
+    path = PureWindowsPath(value)
+    if not path.is_absolute() or ".." in path.parts or any(":" in p for p in path.parts[1:]):
+        raise ValueError("Expected an absolute Windows folder without traversal: " + value)
+    return path
+
+
+def validate_configuration(bindings, profiles):
+    if bindings["schema"] != 1:
+        raise ValueError("Unsupported folder binding schema")
+    folders, profile_ids = set(), set()
+    for binding in bindings["bindings"]:
+        folder = absolute_folder(binding["folder"])
+        if folder in folders:
+            raise ValueError("Duplicate folder binding: " + str(folder))
+        folders.add(folder)
+        if binding["config"] not in profiles:
+            raise ValueError("Missing bound profile: " + binding["config"])
+    for rules in profiles.values():
+        if rules["schema"] != 2 or not rules["id"] or rules["id"] in profile_ids:
+            raise ValueError("Invalid or duplicate profile identity")
+        profile_ids.add(rules["id"])
+        characters = rules["characters"]
+        if (not isinstance(characters, list)
+                or not all(isinstance(name, str) and name.strip() == name and name for name in characters)
+                or len({candidate_key(name) for name in characters}) != len(characters)):
+            raise ValueError("Character catalogue has empty or colliding names")
+        for key in ("groups", "placeholders"):
+            if not isinstance(rules[key], list) or not all(
+                    isinstance(name, str) and name.strip() == name and name for name in rules[key]):
+                raise ValueError("Expected a list of nonempty names: " + key)
+        for shorthand in rules["shared_prefix_shorthands"]:
+            if not shorthand["text"] or not shorthand["members"] or any(
+                    name not in characters for name in shorthand["members"]):
+                raise ValueError("Shorthand must reference configured characters")
+        for raw, override in rules["credit_overrides"].items():
+            if not raw or not override["credits"]:
+                raise ValueError("Empty whole-credit override")
+            for credit in override["credits"]:
+                if credit["kind"] not in ("character", "group", "artist") or not credit["name"].strip():
+                    raise ValueError("Invalid whole-credit override")
+                if credit["kind"] in ("character", "group"):
+                    catalogue = characters if credit["kind"] == "character" else rules["groups"]
+                    if credit["name"] not in catalogue:
+                        raise ValueError("Override must reference a configured identity")
+            if any(issue not in ISSUE_LABELS for issue in override.get("issues", [])):
+                raise ValueError("Unknown override issue")
+
+
+def select_profile(path, bindings, profiles):
+    matches = [b for b in bindings["bindings"]
+               if absolute_folder(b["folder"]) == path or absolute_folder(b["folder"]) in path.parents]
+    if not matches:
+        return None
+    binding = max(matches, key=lambda b: len(absolute_folder(b["folder"]).parts))
+    return profiles[binding["config"]]
 
 
 def validate_source(data):
+    root = absolute_folder(data["summary"]["root"])
     records = data["files"]
     if not isinstance(records, list) or len(records) != data["summary"]["total_audio"]:
         raise ValueError("Source file count does not match its summary")
     paths = set()
     for record in records:
-        if not isinstance(record["path"], str) or not record["path"] or record["path"] in paths:
-            raise ValueError("Missing or duplicate source path")
-        paths.add(record["path"])
+        path = PureWindowsPath(record["path"])
+        if (not record["path"] or path.drive or path.root or ".." in path.parts
+                or not path.parts or any(":" in p for p in path.parts) or path in paths):
+            raise ValueError("Missing, duplicate or escaping source path")
+        paths.add(path)
         for field in ("artist", "albumartist"):
             if not isinstance(record[field], list) or not all(
                     isinstance(value, str) for value in record[field]):
                 raise ValueError("Expected native arrays of strings: " + field)
+    return root
 
 
-def classify(data, rules, source_hash):
-    validate_source(data)
-    parser = Classifier(data["files"], rules)
+def classify(data, bindings, profiles, source_hash):
+    root = validate_source(data)
+    validate_configuration(bindings, profiles)
+    parsers = {rules["id"]: Classifier(rules) for rules in profiles.values()}
+    parsers[""] = Classifier()
     tracks, entities, signatures = [], {}, {}
 
-    def register(credit, track_id, project):
+    def register(credit, track_id, project, scope):
         key = credit["entity_id"]
         if key not in entities:
-            entities[key] = {"id": key, "kind": credit["kind"], "name": credit["name"],
+            entities[key] = {"id": key, "profile": scope or None,
+                             "kind": credit["kind"], "name": credit["name"],
                              "track_ids": set(), "projects": set(), "raw_credits": set(),
                              "methods": set()}
         entity = entities[key]
@@ -256,18 +290,22 @@ def classify(data, rules, source_hash):
         entity["methods"].add(credit["method"])
 
     for record in data["files"]:
+        profile = select_profile(root / record["path"], bindings, profiles)
+        scope = profile["id"] if profile else ""
+        parser = parsers[scope]
         track_id = identity("track", record["path"])
         memberships = {kind: set() for kind in KINDS}
         credits, issues = [], []
         for raw in record["artist"]:
             original = parser.credit("original", raw, raw, "unchanged")
-            register(original, track_id, record["project"])
+            register(original, track_id, record["project"], scope)
             memberships["original"].add(original["entity_id"])
-            if raw not in signatures:
+            key = (scope, raw)
+            if key not in signatures:
                 found, pending = parser.parse(raw)
-                signatures[raw] = {"raw": raw, "credits": found, "issues": pending,
-                                   "paths": [], "projects": set()}
-            signature = signatures[raw]
+                signatures[key] = {"profile": scope or None, "raw": raw, "credits": found,
+                                   "issues": pending, "paths": [], "projects": set()}
+            signature = signatures[key]
             signature["paths"].append(record["path"])
             signature["projects"].add(record["project"])
             credits.extend(signature["credits"])
@@ -276,7 +314,7 @@ def classify(data, rules, source_hash):
             if raw.strip():
                 credits.append(parser.credit("album_artist", raw.strip(), raw, "album_credit_only"))
         for credit in credits:
-            register(credit, track_id, record["project"])
+            register(credit, track_id, record["project"], scope)
             memberships[credit["kind"]].add(credit["entity_id"])
         if record["status"] != "ok":
             issues.append("source_tags_unavailable")
@@ -287,7 +325,7 @@ def classify(data, rules, source_hash):
                           else "album_tags_unavailable")
         if "albumartist_alias_conflict" in record["flags"]:
             issues.append("album_artist_field_conflict")
-        tracks.append({"id": track_id, "source": record,
+        tracks.append({"id": track_id, "profile": scope or None, "source": record,
                        "memberships": {kind: sorted(ids) for kind, ids in memberships.items()},
                        "credits": credits, "issues": sorted(set(issues))})
 
@@ -297,52 +335,47 @@ def classify(data, rules, source_hash):
             entity[key] = sorted(entity[key])
         entity["track_count"] = len(entity["track_ids"])
         entity_list.append(entity)
-    entity_list.sort(key=lambda item: (item["kind"], -item["track_count"], item["name"]))
+    entity_list.sort(key=lambda e: (e["profile"] or "", e["kind"], -e["track_count"], e["name"]))
     alias_groups = defaultdict(list)
     for entity in entity_list:
-        if entity["kind"] != "original":
-            alias_groups[(entity["kind"], candidate_key(entity["name"]))].append(entity)
-    proposals = [{"kind": kind, "comparison_key": key, "approval": "pending",
+        if entity["kind"] not in ("original", "character"):
+            alias_groups[(entity["profile"] or "", entity["kind"], candidate_key(entity["name"]))].append(entity)
+    proposals = [{"profile": scope or None, "kind": kind, "comparison_key": key,
                   "variants": [{"id": e["id"], "name": e["name"],
                                 "track_count": e["track_count"]} for e in variants]}
-                 for (kind, key), variants in sorted(alias_groups.items()) if len(variants) > 1]
+                 for (scope, kind, key), variants in sorted(alias_groups.items()) if len(variants) > 1]
     signature_list = []
     for signature in signatures.values():
         signature["projects"] = sorted(signature["projects"])
         signature["file_count"] = len(signature["paths"])
         signature_list.append(signature)
-    signature_list.sort(key=lambda item: (-item["file_count"], item["raw"]))
+    signature_list.sort(key=lambda s: (-s["file_count"], s["profile"] or "", s["raw"]))
     summary = {
         "source_files": len(tracks),
+        "profile_file_counts": dict(sorted(Counter(t["profile"] or "unbound" for t in tracks).items())),
         "source_status": dict(Counter(t["source"]["status"] for t in tracks)),
         "unique_artist_signatures": len(signatures),
         "entities_by_kind": dict(Counter(e["kind"] for e in entity_list)),
-        "tracks_by_kind": {kind: sum(bool(t["memberships"][kind]) for t in tracks)
-                           for kind in KINDS},
+        "tracks_by_kind": {kind: sum(bool(t["memberships"][kind]) for t in tracks) for kind in KINDS},
         "tracks_with_review_items": sum(bool(t["issues"]) for t in tracks),
         "signature_review_count": sum(bool(s["issues"]) for s in signature_list),
         "alias_proposals": len(proposals),
         "issue_file_counts": dict(sorted(Counter(
             issue for track in tracks for issue in track["issues"]).items())),
     }
-    result = {"schema": 1, "approval": "pending_user_confirmation",
+    result = {"schema": 2, "decision": "offline_policy_confirmed_unknowns_preserved",
               "source_sha256": source_hash, "source_root": data["summary"]["root"],
               "source_generated_at": data["summary"]["generated_at"],
-              "rules": rules, "summary": summary, "entities": entity_list, "tracks": tracks}
+              "folder_bindings": bindings, "profiles": profiles,
+              "summary": summary, "entities": entity_list, "tracks": tracks}
     review = {
-        "approval": "pending_user_confirmation", "source_sha256": source_hash,
-        "alias_proposals_not_applied": proposals,
-        "untyped_entities": [e for e in entity_list if e["kind"] == "artist"],
+        "source_sha256": source_hash, "alias_proposals_not_applied": proposals,
+        "literal_entities": [e for e in entity_list if e["kind"] == "artist"],
         "signatures": signature_list,
-        "multiple_cv_relationships": [
-            {"character": role, "observed_actors": sorted(actors),
-             "note": "Observed differences may be legitimate recasts or spelling variants; not corrections."}
-            for role, actors in sorted(parser.pairs.items()) if len(actors) > 1],
-        "report_name_candidates_not_applied": data["name_variant_candidates"],
-        "report_role_candidates_not_applied": data["role_credit_variant_candidates"],
-        "source_review_files": [
-            {"path": t["source"]["path"], "issues": t["issues"]}
-            for t in tracks if t["issues"]],
+        "report_name_candidates_not_applied": data.get("name_variant_candidates", []),
+        "report_role_candidates_not_applied": data.get("role_credit_variant_candidates", []),
+        "source_review_files": [{"path": t["source"]["path"], "issues": t["issues"]}
+                                for t in tracks if t["issues"]],
     }
     verify(data, result)
     return result, review
@@ -361,8 +394,8 @@ def verify(data, result):
             if len(ids) != len(set(ids)):
                 raise AssertionError("Repeated membership")
             for key in ids:
-                if entities[key]["kind"] != kind:
-                    raise AssertionError("Entity kind mismatch")
+                if entities[key]["kind"] != kind or entities[key]["profile"] != track["profile"]:
+                    raise AssertionError("Entity kind or profile mismatch")
                 expected[key].add(track["id"])
     if any(set(e["track_ids"]) != expected[e["id"]] for e in entities.values()):
         raise AssertionError("Forward/reverse indexes disagree")
@@ -377,14 +410,13 @@ def write_outputs(output, result, review):
     for name, content in (("classification.json", result), ("review.json", review)):
         (output / name).write_text(json.dumps(content, ensure_ascii=False, indent=2) + "\n",
                                    encoding="utf-8")
-    lines = ["# \u6b4c\u624b\u5206\u7c7b\u7ed3\u679c\uff08\u5f85\u786e\u8ba4\uff09", "",
-             "- Input: report JSON snapshot only; no music files opened.",
-             "- Raw source records preserved exactly; no aliases applied automatically.",
-             "- Character/CV links are observations, not authoritative identity corrections.",
-             "- Group types in rules.json are draft proposals; no member inference.",
-             "- Album artist labels stay separate and are never split into song performers.",
-             "- Internal whitespace/NFKC variants are proposals only; untyped ARTIST is not proof of vocals.",
-             "- Review items are not error verdicts. Rows/files/identities are different counts.",
+    lines = ["# \u6b4c\u624b\u5206\u7c7b\u7ed3\u679c", "",
+             "- Offline derived index only; no audio, tags or APK modified.",
+             "- Folder-bound profiles only; unbound ARTIST values remain literal.",
+             "- Known character names merge across CV/spacing variants; no CV categories.",
+             "- Group-only credits never imply members; explicit known members are indexed.",
+             "- Unknown credits remain literal. Album artists never fill song performers.",
+             "- Counts overlap: one track can appear under multiple characters/groups.",
              "- Source SHA-256: `" + result["source_sha256"] + "`", "",
              "## \u7edf\u8ba1", "", "```json",
              json.dumps(result["summary"], ensure_ascii=False, indent=2), "```", "",
@@ -392,49 +424,60 @@ def write_outputs(output, result, review):
     for kind in KINDS:
         if kind == "original":
             continue
-        lines.extend(["### " + KIND_LABELS[kind], "", "| \u540d\u79f0 | \u6587\u4ef6\u6570 |",
-                      "| --- | ---: |"])
+        lines.extend(["### " + KIND_LABELS[kind], "",
+                      "| Profile | \u540d\u79f0 | \u6587\u4ef6\u6570 |", "| --- | --- | ---: |"])
         for entity in result["entities"]:
             if entity["kind"] == kind:
-                lines.append("| " + md(entity["name"]) + " | " + str(entity["track_count"]) + " |")
+                lines.append("| " + md(entity["profile"] or "unbound") + " | " +
+                             md(entity["name"]) + " | " + str(entity["track_count"]) + " |")
         lines.append("")
-    lines.extend(["## \u5f85\u786e\u8ba4\u5408\u5e76\uff08\u672a\u5e94\u7528\uff09", ""])
+    lines.extend(["## \u975e\u89d2\u8272\u522b\u540d\u5efa\u8bae\uff08\u672a\u5408\u5e76\uff09", ""])
     for proposal in review["alias_proposals_not_applied"]:
         lines.append("- " + KIND_LABELS[proposal["kind"]] + ": " +
                      " / ".join(v["name"] + " (" + str(v["track_count"]) + ")"
                                 for v in proposal["variants"]))
     (output / "classification-report.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    lines = ["# \u539f\u59cb\u7f72\u540d\u5206\u7c7b\u5bf9\u7167\uff08\u5f85\u786e\u8ba4\uff09", "",
-             "All distinct ARTIST strings, including unresolved entries; counts are source files.",
-             "Source strings use JSON quoting so trailing spaces remain visible.", "",
-             "| \u539f\u59cb\u7f72\u540d | \u6587\u4ef6\u6570 | \u5206\u7c7b\u7ed3\u679c | \u5f85\u786e\u8ba4 |",
-             "| --- | ---: | --- | --- |"]
+    lines = ["# \u539f\u59cb\u7f72\u540d\u5206\u7c7b\u5bf9\u7167", "",
+             "All ARTIST strings, including unresolved entries; counts are source files.",
+             "JSON quoting preserves visible trailing spaces. CV identities are not indexed.", "",
+             "| Profile | \u539f\u59cb\u7f72\u540d | \u6587\u4ef6\u6570 | \u5206\u7c7b\u7ed3\u679c | \u590d\u6838\u9879 |",
+             "| --- | --- | ---: | --- | --- |"]
     for signature in review["signatures"]:
         credits = list(dict.fromkeys(KIND_LABELS[c["kind"]] + ": " + c["name"]
                                      for c in signature["credits"]))
         lines.append("| " + " | ".join(md(value) for value in [
-            json.dumps(signature["raw"], ensure_ascii=False), signature["file_count"],
-            "; ".join(credits),
-            "; ".join(ISSUE_LABELS.get(issue, issue) for issue in signature["issues"]) or "-"]) + " |")
+            signature["profile"] or "unbound", json.dumps(signature["raw"], ensure_ascii=False),
+            signature["file_count"], "; ".join(credits),
+            "; ".join(ISSUE_LABELS.get(i, i) for i in signature["issues"]) or "-"]) + " |")
     (output / "signature-review.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def load_configuration(path):
+    bindings = json.loads(path.read_text(encoding="utf-8-sig"))
+    profiles = {b["config"]: json.loads((path.parent / b["config"]).read_text(encoding="utf-8-sig"))
+                for b in bindings["bindings"]}
+    validate_configuration(bindings, profiles)
+    return bindings, profiles
 
 
 def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument("source", type=Path)
+    cli.add_argument("--bindings", type=Path, default=HERE / "folder-bindings.json")
+    cli.add_argument("--output", type=Path, default=HERE / "output")
     args = cli.parse_args()
     raw = args.source.read_bytes()
     source_hash = hashlib.sha256(raw).hexdigest()
     data = json.loads(raw)
-    rules = json.loads((HERE / "rules.json").read_text(encoding="utf-8"))
-    result, review = classify(data, rules, source_hash)
-    write_outputs(HERE / "output", result, review)
-    verify(data, json.loads((HERE / "output" / "classification.json").read_text(encoding="utf-8")))
+    bindings, profiles = load_configuration(args.bindings)
+    result, review = classify(data, bindings, profiles, source_hash)
+    write_outputs(args.output, result, review)
+    verify(data, json.loads((args.output / "classification.json").read_text(encoding="utf-8")))
     if args.source.read_bytes() != raw:
         raise RuntimeError("Input snapshot changed during the run")
     print(json.dumps(result["summary"], ensure_ascii=False, indent=2))
     print("Source unchanged; source preservation and index consistency checks passed.")
-    print("Output:", HERE / "output")
+    print("Output:", args.output)
 
 
 if __name__ == "__main__":

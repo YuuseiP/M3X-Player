@@ -4,6 +4,13 @@
     const ui = window.M3X_UI, root = document.getElementById("m3x-concept"), audio = document.getElementById("audio");
     let state = nativeCommand("poll"), config = state.settings || {}, lines = [], active = -1, detailRequest = 0, page = "library", lastNotice = "";
     const $ = id => document.getElementById(id);
+    const classification = document.createElement("p");
+    classification.id = "builtin-classification"; classification.className = "m3x-caption";
+    const directories = document.getElementById("scan-directories");
+    directories.parentNode.insertBefore(classification, directories.nextSibling);
+    fetch("/api/library").then(response => response.json()).then(library => {
+      classification.textContent = `内置分类 · 已匹配 ${library.classification.matched} 首 · 其余保留原始歌手`;
+    });
     const configure = update => { const result = nativeCommand("configure", update); if (!result.error) config = result.settings; return result; };
     function setting(label, control) {
       const row = document.createElement("label"); row.className = "m3x-setting";

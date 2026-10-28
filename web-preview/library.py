@@ -250,6 +250,9 @@ class MusicLibrary:
             track = next((item.copy() for item in self.tracks if item["id"] == track_id), None)
         if not track:
             raise ValueError("歌曲不在当前曲库中")
+        return self.read_details(track)
+
+    def read_details(self, track):
         path = Path(track["path"])
         if track.get("schema") != 2:
             track = self.probe(path, path.stat())

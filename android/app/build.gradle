@@ -14,8 +14,8 @@ android {
         applicationId 'cn.yuusei.m3x'
         minSdk 25
         targetSdk 28
-        versionCode 1
-        versionName '0.2.0'
+        versionCode 3
+        versionName '0.4.0'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
     compileOptions {
@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation project(':decoder-flac')
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.media3:media3-exoplayer:1.5.1'
     implementation 'androidx.media3:media3-session:1.5.1'

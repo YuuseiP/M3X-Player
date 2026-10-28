@@ -7,3 +7,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "M3XPlayer"
 include(":app")
+include(":decoder-flac")

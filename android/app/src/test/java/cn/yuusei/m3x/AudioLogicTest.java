@@ -2,11 +2,130 @@ package cn.yuusei.m3x;
 
 import org.junit.Test;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import java.io.*;
 import java.util.*;
 import static org.junit.Assert.*;
 
 public class AudioLogicTest {
+    @Test public void contentHashKeepsExistingSongIds() throws Exception {
+        assertEquals("ba7816bf8f01cfea414140de", MusicLibrary.hash("abc"));
+        assertEquals(MusicLibrary.hash("abc"), MusicLibrary.hash(new byte[]{97, 98, 99}));
+        assertNotEquals(MusicLibrary.hash(new byte[]{1, 2}), MusicLibrary.hash(new byte[]{1, 3}));
+    }
+
+    @Test public void flacHeaderScanKeepsTagsAndCoverWithoutReadingAudio() throws Exception {
+        byte[] data = flacHeader(false);
+        ByteArrayOutputStream file = new ByteArrayOutputStream();
+        file.write(data); file.write(new byte[1024 * 1024]);
+        int[] bytesRead = {0};
+        InputStream source = new FilterInputStream(new ByteArrayInputStream(file.toByteArray())) {
+            @Override public int read(byte[] buffer, int offset, int count) throws IOException {
+                int n = super.read(buffer, offset, count); if (n > 0) bytesRead[0] += n; return n;
+            }
+        };
+        JSONObject track = new JSONObject().put("replayGain", new JSONObject());
+        assertArrayEquals(new byte[]{1, 2, 3}, TagReader.read(source, track));
+        assertEquals(96000, track.getInt("sampleRate")); assertEquals(24, track.getInt("bits"));
+        assertEquals(2, track.getInt("channels")); assertEquals(180, track.getDouble("duration"), 1e-9);
+        assertEquals("Title", track.getString("title")); assertEquals("Artist", track.getString("artist"));
+        assertEquals("Album", track.getString("album")); assertEquals("2026", track.getString("year"));
+        assertEquals("2/10", track.getString("trackNumber")); assertEquals("1", track.getString("discNumber"));
+        assertEquals("[00:01]Lyrics", track.getString("embeddedLyrics"));
+        assertEquals("-6 dB", track.getJSONObject("replayGain").getString("replaygain_track_gain"));
+        assertTrue("Only headers and buffered read-ahead, not the audio payload", bytesRead[0] <= data.length + 8192);
+    }
+
+    @Test public void incompleteFlacHeadersDoNotEnableFastScan() throws Exception {
+        byte[] valid = flacHeader(false);
+        byte[] oversized = Arrays.copyOf(valid, 46);
+        oversized[42] = (byte) 0x84; oversized[43] = (byte) 0x80; oversized[44] = 0; oversized[45] = 1;
+        byte[] zeroSamples = valid.clone();
+        zeroSamples[21] &= (byte) 0xf0; Arrays.fill(zeroSamples, 22, 26, (byte) 0);
+        byte[] invalidFrame = valid.clone(); invalidFrame[invalidFrame.length - 2] = 0;
+        for (byte[] bytes : new byte[][]{Arrays.copyOf(valid, 20), Arrays.copyOf(valid, valid.length - 2),
+                flacHeader(true), oversized, zeroSamples, invalidFrame}) {
+            JSONObject track = new JSONObject().put("replayGain", new JSONObject());
+            try { TagReader.read(new ByteArrayInputStream(bytes), track); fail("Malformed FLAC must fall back to the platform reader"); }
+            catch (IOException expected) {
+                assertFalse(track.has("duration"));
+                if (bytes == zeroSamples) {
+                    assertEquals(24, track.getInt("bits"));
+                    assertEquals(96000, track.getInt("sampleRate"));
+                }
+            }
+        }
+    }
+
+    private byte[] flacHeader(boolean invalidPicture) throws Exception {
+        ByteArrayOutputStream file = new ByteArrayOutputStream();
+        DataOutputStream output = new DataOutputStream(file);
+        output.writeBytes("fLaC");
+        byte[] info = new byte[34];
+        java.nio.ByteBuffer.wrap(info).putLong(10, (96000L << 44) | (1L << 41) | (23L << 36) | (96000L * 180));
+        flacBlock(output, 0, info);
+        String[] tags = {"TITLE=Title", "ARTIST=Artist", "ALBUM=Album", "DATE=2026", "TRACKNUMBER=2/10",
+            "DISCNUMBER=1", "LYRICS=[00:01]Lyrics", "REPLAYGAIN_TRACK_GAIN=-6 dB"};
+        ByteArrayOutputStream comments = new ByteArrayOutputStream();
+        DataOutputStream text = new DataOutputStream(comments);
+        text.writeInt(0); text.writeInt(Integer.reverseBytes(tags.length));
+        for (String tag : tags) { byte[] bytes = tag.getBytes("UTF-8"); text.writeInt(Integer.reverseBytes(bytes.length)); text.write(bytes); }
+        flacBlock(output, 4, comments.toByteArray());
+        ByteArrayOutputStream image = new ByteArrayOutputStream();
+        DataOutputStream picture = new DataOutputStream(image);
+        picture.writeInt(3); picture.writeInt(10); picture.writeBytes("image/jpeg"); picture.writeInt(0);
+        picture.writeInt(2); picture.writeInt(2); picture.writeInt(24); picture.writeInt(0);
+        picture.writeInt(invalidPicture ? 100 : 3); picture.write(new byte[]{1, 2, 3});
+        flacBlock(output, 0x86, image.toByteArray());
+        output.writeShort(0xfff8);
+        return file.toByteArray();
+    }
+    private void flacBlock(DataOutputStream output, int type, byte[] data) throws IOException {
+        output.writeByte(type); output.writeByte(data.length >>> 16); output.writeShort(data.length); output.write(data);
+    }
+
+    @Test public void largeFlacPicturesAndPaddingDoNotPreventImport() throws Exception {
+        byte[] valid = flacHeader(false);
+        ByteArrayOutputStream file = new ByteArrayOutputStream();
+        DataOutputStream output = new DataOutputStream(file);
+        output.write(valid, 0, 42);
+        flacBlock(output, 6, new byte[12 * 1024 * 1024 + 1]);
+        flacBlock(output, 1, new byte[5 * 1024 * 1024]);
+        output.write(valid, 42, valid.length - 42);
+        JSONObject track = new JSONObject().put("replayGain", new JSONObject());
+        assertArrayEquals(new byte[]{1, 2, 3}, TagReader.read(new ByteArrayInputStream(file.toByteArray()), track));
+        assertEquals(180, track.getDouble("duration"), 1e-9);
+        assertEquals("Title", track.getString("title"));
+    }
+
+    @Test public void wav32HeaderProvidesDurationRateAndChannelsWithoutPlatformCodecs() throws Exception {
+        ByteArrayOutputStream file = new ByteArrayOutputStream();
+        DataOutputStream out = new DataOutputStream(file);
+        out.writeBytes("RIFF"); out.writeInt(Integer.reverseBytes(44 + 10 + 768000 - 8)); out.writeBytes("WAVE");
+        out.writeBytes("JUNK"); out.writeInt(Integer.reverseBytes(1)); out.writeShort(0);
+        out.writeBytes("fmt "); out.writeInt(Integer.reverseBytes(16));
+        out.writeShort(Short.reverseBytes((short) 1)); out.writeShort(Short.reverseBytes((short) 2));
+        out.writeInt(Integer.reverseBytes(96000)); out.writeInt(Integer.reverseBytes(768000));
+        out.writeShort(Short.reverseBytes((short) 8)); out.writeShort(Short.reverseBytes((short) 32));
+        out.writeBytes("data"); out.writeInt(Integer.reverseBytes(768000)); out.write(new byte[8]);
+        JSONObject track = new JSONObject();
+        TagReader.read(new ByteArrayInputStream(file.toByteArray()), track);
+        assertEquals(32, track.getInt("bits")); assertEquals(96000, track.getInt("sampleRate"));
+        assertEquals(2, track.getInt("channels")); assertEquals(1, track.getDouble("duration"), 1e-9);
+        assertEquals(6144000, track.getLong("bitrate"));
+        byte[] corrupt = file.toByteArray(); corrupt[12 + 10 + 20] = 0;
+        try { TagReader.read(new ByteArrayInputStream(corrupt), new JSONObject()); fail("Invalid block alignment"); }
+        catch (IOException expected) {}
+    }
+
+    @Test public void cueResolvesRelativePathsAndWindowsSeparators() {
+        assertEquals("file:/storage/music/Disc/one.flac", CueParser.resolvePath("file:/storage/music", "Disc\\one.flac"));
+        assertEquals("file:/storage/music/one.flac", CueParser.resolvePath("file:/storage/music/Disc", "../one.flac"));
+        assertEquals("document:provider:card:Music/one.flac", CueParser.resolvePath("document:provider:card:Music", "./one.flac"));
+        assertEquals("", CueParser.resolvePath("music", "/other/one.flac"));
+        assertEquals("", CueParser.resolvePath("music", "C:\\one.flac"));
+    }
+
     @Test public void cueUsesFramesAndMultipleFiles() {
         List<CueParser.Entry> entries = CueParser.parse("PERFORMER \"Artist\"\nTITLE \"Album\"\nFILE \"disc one.flac\" WAVE\nTRACK 01 AUDIO\nTITLE \"First\"\nINDEX 01 00:00:00\nTRACK 02 AUDIO\nTITLE \"Second\"\nINDEX 01 01:02:37\nFILE \"disc two.flac\" WAVE\nTRACK 03 AUDIO\nINDEX 01 00:00:00");
         assertEquals(3, entries.size()); assertEquals("disc one.flac", entries.get(1).file);

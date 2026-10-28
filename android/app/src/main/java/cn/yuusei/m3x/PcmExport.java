@@ -6,9 +6,28 @@ import android.net.Uri;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import androidx.media3.decoder.flac.FlacDecoderJni;
+import androidx.media3.datasource.*;
+import androidx.media3.datasource.okhttp.OkHttpDataSource;
+import androidx.media3.extractor.DefaultExtractorInput;
+import androidx.media3.extractor.FlacStreamMetadata;
 
 final class PcmExport {
     static File decode(Context context, Uri uri, long startMs, long endMs, boolean reverse, String id) throws Exception {
+        try { return decodePlatform(context, uri, startMs, endMs, reverse, id); }
+        catch (Exception error) {
+            DefaultDataSource source = new DefaultDataSource(context, new OkHttpDataSource.Factory(NativeNetwork.HTTP).createDataSource());
+            boolean flac = false;
+            try (InputStream input = new DataSourceInputStream(source,
+                    new DataSpec.Builder().setUri(uri).setHttpRequestHeaders(NativeNetwork.headers(uri.toString())).build())) {
+                flac = new DataInputStream(input).readInt() == 0x664c6143;
+            } catch (IOException ignored) {}
+            if (!flac) throw error;
+            return decodeFlac(context, uri, startMs, endMs, reverse, id);
+        }
+    }
+
+    private static File decodePlatform(Context context, Uri uri, long startMs, long endMs, boolean reverse, String id) throws Exception {
         if (startMs < 0 || (endMs > 0 && endMs <= startMs)) throw new IllegalArgumentException("片段起止时间不正确");
         File directory = new File(context.getCacheDir(), "decoded"); directory.mkdirs();
         File target = new File(directory, id + (reverse ? "-reverse" : "-clip") + ".wav");
@@ -75,6 +94,56 @@ final class PcmExport {
             try {
                 if (decoder != null) { try { decoder.stop(); } catch (IllegalStateException ignored) {} decoder.release(); }
             } finally { extractor.release(); if (!complete) temporary.delete(); }
+        }
+        if (target.exists() && !target.delete()) throw new IOException("无法替换旧导出缓存");
+        if (!temporary.renameTo(target)) throw new IOException("无法保存导出结果");
+        return target;
+    }
+
+    private static File decodeFlac(Context context, Uri uri, long startMs, long endMs, boolean reverse, String id) throws Exception {
+        if (startMs < 0 || (endMs > 0 && endMs <= startMs)) throw new IllegalArgumentException("片段起止时间不正确");
+        File directory = new File(context.getCacheDir(), "decoded"); directory.mkdirs();
+        File target = new File(directory, id + (reverse ? "-reverse" : "-clip") + ".wav");
+        File temporary = new File(directory, id + "-export.tmp");
+        DefaultDataSource input = new DefaultDataSource(context, new OkHttpDataSource.Factory(NativeNetwork.HTTP).createDataSource());
+        FlacDecoderJni decoder = null;
+        boolean complete = false;
+        try (RandomAccessFile output = new RandomAccessFile(temporary, "rw")) {
+            output.setLength(44); output.seek(44);
+            long length = input.open(new DataSpec.Builder().setUri(uri).setHttpRequestHeaders(NativeNetwork.headers(uri.toString())).build());
+            decoder = new FlacDecoderJni();
+            decoder.setData(new DefaultExtractorInput(input, 0, length));
+            FlacStreamMetadata metadata = decoder.decodeStreamMetadata();
+            int channels = metadata.channels, rate = metadata.sampleRate, bytesPerSample = metadata.bitsPerSample / 8;
+            ByteBuffer frame = ByteBuffer.allocateDirect(metadata.getMaxDecodedFrameSize());
+            long deadline = android.os.SystemClock.elapsedRealtime() + 120000;
+            while (true) {
+                if (Thread.currentThread().isInterrupted()) throw new IOException("导出已取消");
+                if (android.os.SystemClock.elapsedRealtime() > deadline) throw new IOException("解码超时");
+                if (directory.getUsableSpace() < 16 * 1024 * 1024 || output.length() > 0xffffff00L) throw new IOException("缓存空间不足或片段超过 WAV 大小限制");
+                decoder.decodeSample(frame);
+                if (!frame.hasRemaining()) break;
+                long timeUs = decoder.getLastFrameTimestamp();
+                int frames = frame.remaining() / bytesPerSample / channels;
+                int from = (int) Math.min(frames, Math.max(0, (long) Math.ceil((startMs * 1000 - timeUs) * rate / 1e6)));
+                int to = endMs > 0 ? (int) Math.max(from, Math.min(frames, (long) Math.ceil((endMs * 1000 - timeUs) * rate / 1e6))) : frames;
+                byte[] pcm = new byte[(to - from) * channels * 2];
+                for (int i = 0; i < (to - from) * channels; i++) {
+                    int offset = (from * channels + i) * bytesPerSample;
+                    if (bytesPerSample == 1) { pcm[i * 2] = 0; pcm[i * 2 + 1] = (byte) ((frame.get(offset) & 255) - 128); }
+                    else { pcm[i * 2] = frame.get(offset + bytesPerSample - 2); pcm[i * 2 + 1] = frame.get(offset + bytesPerSample - 1); }
+                }
+                output.write(pcm);
+                if (endMs > 0 && timeUs + frames * 1e6 / rate >= endMs * 1000) break;
+            }
+            long size = output.length() - 44;
+            if (size == 0) throw new IOException("片段没有音频数据");
+            if (reverse) reverse(output, channels * 2);
+            output.seek(0); DsdDecoder.wavHeader(output, rate, channels, 16, size); output.getFD().sync();
+            complete = true;
+        } finally {
+            try { if (decoder != null) decoder.release(); }
+            finally { try { input.close(); } finally { if (!complete) temporary.delete(); } }
         }
         if (target.exists() && !target.delete()) throw new IOException("无法替换旧导出缓存");
         if (!temporary.renameTo(target)) throw new IOException("无法保存导出结果");
