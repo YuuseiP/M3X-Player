@@ -2,7 +2,7 @@
 
 ## 安装
 
-安装文件：`D:\CodeFile\M3X-Player\dist\Cheng-M3X-0.4.1.apk`。
+安装文件：`D:\CodeFile\M3X-Player\dist\Cheng-M3X-0.4.2.apk`。
 
 这是带本地发布签名的侧载 APK，不是 Google Play 发布包。面向原版 M3X 的 Android 7.1 / API 25，`minSdk=25`、`targetSdk=28`。不要求电脑预览服务、不捆绑测试歌曲、不登录账户。
 
@@ -12,6 +12,12 @@
 4. 软件内没有音量滑块；使用 M3X 实体音量键。声音处理、提交格式信息仍在播放页底部弹出面板。
 
 不需要把 Windows 上的 `D:\BaiduNetdiskDownload` 路径填进设备；设备只能访问自身存储及已授权的网络服务器。
+
+## 0.4.2 AIFF 播放修复
+
+- 补充 AIFF / 未压缩 AIFF-C（NONE、twos、sowt）容器提取器，实时读取 PCM，支持 8/16/24/32 位、进度拖动和现有 DSP；不生成整曲转换缓存。
+- 扫描直接读取 COMM / SSND 的时长、采样率、声道和位深，识别 `.aif`、`.aiff`、`.aifc`。
+- 真机测试与边界见 `AIFF.md`。测试歌曲仅在 androidTest APK 中。
 
 ## 0.4.1 启动、交互与动画
 

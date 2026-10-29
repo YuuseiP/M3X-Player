@@ -109,6 +109,11 @@ final class TagReader {
                 }
                 skip(input, length + (length & 1));
             }
+        } else if (new String(magic, "US-ASCII").equals("FORM")) {
+            AiffHeader h = AiffHeader.read(new SequenceInputStream(new ByteArrayInputStream(magic), input));
+            track.put("sampleRate", h.rate); track.put("channels", h.channels); track.put("bits", h.bits);
+            track.put("duration", h.frames / (double) h.rate);
+            track.put("bitrate", (long) h.rate * h.frameSize * 8);
         } else if (magic[0] == 'I' && magic[1] == 'D' && magic[2] == '3') {
             int version = magic[3]; input.readUnsignedByte(); int flags = input.readUnsignedByte();
             int size = sync(input.readInt());

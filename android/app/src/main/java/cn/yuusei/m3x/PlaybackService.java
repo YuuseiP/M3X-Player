@@ -144,7 +144,7 @@ public final class PlaybackService extends MediaSessionService {
         }.setEnableDecoderFallback(true).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         ResolvingDataSource.Factory sources = new ResolvingDataSource.Factory(new DefaultDataSource.Factory(this, new OkHttpDataSource.Factory(NativeNetwork.HTTP)),
             spec -> spec.withAdditionalHeaders(NativeNetwork.headers(spec.uri.toString())));
-        sourceFactory = new DefaultMediaSourceFactory(sources);
+        sourceFactory = new DefaultMediaSourceFactory(sources, AiffExtractor.factory());
         player = new ExoPlayer.Builder(this, renderers).setMediaSourceFactory(sourceFactory).build();
         player.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), true);
         player.setHandleAudioBecomingNoisy(true);

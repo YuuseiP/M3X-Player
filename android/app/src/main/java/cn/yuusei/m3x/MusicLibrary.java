@@ -36,7 +36,7 @@ public final class MusicLibrary {
     private final Map<String, Boolean> documentProviders = new ConcurrentHashMap<>();
     public final File artwork;
     public final File lyrics;
-    private final Set<String> formats = new HashSet<>(Arrays.asList("flac", "mp3", "wav", "m4a", "aac", "ogg", "opus", "aif", "aiff", "dsf", "dff"));
+    private final Set<String> formats = new HashSet<>(Arrays.asList("flac", "mp3", "wav", "m4a", "aac", "ogg", "opus", "aif", "aiff", "aifc", "dsf", "dff"));
     private boolean scanCandidate(String name) {
         String ext = extension(name);
         return formats.contains(ext) || ext.equals("cue") || ext.equals("wv");
