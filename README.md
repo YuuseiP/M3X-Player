@@ -1,14 +1,14 @@
 # 澄 · M3X Player
 
-面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和内置的歌手署名分类配置。当前本地版本为 **0.5.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
+面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和内置的歌手署名分类配置。当前版本为 **0.5.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
 
 本项目不是山灵官方产品。面向 Android 7.1 / API 25；0.4.0 已在 M3X 真机验证 FLAC 软解、扫描恢复和 96kHz PCM DIRECT 系统输出，尚未完成实听、DAC 模拟输出测量与长期播放验证。
 
 ## 下载与安装
 
-0.5.0 内置联网歌词搜索、逐曲标注和双语歌词标签固化，安装包在 `dist/Cheng-M3X-0.5.0.apk`，沿用发布签名，可覆盖安装；本次未创建或更新远程 Release。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`；歌词使用与恢复边界见 [歌词功能说明](android/LYRICS.md)。0.5.0 已在 M3X 真机通过 17 项歌词验收，并验证内置存储／SD 卡合成 AIFF 写入与完整恢复。
+0.5.0 内置联网歌词搜索、逐曲标注和双语歌词标签固化，安装包在 `dist/Cheng-M3X-0.5.0.apk`，沿用发布签名，可覆盖安装；发布版本为 [v0.5.0](../../releases/tag/v0.5.0)。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`；歌词使用与恢复边界见 [歌词功能说明](android/LYRICS.md)。0.5.0 已在 M3X 真机通过 17 项歌词验收，并验证内置存储／SD 卡合成 AIFF 写入与完整恢复。
 
-从 [0.4.0 Release](../../releases/tag/v0.4.0) 下载 `Cheng-M3X-0.4.0.apk`、`.apk.sha256` 校验文件与 `verification-0.4.0.json` 验证记录；本机构建输出位于 `dist/`。历史版本保留在 [Releases](../../releases) 中。仓库现已公开。
+从 [0.5.0 Release](../../releases/tag/v0.5.0) 下载 `Cheng-M3X-0.5.0.apk`、`.apk.sha256` 校验文件与 `verification-0.5.0.json` 验证记录；本机构建输出位于 `dist/`。历史版本保留在 [Releases](../../releases) 中。仓库现已公开。
 
 1. 将 APK 复制到设备，使用文件管理器打开并按系统提示允许安装。
 2. 首次启动授予读取音乐的权限，或在「我的 → 设置 → 添加扫描目录」授权音乐文件夹。

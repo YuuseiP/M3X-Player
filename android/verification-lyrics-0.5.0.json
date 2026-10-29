@@ -84,7 +84,7 @@
     "SAF replacement is not atomic; recovery journal and backup retained",
     "One-level undo in app-private storage, removed by uninstall",
     "Direct source endpoints may change or restrict access",
-    "No remote publication or push"
+    "Release v0.5.0 authorized after user acceptance; APK unchanged from physical-device verification"
   ],
   "physicalDevice": {
     "date": "2026-10-29",
