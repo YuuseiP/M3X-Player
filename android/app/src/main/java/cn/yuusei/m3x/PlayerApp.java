@@ -15,12 +15,14 @@ public final class PlayerApp extends Application {
     public final ExecutorService jobs = Executors.newSingleThreadExecutor();
     public MusicLibrary library;
     public PlaybackService playback;
+    public LyricsManager lyricManager;
     private Future<?> libraryReady;
 
     @Override public void onCreate() {
         super.onCreate();
         instance = this;
         library = new MusicLibrary(this, false);
+        lyricManager = new LyricsManager(this);
         libraryReady = jobs.submit(() -> library.load());
     }
 

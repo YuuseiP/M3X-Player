@@ -11,7 +11,14 @@ import java.util.Locale;
 final class TagReader {
     static byte[] read(Context context, Uri uri, JSONObject track) {
         try (InputStream input = context.getContentResolver().openInputStream(uri)) {
-            return read(input, track);
+            byte[] cover = read(input, track);
+            String name = track.optString("filename").toLowerCase(Locale.ROOT);
+            if (name.matches(".*\\.(aif|aiff|aifc|wav|m4a|mp4)$")) {
+                try { String text = ContainerLyrics.read(context.getContentResolver().openInputStream(uri));
+                    if (!text.isEmpty()) track.put("embeddedLyrics", text);
+                } catch (Exception ignored) { /* Optional lyrics do not invalidate playable audio. */ }
+            }
+            return cover;
         } catch (Exception ignored) { /* Optional tags must not make an otherwise playable song disappear. */ }
         return null;
     }

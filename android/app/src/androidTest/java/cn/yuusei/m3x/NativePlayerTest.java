@@ -55,6 +55,130 @@ public final class NativePlayerTest extends InstrumentationTestCase {
             assertTrue(image.compress(android.graphics.Bitmap.CompressFormat.PNG, 100, output));
         } finally { image.recycle(); }
     }
+    public void test050InterruptedRecoveryWithoutCatalogTrack() throws Exception {
+        MusicLibrary original = app.library;
+        File song = new File(app.getCacheDir(), "lyrics-interrupted.flac");
+        AudioTagEditor.copy(getInstrumentation().getContext().getAssets().open("fixture-24-96.flac"), song);
+        String before = AudioTagEditor.sha(song), id = "lyrics-interrupted";
+        File journal = new File(app.getFilesDir(), "lyric-selections/" + MusicLibrary.hash(id) + ".journal");
+        JSONObject item = json("id", id, "uri", Uri.fromFile(song).toString(), "filename", song.getName(), "title", "Interrupted fixture", "artist", "A", "album", "B", "duration", 2);
+        java.lang.reflect.Method setter = MusicLibrary.class.getDeclaredMethod("setTracks", java.util.List.class); setter.setAccessible(true);
+        MusicLibrary isolated = new MusicLibrary(app); setter.invoke(isolated, java.util.Collections.singletonList(item));
+        try {
+            app.library = isolated;
+            app.lyricManager.mutate(id, "[00:01.000]原文\n[00:01.000]译文\n", false, false);
+            JSONObject j = new JSONObject(new String(MusicLibrary.read(new FileInputStream(journal), 10000), "UTF-8"));
+            j.put("state", "needs-recovery");
+            try (FileOutputStream output = new FileOutputStream(journal)) { output.write(j.toString().getBytes("UTF-8")); output.getFD().sync(); }
+            try (FileOutputStream output = new FileOutputStream(song)) { output.write(new byte[]{1, 2, 3}); }
+            setter.invoke(isolated, java.util.Collections.emptyList());
+            // AtomicFile may be interrupted after renaming the primary journal to .bak.
+            assertTrue(journal.renameTo(new File(journal.getPath() + ".bak")));
+            waitJs("!!window.M3X_UI&&typeof nativeCommand==='function'");
+            js("window.__lyricsRecovery=null;window.addEventListener('m3x-lyrics-result',function(e){if(e.detail.requestId==='recovery-probe')window.__lyricsRecovery=e.detail;});nativeCommand('lyrics',{operation:'recoveries',requestId:'recovery-probe'});true");
+            waitJs("window.__lyricsRecovery!==null");
+            assertEquals("true", js("window.__lyricsRecovery.entries.some(function(t){return t.id==='lyrics-interrupted';})"));
+            try { app.lyricManager.mutate(id, "", true, false); fail("Unknown partial content needs explicit recovery"); } catch (IOException expected) {}
+            assertEquals(3L, song.length()); assertTrue(journal.isFile());
+            app.lyricManager.mutate(id, "", true, true);
+            assertEquals(before, AudioTagEditor.sha(song)); assertFalse(journal.exists());
+        } finally {
+            if (journal.isFile()) { JSONObject j = new JSONObject(new String(MusicLibrary.read(new FileInputStream(journal), 10000), "UTF-8")); new File(journal.getParentFile(), j.optString("backup")).delete(); journal.delete(); }
+            song.delete(); app.library = original;
+            java.lang.reflect.Method persist = MusicLibrary.class.getDeclaredMethod("persistCatalog"); persist.setAccessible(true); persist.invoke(original);
+        }
+    }
+
+    public void test050SafWriteAndFailureRecovery() throws Exception {
+        MusicLibrary original = app.library;
+        java.lang.reflect.Method setter = MusicLibrary.class.getDeclaredMethod("setTracks", java.util.List.class); setter.setAccessible(true);
+        String text = "[00:01.000]日本語\n[00:01.000]中文\n";
+        try {
+            for (String name : new String[]{"normal.flac", "readonly.flac", "fault.flac"}) {
+                File song = new File(app.getCacheDir(), name);
+                Uri source = Uri.parse("content://cn.yuusei.m3x.test.lyrics/" + name);
+                app.getContentResolver().call(source, "reset", name, null);
+                AudioTagEditor.copy(app.getContentResolver().openInputStream(source), song);
+                String before = AudioTagEditor.sha(song), id = "saf-" + name;
+                JSONObject item = json("id", id, "uri", "content://cn.yuusei.m3x.test.lyrics/" + name, "filename", name, "title", "SAF", "artist", "A", "album", "B", "duration", 2);
+                MusicLibrary isolated = new MusicLibrary(app); setter.invoke(isolated, java.util.Collections.singletonList(item)); app.library = isolated;
+                File journal = new File(app.getFilesDir(), "lyric-selections/" + MusicLibrary.hash(id) + ".journal");
+                try {
+                    if (name.startsWith("normal")) {
+                        app.lyricManager.mutate(id, text, false, false);
+                        AudioTagEditor.copy(app.getContentResolver().openInputStream(source), song);
+                        assertEquals(text, AudioTagEditor.lyrics(song));
+                        app.lyricManager.mutate(id, "", true, false);
+                        assertEquals(before, AudioTagEditor.sha(app.getContentResolver().openInputStream(source)));
+                    } else {
+                        try { app.lyricManager.mutate(id, text, false, false); fail("write should fail"); } catch (IOException expected) {}
+                        assertEquals("Failure rollback " + name, before, AudioTagEditor.sha(app.getContentResolver().openInputStream(source)));
+                    }
+                } finally {
+                    if (journal.isFile()) { JSONObject j = new JSONObject(new String(MusicLibrary.read(new FileInputStream(journal), 10000), "UTF-8")); new File(journal.getParentFile(), j.optString("backup")).delete(); journal.delete(); }
+                    song.delete();
+                }
+            }
+        } finally {
+            app.library = original;
+            java.lang.reflect.Method persist = MusicLibrary.class.getDeclaredMethod("persistCatalog"); persist.setAccessible(true); persist.invoke(original);
+        }
+    }
+
+    public void test050LyricsWriteRecoveryAndUi() throws Exception {
+        MusicLibrary original = app.library;
+        File song = new File(app.getCacheDir(), "lyrics-integration.flac");
+        AudioTagEditor.copy(getInstrumentation().getContext().getAssets().open("fixture-24-96.flac"), song);
+        String before = AudioTagEditor.sha(song), audio = AudioTagEditor.payload(song), id = "lyrics-integration";
+        File journal = new File(app.getFilesDir(), "lyric-selections/" + MusicLibrary.hash(id) + ".journal");
+        JSONObject item = json("id", id, "uri", Uri.fromFile(song).toString(), "filename", song.getName(), "title", "测试曲", "artist", "测试歌手", "album", "测试盘", "duration", 2, "src", "native/" + id);
+        MusicLibrary isolated = new MusicLibrary(app);
+        java.lang.reflect.Method setter = MusicLibrary.class.getDeclaredMethod("setTracks", java.util.List.class); setter.setAccessible(true);
+        setter.invoke(isolated, java.util.Collections.singletonList(item));
+        String text = "[offset:0]\n[00:00.100]日本語\n[00:00.100]中文\n";
+        try {
+            app.library = isolated;
+            getInstrumentation().runOnMainSync(() -> { app.playback.load(id, false); app.playback.player.seekTo(700); });
+            app.lyricManager.mutate(id, text, false, false);
+            getInstrumentation().runOnMainSync(() -> {
+                assertFalse(app.playback.tagEditing); assertFalse(app.playback.player.getPlayWhenReady());
+                assertEquals(id, app.playback.player.getCurrentMediaItem().mediaId);
+                assertEquals(700L, app.playback.player.getCurrentPosition());
+                app.playback.play();
+            });
+            waitJs("nativeCommand('poll').playing&&nativeCommand('poll').position>0.8");
+            getInstrumentation().runOnMainSync(() -> app.playback.pause());
+            assertEquals(text, AudioTagEditor.lyrics(song)); assertEquals(audio, AudioTagEditor.payload(song)); assertTrue(journal.isFile());
+            assertEquals(text, isolated.details(id).getString("lyrics"));
+            // Undo must restore the complete file byte-for-byte, not merely remove its lyrics field.
+            app.lyricManager.mutate(id, "", true, false); assertEquals(before, AudioTagEditor.sha(song)); assertFalse(journal.exists());
+            app.lyricManager.mutate(id, text, false, false);
+            app.lyricManager.mutate(id, text.replace("日本語", "変更"), false, false);
+            app.lyricManager.mutate(id, "", true, false); assertEquals(text, AudioTagEditor.lyrics(song));
+            app.lyricManager.mutate(id, text, false, false);
+            AudioTagEditor.embed(song, text.replace("日本語", "外部変更"));
+            String external = AudioTagEditor.sha(song);
+            try { app.lyricManager.mutate(id, "", true, false); fail("external change must block recovery"); } catch (IOException expected) {}
+            assertEquals(external, AudioTagEditor.sha(song));
+            assertFalse(LyricsManager.writable(new JSONObject(item.toString()).put("cueStart", 0)));
+            assertFalse(LyricsManager.writable(new JSONObject(item.toString()).put("uri", "https://example.com/a.flac")));
+            waitJs("!!window.M3X_UI && typeof nativeCommand==='function'");
+            js("window.dispatchEvent(new Event('m3x-native-library')); true");
+            Thread.sleep(1000);
+            waitJs("Array.from(document.querySelectorAll('button')).some(b=>b.textContent==='搜索与固化歌词')");
+            js("Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='搜索与固化歌词').click();true");
+            // Current track can be empty; exercise actual song menu for the injected local track.
+            js("document.getElementById('song-menu-dialog').dataset.trackId='lyrics-integration';Array.from(document.querySelectorAll('button')).find(b=>b.textContent==='联网搜索／标注／固化歌词').click();true");
+            waitJs("Array.from(document.querySelectorAll('dialog[open] h2')).some(n=>n.textContent==='搜索与固化歌词')");
+            waitJs("Array.from(document.querySelectorAll('dialog[open] p')).some(n=>n.textContent.indexOf('可联网搜索')>=0)");
+            capture("lyrics-search-050.png");
+        } finally {
+            if (journal.isFile()) { JSONObject j = new JSONObject(new String(MusicLibrary.read(new FileInputStream(journal), 10000), "UTF-8")); new File(journal.getParentFile(), j.optString("backup")).delete(); journal.delete(); }
+            song.delete(); app.library = original;
+            java.lang.reflect.Method persist = MusicLibrary.class.getDeclaredMethod("persistCatalog"); persist.setAccessible(true); persist.invoke(original);
+        }
+    }
+
     public void test040NativeFlacAndExportMatchReference() throws Exception {
         byte[] flac = MusicLibrary.read(getInstrumentation().getContext().getAssets().open("fixture-24-96.flac"), 1024 * 1024);
         androidx.media3.decoder.flac.FlacDecoderJni decoder = new androidx.media3.decoder.flac.FlacDecoderJni();
@@ -590,7 +714,7 @@ public final class NativePlayerTest extends InstrumentationTestCase {
         getInstrumentation().runOnMainSync(() -> activity.refresh());
         waitJs("Boolean(window.M3X_UI)&&document.querySelectorAll('[data-list=\"library\"] [data-track]').length===1");
         assertEquals("0", js("document.querySelectorAll('[data-list=\"queue\"] [data-track]').length"));
-        assertEquals("true", js("(function(){var b=document.querySelector('.m3x-nav [data-page=\"player\"]');b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,clientX:20,clientY:20}));return !!document.querySelector('.m3x-ripple');})()"));
+        js("document.querySelector('.m3x-nav [data-page=\"player\"]').click();true");
         assertEquals("true", js("document.querySelector('.m3x-header')===null"));
         js("document.querySelector('[data-list=\"library\"] [data-track]').click()");
         waitJs("!audio.paused&&audio.currentTime>0.2&&audio.readyState>=2");

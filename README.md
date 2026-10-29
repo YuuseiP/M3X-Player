@@ -1,12 +1,12 @@
 # 澄 · M3X Player
 
-面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和内置的歌手署名分类配置。当前本地版本为 **0.4.2**，Android 应用 ID 为 `cn.yuusei.m3x`。
+面向山灵 M3X 的本地音乐播放器，包含 Android 原生播放服务、共享网页界面和内置的歌手署名分类配置。当前本地版本为 **0.5.0**，Android 应用 ID 为 `cn.yuusei.m3x`。
 
 本项目不是山灵官方产品。面向 Android 7.1 / API 25；0.4.0 已在 M3X 真机验证 FLAC 软解、扫描恢复和 96kHz PCM DIRECT 系统输出，尚未完成实听、DAC 模拟输出测量与长期播放验证。
 
 ## 下载与安装
 
-0.4.2 修复 AIFF 播放，安装包在 `dist/Cheng-M3X-0.4.2.apk`，沿用发布签名，可覆盖安装；本次未创建或更新远程 Release。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`。
+0.5.0 内置联网歌词搜索、逐曲标注和双语歌词标签固化，安装包在 `dist/Cheng-M3X-0.5.0.apk`，沿用发布签名，可覆盖安装；本次未创建或更新远程 Release。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`；歌词使用与恢复边界见 [歌词功能说明](android/LYRICS.md)。
 
 从 [0.4.0 Release](../../releases/tag/v0.4.0) 下载 `Cheng-M3X-0.4.0.apk`、`.apk.sha256` 校验文件与 `verification-0.4.0.json` 验证记录；本机构建输出位于 `dist/`。历史版本保留在 [Releases](../../releases) 中。仓库现已公开。
 
@@ -28,6 +28,7 @@ if ($actual -ne $expected) { throw 'APK SHA-256 mismatch' }
 - 内置分类：保留已确认的 4,235 首歌曲归属与百科汉字名，离线匹配设备上的音乐；收藏和歌单集中在「我的」横向栏目中。
 - 原生播放：Media3 / ExoPlayer 后台服务、媒体通知、音频焦点、系统媒体键、倍速、睡眠定时和播放统计。
 - 声音处理：十段 EQ、32 段参数 EQ、ReplayGain、AutoEQ 参数导入、混响、压限和手动重采样。
+- 歌词：QQ／网易云联网检索、候选预览、曲名／歌手／专辑／整曲偏差标注、离线采用、双语 LRC 写入歌曲标签和完整文件恢复。
 - 扩展功能：LRC 歌词、WebDAV / DLNA 浏览播放、片段导出、倒放，以及设置与歌单备份。
 - 共享界面：浅色/深色主题、两种布局、头像裁切、个人资料和独立的本机网页预览。
 

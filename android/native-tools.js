@@ -2,7 +2,7 @@
   "use strict";
   function initialize() {
     const ui = window.M3X_UI, root = document.getElementById("m3x-concept"), audio = document.getElementById("audio");
-    let state = nativeCommand("poll"), config = state.settings || {}, lines = [], active = -1, detailRequest = 0, page = "library", lastNotice = "";
+    let state = nativeCommand("poll"), config = state.settings || {}, lines = [], active = -1, detailRequest = 0, page = "library", lastNotice = "", selectedLyrics = false;
     const $ = id => document.getElementById(id);
     const classification = document.createElement("p");
     classification.id = "builtin-classification"; classification.className = "m3x-caption";
@@ -185,11 +185,171 @@
       input.type = "url"; input.placeholder = "https://…/歌词.lrc"; input.setAttribute("aria-label", "歌词地址");
       content.append(input, button("读取并保存", () => nativeCommand("network", { operation: "lyrics", id: track.id, url: input.value })));
     }));
+
+    let lyricRequestId = 0;
+    function onlineLyrics(track) {
+      if (!track) { ui.toast("请先选择歌曲"); return; }
+      const content = sheet("搜索与固化歌词"), dialog = content.closest("dialog");
+      const context = document.createElement("p"); context.className = "m3x-caption";
+      context.textContent = "本地：" + track.title + " · " + (track.originalArtist || track.artist) + " · " + (track.album || "") + " · " + Number(track.duration || 0).toFixed(1) + " 秒";
+      const info = document.createElement("p"); info.className = "m3x-caption";
+      info.textContent = "联网查询会向所选来源发送搜索词和候选编号，不上传音频。请核对发行版本、演唱者和时长，再采用歌词。标注写入歌词头，不改歌曲本身的曲名／歌手／专辑标签。";
+      const query = document.createElement("input"); query.type = "search"; query.maxLength = 250; query.setAttribute("aria-label", "歌词搜索词");
+      query.value = (track.title + " " + (track.originalArtist || track.artist || "")).slice(0, 250);
+      const provider = document.createElement("select"); provider.setAttribute("aria-label", "歌词来源"); provider.append(new Option("QQ 音乐", "QQ"), new Option("网易云音乐", "NE"));
+      const status = document.createElement("p"); status.className = "m3x-caption"; status.setAttribute("role", "status");
+      const results = document.createElement("div"), editor = document.createElement("section"), preview = document.createElement("div");
+      results.className = "m3x-lyric-results";
+      editor.hidden = true; preview.className = "m3x-lyric-preview";
+      let doc = null, token = "", revision = "", busy = false, editable = false, sequence = 0, previewLines = [], selected = false;
+      const pending = new Map(), controls = [], fields = {};
+      function request(operation, args = {}) {
+        return new Promise((resolve, reject) => {
+          const requestId = "lyrics-" + Date.now() + "-" + (++lyricRequestId);
+          pending.set(requestId, { resolve, reject });
+          const result = nativeCommand("lyrics", { id: track.id, requestId, operation, ...args });
+          if (result.error) { pending.delete(requestId); reject(new Error(result.error)); }
+        });
+      }
+      const receive = event => {
+        const data = event.detail, p = pending.get(data.requestId);
+        if (!p || data.id !== track.id) return;
+        pending.delete(data.requestId); if (data.error) p.reject(new Error(data.error)); else p.resolve(data);
+      };
+      window.addEventListener("m3x-lyrics-result", receive);
+      function lock(value) { busy = value; controls.forEach(control => { control.disabled = value; }); }
+      async function run(action) {
+        if (busy) return;
+        lock(true); status.textContent = "处理中…";
+        try { await action(); } catch (error) {
+          status.textContent = error.message || "歌词操作失败";
+          try { const fresh = await request("state"); recovery.hidden = !fresh.recovery; recoveryWarning.hidden = !fresh.recovery || fresh.recovery === "complete"; } catch (_) {}
+        }
+        finally { lock(false); }
+      }
+      const search = button("联网搜索", () => run(async () => {
+        const seq = ++sequence; results.replaceChildren();
+        const data = await request("search", { provider: provider.value, query: query.value });
+        if (seq !== sequence || !dialog.open) return;
+        status.textContent = data.entries.length ? "找到 " + data.entries.length + " 个候选；点击预览，不会自动采用" : "没有找到候选；可调整搜索词或切换来源";
+        data.entries.forEach(row => {
+          const delta = row.durationMs ? " · " + (row.durationMs / 1000).toFixed(1) + " 秒（与本地差 " + (row.durationMs / 1000 - (track.duration || 0)).toFixed(1) + " 秒）" : " · 时长未知";
+          const candidate = button(row.title + " · " + row.artist + " · " + row.album + delta, () => run(async () => {
+            const data = await request("fetch", { token: row.token }); if (!dialog.open) return;
+            show(data.document, data.token, false); status.textContent = "候选预览；请填写标注并试听后采用";
+          }));
+          results.append(candidate); controls.push(candidate);
+        });
+      }));
+      controls.push(search, query, provider);
+      content.append(context, info, setting("来源", provider), setting("搜索词", query), search, status, results, editor);
+      const provenance = document.createElement("p"); provenance.className = "m3x-caption"; editor.append(provenance);
+      for (const [key, label] of [["title", "歌词曲名"], ["artist", "歌词歌手"], ["album", "歌词专辑"], ["offsetMs", "整曲偏差（毫秒，正数延后）"], ["note", "版本／试听备注"]]) {
+        const input = document.createElement("input"); input.type = key === "offsetMs" ? "number" : "text";
+        input.setAttribute("aria-label", label); input.maxLength = key === "note" ? 1000 : 500;
+        if (key === "offsetMs") { input.min = -30000; input.max = 30000; input.step = 100; }
+        fields[key] = input; controls.push(input); editor.append(setting(label, input));
+        input.addEventListener("input", () => { selected = false; renderPreview(); });
+      }
+      const fine = document.createElement("div");
+      for (const amount of [-200, 200]) { const adjust = button((amount > 0 ? "+" : "") + amount + " ms", () => {
+        fields.offsetMs.value = Math.min(30000, Math.max(-30000, Number(fields.offsetMs.value) + amount)); selected = false; renderPreview();
+      }); controls.push(adjust); fine.append(adjust); }
+      function annotations() {
+        const value = {}; Object.keys(fields).forEach(key => { value[key] = key === "offsetMs" ? Number(fields[key].value) : fields[key].value; });
+        if (!Number.isInteger(value.offsetMs) || Math.abs(value.offsetMs) > 30000) throw new Error("整曲偏差须为 ±30000 内的整数毫秒");
+        return value;
+      }
+      function renderPreview() {
+        if (!doc) return;
+        const shift = Number(fields.offsetMs.value) / 1000;
+        const original = M3X_TOOLS.parseLrc(doc.original || "").lines, translated = M3X_TOOLS.parseLrc(doc.translation || "").lines;
+        previewLines = original.concat(translated).map(line => ({ time: Math.max(0, line.time + shift), text: line.text })).sort((a, b) => a.time - b.time);
+        preview.replaceChildren();
+        previewLines.forEach(line => {
+          const entry = button(line.time.toFixed(2) + "  " + line.text, () => { if (ui.currentTrack()?.id === track.id) audio.currentTime = line.time; else ui.toast("请先播放此歌曲再跳转试听"); });
+          preview.append(entry);
+        });
+        provenance.textContent = (doc.provider === "NE" ? "网易云音乐" : "QQ 音乐") + " · ID " + doc.songId + (translated.some(line => line.text) ? " · 原文＋同步译文" : " · 无同步译文，不能双语固化") + (selected ? " · 已采用" : " · 预览／标注尚未保存");
+      }
+      function show(value, draftToken, isSelected) {
+        doc = value; token = draftToken || ""; revision = value.revision || ""; selected = isSelected; editor.hidden = false;
+        Object.keys(fields).forEach(key => { fields[key].value = value[key] || (key === "offsetMs" ? 0 : ""); }); renderPreview();
+        editor.scrollIntoView({ block: "start" });
+      }
+      async function save() {
+        if (!doc) throw new Error("请先预览候选");
+        const data = await request("select", { ...(token ? { token } : { revision }), annotations: annotations() });
+        show(data.document, "", true); window.dispatchEvent(new Event("m3x-lyrics-changed")); return data;
+      }
+      const adopt = button("采用歌词并保存逐曲标注", () => run(async () => { const data = await save(); status.textContent = data.message; }));
+      const embed = button("一键固化双语歌词到歌曲标签", () => run(async () => {
+        if (!editable) throw new Error("此歌曲仅支持搜索和采用；固化需要完整的本地受支持音频");
+        if (!doc || !M3X_TOOLS.parseLrc(doc.translation || "").lines.some(line => line.text)) throw new Error("此候选没有同步译文，请选择双语候选");
+        if (!selected) await save();
+        const data = await request("embed", { revision }); status.textContent = data.message; recovery.hidden = false;
+        window.dispatchEvent(new Event("m3x-lyrics-changed"));
+      }));
+      const warning = document.createElement("p"); warning.className = "m3x-caption";
+      warning.textContent = "固化会覆盖歌曲原有歌词字段，保留本次写入前的完整恢复副本，并暂停播放；标注偏差已计入双语时间戳。备份占用歌曲大小的空间，卸载应用会删除备份；请勿在其他应用同时编辑歌曲。";
+      const recovery = button("恢复本次固化前的完整歌曲文件", () => run(async () => {
+        const data = await request("restore", { recoverInterrupted: interrupted.checked }); status.textContent = data.message;
+        recovery.hidden = true; interrupted.checked = false; window.dispatchEvent(new Event("m3x-lyrics-changed"));
+        const fresh = await request("state"); if (fresh.document) show(fresh.document, "", true); else { doc = null; editor.hidden = true; }
+      })); recovery.hidden = true;
+      const interrupted = document.createElement("input"); interrupted.type = "checkbox";
+      const recoveryWarning = setting("仅限未完成写入：允许恢复副本覆盖当前文件（将覆盖外部修改）", interrupted); recoveryWarning.hidden = true;
+      controls.push(adopt, embed, recovery, interrupted);
+      editor.append(fine, adopt, warning, embed, preview); content.append(recoveryWarning, recovery);
+      const tick = event => {
+        if (!doc || event.detail.id !== track.id) return;
+        const time = event.detail.position, nodes = preview.children;
+        let active = -1; previewLines.forEach((line, i) => { if (line.time <= time) active = i; });
+        Array.from(nodes).forEach((node, i) => node.setAttribute("aria-current", String(i === active || active >= 0 && previewLines[i].time === previewLines[active].time)));
+      };
+      window.addEventListener("m3x-native-state", tick);
+      dialog.addEventListener("close", () => { ++sequence; window.removeEventListener("m3x-lyrics-result", receive); window.removeEventListener("m3x-native-state", tick); pending.forEach(p => p.reject(new Error("面板已关闭"))); pending.clear(); });
+      run(async () => {
+        const data = await request("state"); if (!dialog.open) return;
+        editable = data.writable; if (data.document) show(data.document, "", true);
+        recovery.hidden = !data.recovery;
+        recoveryWarning.hidden = !data.recovery || data.recovery === "complete";
+        status.textContent = data.recovery && data.recovery !== "complete" ? "检测到未完成的写入，请先恢复文件" : "可联网搜索；已采用的歌词和标注可离线使用";
+      });
+    }
+
+    settings.append(button("歌词固化恢复记录", () => {
+      const content = sheet("歌词固化恢复记录"), status = document.createElement("p"); status.className = "m3x-caption"; status.textContent = "读取恢复记录…"; content.append(status);
+      const requestId = "recoveries-" + Date.now();
+      const receive = event => {
+        if (event.detail.requestId !== requestId) return;
+        window.removeEventListener("m3x-lyrics-result", receive);
+        if (!content.closest("dialog")) return;
+        status.textContent = event.detail.error || "完整副本保存在应用内；卸载会删除。歌曲扫描后消失时，也可以从这里进入恢复。";
+        const entries = event.detail.entries || [];
+        if (!entries.length && !event.detail.error) status.textContent = "暂无固化恢复记录";
+        entries.forEach(item => content.append(button(item.title + " · " + (item.state === "complete" ? "可撤销固化" : "写入未完成"), () => {
+          onlineLyrics(ui.tracks.find(track => track.id === item.id) || { id: item.id, title: item.title, originalArtist: "恢复记录", album: item.uri });
+        })));
+      };
+      window.addEventListener("m3x-lyrics-result", receive);
+      content.closest("dialog").addEventListener("close", () => window.removeEventListener("m3x-lyrics-result", receive));
+      nativeCommand("lyrics", { operation: "recoveries", requestId });
+    }));
+    songMenu.append(button("联网搜索／标注／固化歌词", () => onlineLyrics(ui.tracks.find(track => track.id === $("song-menu-dialog").dataset.trackId))));
+    $("lyrics-lines").parentNode.insertBefore(button("搜索与固化歌词", () => onlineLyrics(ui.currentTrack())), $("lyrics-lines"));
+    window.addEventListener("m3x-lyrics-changed", () => lyrics());
+
     function lyrics() {
       const request = ++detailRequest, track = ui.currentTrack();
       if (!track) return;
       fetch("/api/track?id=" + encodeURIComponent(track.id)).then(response => response.json()).then(details => {
         if (request !== detailRequest) return;
+        if (details.lyricWarning) ui.toast(details.lyricWarning);
+        selectedLyrics = !!details.lyricSelection;
+        $("lyric-offset").disabled = selectedLyrics;
+        if (selectedLyrics) { $("lyric-offset").value = 0; $("lyric-offset-label").value = "逐曲标注已应用"; }
+        else { $("lyric-offset").value = config.lyricOffset || 0; $("lyric-offset-label").value = $("lyric-offset").value + " 秒"; }
         const parsed = M3X_TOOLS.parseLrc(details.lyrics || ""); lines = parsed.lines; active = -1; $("lyrics-lines").replaceChildren();
         if (!lines.length) { const p = document.createElement("p"); p.className = "m3x-plain-lyrics"; p.textContent = parsed.plain || "暂无本地歌词"; $("lyrics-lines").append(p); }
         lines.forEach((line, index) => {

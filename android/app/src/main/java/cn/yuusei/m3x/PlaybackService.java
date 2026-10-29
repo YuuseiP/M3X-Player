@@ -242,6 +242,7 @@ public final class PlaybackService extends MediaSessionService {
     }
 
     public void syncQueue(JSONObject ui) {
+        if (tagEditing) return;
         if (player == null) return;
         JSONArray queue = ui.optJSONArray("queue"), hidden = ui.optJSONArray("hidden");
         String selection = String.valueOf(queue) + ":" + String.valueOf(hidden) + ":" + ui.optBoolean("queueCleared");
@@ -284,11 +285,31 @@ public final class PlaybackService extends MediaSessionService {
         player.setRepeatMode(mode == 2 ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_ALL);
     }
 
+    volatile boolean tagEditing;
+    private List<MediaItem> tagQueue;
+    private int tagIndex;
+    private long tagPosition;
+    void holdForTags() {
+        if (tagEditing || preparingFile || restoring) throw new IllegalStateException("播放源正在准备，请稍后固化");
+        tagQueue = new ArrayList<>();
+        for (int i = 0; i < player.getMediaItemCount(); i++) tagQueue.add(player.getMediaItemAt(i));
+        tagIndex = Math.max(0, player.getCurrentMediaItemIndex()); tagPosition = Math.max(0, player.getCurrentPosition());
+        tagEditing = true; fileRequest++; conversionPlay = false;
+        player.pause(); player.stop(); player.clearMediaItems();
+    }
+    void releaseTags() {
+        if (!tagEditing) return;
+        tagEditing = false;
+        if (!tagQueue.isEmpty()) player.setMediaItems(tagQueue, Math.min(tagIndex, tagQueue.size() - 1), tagPosition);
+        tagQueue = null; queueLibrary = null;
+        // Deliberately leave paused: the user can inspect the write or recovery result before playing.
+    }
     public JSONObject currentTrack() {
         return player == null || player.getCurrentMediaItem() == null ? null : app.library.track(player.getCurrentMediaItem().mediaId);
     }
 
     public void load(String id, boolean play) {
+        if (tagEditing) return;
         if (restoring) throw new IllegalStateException("曲库正在加载，请稍候");
         cancelWholeSongTimer();
         conversionPlay = play;
@@ -333,6 +354,7 @@ public final class PlaybackService extends MediaSessionService {
     }
 
     public void play() {
+        if (tagEditing) return;
         conversionPlay = true;
         if (!player.getPlayWhenReady() && settings.optBoolean("fades")) { manualGain = 0; ramp(1, false); }
         else if (pauseAfterRamp) ramp(1, false);
@@ -348,6 +370,7 @@ public final class PlaybackService extends MediaSessionService {
         app.main.removeCallbacks(fadeTick); app.main.post(fadeTick);
     }
     public void next(boolean previous) {
+        if (tagEditing) return;
         cancelWholeSongTimer();
         if (previous) player.seekToPreviousMediaItem(); else player.seekToNextMediaItem();
         play();
@@ -367,6 +390,7 @@ public final class PlaybackService extends MediaSessionService {
 
     public void configure(JSONObject update) throws Exception { configure(update, false); }
     private void configure(JSONObject update, boolean replace) throws Exception {
+        if (tagEditing) throw new IllegalStateException("歌词正在固化，请稍后更改播放设置");
         JSONObject old = settings; JSONObject next = replace ? new JSONObject() : new JSONObject(settings.toString());
         Iterator<String> keys = update.keys(); while (keys.hasNext()) { String key = keys.next(); next.put(key, update.get(key)); }
         double speed = next.optDouble("rate", 1);

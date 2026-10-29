@@ -1,0 +1,1 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"><application><provider android:name="cn.yuusei.m3x.LyricsTestProvider" android:authorities="cn.yuusei.m3x.test.lyrics" android:exported="true" /></application></manifest>

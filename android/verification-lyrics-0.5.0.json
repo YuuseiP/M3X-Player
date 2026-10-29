@@ -1,0 +1,89 @@
+{
+  "version": "0.5.0",
+  "versionCode": 6,
+  "date": "2026-10-29",
+  "branch": "codex/lyrics-search-tags",
+  "artifact": {
+    "path": "dist/Cheng-M3X-0.5.0.apk",
+    "bytes": 36949851,
+    "sha256": "cea5f286f79fe42012c4d77ae5d88d87ab836655f93768d63f052ba13a09ee46",
+    "signatureSchemeV2": true,
+    "certificateSha256": "fa4e1da7f80a935547b9d61c9cc83c9a9fb138dcb91e292bbbe71bb1d88dde30",
+    "sameCertificateAs042": true
+  },
+  "environment": {
+    "device": "emulator-5580",
+    "android": "7.1.1",
+    "api": 25,
+    "abi": "x86_64",
+    "realDeviceTested": false,
+    "userAudioModified": false
+  },
+  "checks": {
+    "jvm": {
+      "tests": 23,
+      "failures": 0,
+      "errors": 0
+    },
+    "lintDebug": {
+      "errors": 0,
+      "warnings": 5
+    },
+    "releaseBuild": "passed",
+    "releaseInstrumentation": {
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "includes": [
+        "11 synthetic format roundtrips",
+        "local write/rewrite/full-file undo/external change refusal",
+        "SAF normal/readonly/truncate-failure rollback",
+        "interrupted restore after catalog removal",
+        "QQ and NetEase online fetch",
+        "QQ UI search/annotate/adopt/embed/undo",
+        "scan recovery and playback",
+        "background playback/DSP/queue"
+      ]
+    },
+    "finalRecoveryPatchRegression": {
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "includes": [
+        "AtomicFile .journal.bak-only inventory",
+        "queue ID and 700ms position preserved, paused then resumes",
+        "local/SAF recovery",
+        "online UI end-to-end"
+      ]
+    }
+  },
+  "formats": [
+    "FLAC",
+    "AIFF8",
+    "AIFF16",
+    "AIFF24",
+    "AIFF32",
+    "AIFC sowt",
+    "AAC M4A",
+    "ALAC16 M4A",
+    "ALAC24 M4A",
+    "MP3 with cover and ReplayGain",
+    "WAV INFO"
+  ],
+  "dependencySources": {
+    "jaudiotagger": {
+      "version": "3.0.1",
+      "file": "jaudiotagger-3.0.1-sources.jar",
+      "sha256": "d9c79a145944e6bc37579403843c9da84cd81459e42c9877351802ee284f5858"
+    }
+  },
+  "limits": [
+    "No physical M3X tag write test",
+    "No real music changed",
+    "No claim of recording match accuracy from search or duration",
+    "SAF replacement is not atomic; recovery journal and backup retained",
+    "One-level undo in app-private storage, removed by uninstall",
+    "Direct source endpoints may change or restrict access",
+    "No remote publication or push"
+  ]
+}

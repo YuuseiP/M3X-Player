@@ -101,6 +101,8 @@ css += `
 #m3x-concept .m3x-screen[data-layout=catalog] .m3x-song{min-height:80px}
 #m3x-concept .m3x-screen[data-layout=catalog] .m3x-player-tools{clear:both}
 }`;
+css += '\n#m3x-concept .m3x-lyric-preview{max-height:320px;overflow:auto;margin-top:16px}\n#m3x-concept .m3x-lyric-preview [aria-current=true]{color:var(--m3x-accent);font-weight:bold}\n#m3x-concept .m3x-sheet input[type=search],#m3x-concept .m3x-sheet input[type=text]{min-width:0;width:65%;max-width:65%;height:44px;padding:8px;border:1px solid var(--m3x-border);border-radius:6px;background:var(--m3x-surface);color:var(--m3x-fg);font:inherit}\n';
+css += '\n#m3x-concept .m3x-lyric-results{max-height:220px;overflow:auto}\n';
 css = css.replace(/#([0-9a-f]{8}|[0-9a-f]{4})\b/gi, (_, hex) => {
   if (hex.length === 4) hex = [...hex].map(value => value + value).join("");
   return `rgba(${parseInt(hex.slice(0, 2), 16)},${parseInt(hex.slice(2, 4), 16)},${parseInt(hex.slice(4, 6), 16)},${(parseInt(hex.slice(6), 16) / 255).toFixed(4)})`;

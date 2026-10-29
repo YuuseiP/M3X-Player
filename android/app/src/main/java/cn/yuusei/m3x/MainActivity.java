@@ -190,6 +190,10 @@ public final class MainActivity extends Activity {
     }
     @Override protected void onDestroy() { if (web != null) { web.removeJavascriptInterface("M3XNative"); web.destroy(); } super.onDestroy(); }
 
+    public void lyricsResult(JSONObject result) {
+        runOnUiThread(() -> { if (web != null && !isDestroyed()) web.evaluateJavascript(
+            "window.dispatchEvent(new CustomEvent('m3x-lyrics-result',{detail:" + result.toString() + "}))", null); });
+    }
     public final class Bridge {
         @JavascriptInterface public String bootstrap() {
             return json("ui", app.settings("ui"), "tools", app.settings("tools"), "audio", app.settings("audio")).toString();
@@ -232,6 +236,7 @@ public final class MainActivity extends Activity {
                         case "ui-save": app.save("ui", data); service.syncQueue(data); return "{}";
                         case "tools-save": app.save("tools", data); return "{}";
                         case "directories": directories(); break;
+                        case "lyrics": app.lyricManager.handle(MainActivity.this, data); break;
                         case "network": NativeNetwork.handle(MainActivity.this, data); break;
                         case "external-edit": externalEdit(data); break;
                         case "system-eq": {

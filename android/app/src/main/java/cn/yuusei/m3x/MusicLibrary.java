@@ -29,6 +29,20 @@ public final class MusicLibrary {
     private volatile Map<String, JSONObject> byId = Collections.emptyMap();
     private volatile JSONObject scan = json("running", false);
     private volatile boolean cancelled;
+    private boolean tagWriting;
+    synchronized void beginTagWrite() throws IOException {
+        if (tagWriting || scan.optBoolean("running")) throw new IOException("曲库正在扫描或写入，请完成后重试");
+        tagWriting = true;
+    }
+    synchronized void endTagWrite() { tagWriting = false; }
+    synchronized void lyricsWritten(String id, String text, long bytes) throws Exception {
+        JSONObject old = track(id);
+        if (old == null) return;
+        JSONObject next = new JSONObject(old.toString()); next.put("embeddedLyrics", text).put("bytes", bytes).put("modified", -1);
+        List<JSONObject> list = new ArrayList<>(tracks);
+        for (int i = 0; i < list.size(); i++) if (list.get(i).optString("id").equals(id)) list.set(i, next);
+        setTracks(list); persistCatalog();
+    }
     private final AtomicFile catalog;
     private final AtomicFile scanReport;
     private ArtistClassification classification;
@@ -197,6 +211,7 @@ public final class MusicLibrary {
     public void stop() { cancelled = true; }
 
     public synchronized void start() {
+        if (tagWriting) throw new IllegalStateException("歌词正在固化，请稍后扫描");
         if (scan.optBoolean("running")) return;
         cancelled = false;
         scan = json("running", true, "phase", "discovering", "processed", 0, "total", 0, "failed", 0, "skipped", 0);
@@ -560,7 +575,11 @@ public final class MusicLibrary {
         Uri sidecar = sibling(Uri.parse(track.getString("uri")), Collections.singletonList(filename));
         String text = "";
         File downloaded = new File(lyrics, id + ".lrc");
-        if (downloaded.isFile()) text = decode(read(new FileInputStream(downloaded), 2 * 1024 * 1024));
+        JSONObject selected = null;
+        try { selected = app.lyricManager.selected(id); }
+        catch (Exception error) { result.put("lyricWarning", "已采用歌词不可读取，请在搜索面板重新选择"); }
+        if (selected != null) { text = LyricsDocument.lrc(selected, true); result.put("lyricSelection", selected); }
+        else if (downloaded.isFile()) text = decode(read(new FileInputStream(downloaded), 2 * 1024 * 1024));
         else if (sidecar != null) text = decode(read(app.getContentResolver().openInputStream(sidecar), 2 * 1024 * 1024));
         else text = track.optString("embeddedLyrics");
         result.remove("embeddedLyrics"); result.put("lyrics", text);
