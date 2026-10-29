@@ -5,6 +5,7 @@ import org.json.*;
 import java.io.*;
 import static cn.yuusei.m3x.PlayerApp.json;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 final class NativeDocuments {
     static void perform(MainActivity activity, String action, Uri uri, JSONObject data) throws Exception {
         PlayerApp app = PlayerApp.instance;

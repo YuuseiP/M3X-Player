@@ -14,8 +14,8 @@ android {
         applicationId 'cn.yuusei.m3x'
         minSdk 25
         targetSdk 28
-        versionCode 3
-        versionName '0.4.0'
+        versionCode 4
+        versionName '0.4.1'
         testInstrumentationRunner 'android.test.InstrumentationTestRunner'
     }
     compileOptions {
@@ -44,6 +44,9 @@ android {
 
 dependencies {
     implementation project(':decoder-flac')
+    def ffmpegDecoder = rootProject.file('.tools/media3-decoder-ffmpeg.aar')
+    if (!ffmpegDecoder.isFile()) throw new GradleException('Run prepare-ffmpeg.ps1 before building.')
+    implementation files(ffmpegDecoder)
     implementation 'androidx.core:core:1.13.1'
     implementation 'androidx.media3:media3-exoplayer:1.5.1'
     implementation 'androidx.media3:media3-session:1.5.1'

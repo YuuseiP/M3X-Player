@@ -9,7 +9,7 @@ import java.util.*;
 final class ArtistClassification {
     private final Map<String, JSONObject> entities = new LinkedHashMap<>();
     private final Map<String, JSONObject> paths = new HashMap<>();
-    private final Map<String, JSONObject> artists = new HashMap<>();
+    private final Map<String, JSONObject> artists = new java.util.concurrent.ConcurrentHashMap<>();
     private final JSONObject tags;
     final String baseline, folderName;
     final int trackCount;
@@ -34,7 +34,11 @@ final class ArtistClassification {
     }
 
     JSONObject apply(JSONObject source, String locator) throws Exception {
-        JSONObject track = new JSONObject(source.toString());
+        JSONObject track = new JSONObject();
+        for (Iterator<String> keys = source.keys(); keys.hasNext();) {
+            String key = keys.next();
+            track.put(key, source.get(key));
+        }
         String raw = track.optString("originalArtist", track.optString("artist", "未知歌手"));
         String path = locator.replace('\\', '/').replaceFirst("^[^/]*:", "");
         JSONObject known = null;
@@ -61,7 +65,10 @@ final class ArtistClassification {
         }
         if (credits.length() == 0) {
             JSONObject artist = artists.get(raw);
-            if (artist == null) artist = new JSONObject().put("id", "artist-raw-" + identity(raw)).put("kind", "artist").put("name", raw);
+            if (artist == null) {
+                artist = new JSONObject().put("id", "artist-raw-" + identity(raw)).put("kind", "artist").put("name", raw);
+                artists.put(raw, artist);
+            }
             credits.put(artist);
         }
         List<String> names = new ArrayList<>();

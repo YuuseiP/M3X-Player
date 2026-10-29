@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.*;
 import static cn.yuusei.m3x.PlayerApp.json;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 final class NativeNetwork {
     static final OkHttpClient HTTP = new OkHttpClient.Builder().connectTimeout(12, TimeUnit.SECONDS).readTimeout(20, TimeUnit.SECONDS)
         .followRedirects(false).build();

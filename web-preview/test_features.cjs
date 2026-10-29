@@ -239,6 +239,7 @@ require("node:fs").mkdirSync(shots, { recursive: true });
     await nav("player").click();
     await screen.locator('[data-list="upcoming"] [data-track]').first().click();
     await page.waitForFunction(() => !audio.paused && audio.currentSrc.endsWith("02.flac"));
+    await screen.locator('.m3x-transport [data-page="queue"]').click();
     assert.equal(await screen.locator('[data-list="queue"] [data-track]').count(), 10, "Upcoming selection preserves full queue");
     assert.deepEqual(errors, []);
     console.log("PASS: paused next autoplays, mode icons/toasts, playlist create/add/dedupe/rename/remove/queue/persistence, inline nickname, avatar crop/drag/compress/cancel/persistence, fixed-folder UI, real scan, compact layouts.");

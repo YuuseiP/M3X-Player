@@ -10,6 +10,18 @@
     return result;
   };
   window.fetch = async (path, options = {}) => {
+    if (!options.body) {
+      const data = await new Promise((resolve, reject) => {
+        const request = new XMLHttpRequest();
+        request.open("GET", path.replace(/^\/api\//, "/native-api/"));
+        request.onload = () => {
+          try { resolve(JSON.parse(request.responseText)); } catch (error) { reject(error); }
+        };
+        request.onerror = () => reject(new Error("无法读取本地曲库"));
+        request.send();
+      });
+      return { ok: !data.error, status: data.error ? 400 : 200, json: async () => data };
+    }
     const data = JSON.parse(M3XNative.request(path, options.body || ""));
     return { ok: !data.error, status: data.error ? 400 : 200, json: async () => data };
   };
@@ -24,8 +36,6 @@
     };
   }
   if (!window.ResizeObserver) window.ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
-  // shortcut: Android 7.1 lacks animation completion APIs; sheets close immediately on that WebView.
-  if (!Element.prototype.getAnimations) Element.prototype.getAnimations = () => [];
   if (!Element.prototype.scrollIntoView) Element.prototype.scrollIntoView = function () {};
   if (!window.crypto.randomUUID) window.crypto.randomUUID = () => {
     const values = new Uint8Array(16); crypto.getRandomValues(values);
@@ -52,6 +62,29 @@
   }
   function install() {
     dialogs();
+    const root = document.getElementById("m3x-concept");
+    let press = null;
+    root.addEventListener("touchstart", event => {
+      const button = event.target.closest("button"), point = event.touches[0];
+      press = event.touches.length === 1 && button && !button.disabled
+        ? { button, id: point.identifier, x: point.clientX, y: point.clientY, time: Date.now() } : null;
+    }, { passive: true });
+    root.addEventListener("touchmove", event => {
+      const point = event.touches[0];
+      if (press && (!point || Math.abs(point.clientX - press.x) > 8 || Math.abs(point.clientY - press.y) > 8)) press = null;
+    }, { passive: true });
+    root.addEventListener("touchcancel", () => { press = null; }, { passive: true });
+    root.addEventListener("touchend", event => {
+      const tap = press; press = null;
+      const point = event.changedTouches[0];
+      if (!tap || !point || point.identifier !== tap.id || Date.now() - tap.time > 500
+          || tap.button.disabled || event.target.closest("button") !== tap.button) return;
+      // The M3X system still delays synthesized mouse clicks, even with touch-action: manipulation.
+      event.preventDefault();
+      tap.button.dispatchEvent(new MouseEvent("click", {
+        bubbles: true, cancelable: true, view: window, detail: 1, clientX: point.clientX, clientY: point.clientY
+      }));
+    }, { passive: false });
     if (!window.PointerEvent) {
       const stage = document.getElementById("crop-stage");
       if (!stage.setPointerCapture) stage.setPointerCapture = () => {};
@@ -84,17 +117,22 @@
       defaultPlaybackRate: { get: () => rate, set: value => { rate = Number(value); } },
       preservesPitch: { get: () => pitch, set: value => { pitch = !!value; nativeCommand("configure", { rate, preservePitch: pitch }); } }
     });
-    audio.load = () => { const id = source.split("/").pop(); if (id) nativeCommand("load", { id, play: false }); };
+    audio.load = () => { const id = source.split("/").pop(); if (id) snapshot = nativeCommand("load", { id, play: false }); };
     audio.play = async () => {
-      let state = nativeCommand("poll");
       const id = source.split("/").pop();
-      if (id && id !== state.id) nativeCommand("load", { id, play: true });
-      else nativeCommand("play");
-      snapshot = nativeCommand("poll");
+      snapshot = id && id !== snapshot.id ? nativeCommand("load", { id, play: true }) : nativeCommand("play");
+      oldPlaying = !snapshot.paused;
+      send(snapshot.paused ? "pause" : "play"); send("timeupdate");
     };
-    audio.pause = () => { nativeCommand("pause"); snapshot = nativeCommand("poll"); };
+    audio.pause = () => {
+      snapshot = nativeCommand("pause"); oldPlaying = !snapshot.paused;
+      send(snapshot.paused ? "pause" : "play");
+    };
+    let pollTimer;
     const poll = () => {
+      clearTimeout(pollTimer);
       if (document.hidden) return;
+      pollTimer = setTimeout(poll, snapshot.paused ? 1200 : 400);
       const state = nativeCommand("poll");
       if (!state || state.error === "播放服务正在启动") return;
       snapshot = state;
@@ -112,7 +150,7 @@
       send("timeupdate");
       window.dispatchEvent(new CustomEvent("m3x-native-state", { detail: state }));
     };
-    setInterval(poll, 400);
+    pollTimer = setTimeout(poll, 400);
     document.addEventListener("visibilitychange", poll);
     document.getElementById("m3x-concept").addEventListener("click", event => {
       if (event.target.closest('[data-action="choose-folder"]')) { event.stopImmediatePropagation(); nativeCommand("directories"); }

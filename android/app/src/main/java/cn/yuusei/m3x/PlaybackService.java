@@ -11,6 +11,7 @@ import androidx.media3.exoplayer.*;
 import androidx.media3.exoplayer.analytics.AnalyticsListener;
 import androidx.media3.exoplayer.audio.*;
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.source.MediaSource;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.ResolvingDataSource;
 import androidx.media3.datasource.okhttp.OkHttpDataSource;
@@ -40,6 +41,15 @@ public final class PlaybackService extends MediaSessionService {
     private boolean counted;
     private boolean destroyed;
     private JSONObject stats;
+    private DefaultMediaSourceFactory sourceFactory;
+    private List<JSONObject> queueLibrary;
+    private String queueSelection = "";
+    private boolean restoring = true;
+    private String route = "未检测到外接音频设备";
+    private final android.media.AudioDeviceCallback routeChanges = new android.media.AudioDeviceCallback() {
+        @Override public void onAudioDevicesAdded(AudioDeviceInfo[] devices) { updateRoute(); }
+        @Override public void onAudioDevicesRemoved(AudioDeviceInfo[] devices) { updateRoute(); }
+    };
     private float manualGain = 1, rampFrom = 1, rampTarget = 1;
     private long rampStart;
     private boolean pauseAfterRamp, fadeTrackStart;
@@ -94,12 +104,23 @@ public final class PlaybackService extends MediaSessionService {
 
     @Override public void onCreate() {
         super.onCreate();
+        long started = SystemClock.elapsedRealtime();
         app = PlayerApp.instance; app.playback = this; settings = app.settings("audio"); stats = app.settings("tools");
+        ((AudioManager) getSystemService(AUDIO_SERVICE)).registerAudioDeviceCallback(routeChanges, app.main);
+        updateRoute();
         buildPlayer();
+        android.util.Log.i("M3X.Perf", "player built in " + (SystemClock.elapsedRealtime() - started) + " ms");
         session = new MediaSession.Builder(this, sessionPlayer())
             .setSessionActivity(android.app.PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), android.app.PendingIntent.FLAG_IMMUTABLE | android.app.PendingIntent.FLAG_UPDATE_CURRENT))
             .build();
-        restore();
+        app.jobs.execute(() -> {
+            app.awaitLibrary();
+            app.main.post(() -> {
+                if (destroyed) return;
+                restore(); restoring = false;
+                android.util.Log.i("M3X.Perf", "playback restored in " + (SystemClock.elapsedRealtime() - started) + " ms");
+            });
+        });
         lastStats = SystemClock.elapsedRealtime(); app.main.post(tick); app.main.post(fadeTick);
     }
 
@@ -123,7 +144,8 @@ public final class PlaybackService extends MediaSessionService {
         }.setEnableDecoderFallback(true).setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON);
         ResolvingDataSource.Factory sources = new ResolvingDataSource.Factory(new DefaultDataSource.Factory(this, new OkHttpDataSource.Factory(NativeNetwork.HTTP)),
             spec -> spec.withAdditionalHeaders(NativeNetwork.headers(spec.uri.toString())));
-        player = new ExoPlayer.Builder(this, renderers).setMediaSourceFactory(new DefaultMediaSourceFactory(sources)).build();
+        sourceFactory = new DefaultMediaSourceFactory(sources);
+        player = new ExoPlayer.Builder(this, renderers).setMediaSourceFactory(sourceFactory).build();
         player.setAudioAttributes(new AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build(), true);
         player.setHandleAudioBecomingNoisy(true);
         player.setWakeMode(C.WAKE_MODE_LOCAL);
@@ -145,7 +167,7 @@ public final class PlaybackService extends MediaSessionService {
                 JSONObject track = currentTrack();
                 String album = track == null ? "" : track.optString("album");
                 fadeTrackStart = !sameAlbum(previousAlbum, album); previousAlbum = album;
-                if (track != null) {
+                if (track != null && !restoring) {
                     try {
                         JSONObject ui = app.settings("ui"); JSONArray history = ui.optJSONArray("history"); JSONArray updated = new JSONArray().put(track.getString("id"));
                         if (history != null) for (int i = 0; i < history.length() && updated.length() < 20; i++) if (!history.getString(i).equals(track.getString("id"))) updated.put(history.getString(i));
@@ -205,6 +227,9 @@ public final class PlaybackService extends MediaSessionService {
         MediaItem.Builder builder = new MediaItem.Builder().setMediaId(track.optString("id")).setUri(track.optString("uri"))
             .setMediaMetadata(new MediaMetadata.Builder().setTitle(track.optString("title")).setArtist(track.optString("artist")).setAlbumTitle(track.optString("album"))
                 .setArtworkUri(track.optString("cover").startsWith("native-covers/") ? Uri.fromFile(new File(app.library.artwork, track.optString("cover").substring("native-covers/".length()))) : null).build());
+        String scheme = Uri.parse(track.optString("uri")).getScheme();
+        // Local audio uses progressive extraction; skip streaming manifest inference for SAF paths.
+        if ("file".equals(scheme) || "content".equals(scheme)) builder.setMimeType("audio/x-unknown");
         File reversed = new File(getCacheDir(), "decoded/" + track.optString("id") + "-reverse.wav");
         boolean reverse = settings.optBoolean("reverse") && reversed.isFile();
         if (track.has("cueStart") && !reverse) builder.setClippingConfiguration(new MediaItem.ClippingConfiguration.Builder().setStartPositionMs(track.optLong("cueStart")).setEndPositionMs(track.optLong("cueEnd")).build());
@@ -219,22 +244,41 @@ public final class PlaybackService extends MediaSessionService {
     public void syncQueue(JSONObject ui) {
         if (player == null) return;
         JSONArray queue = ui.optJSONArray("queue"), hidden = ui.optJSONArray("hidden");
+        String selection = String.valueOf(queue) + ":" + String.valueOf(hidden) + ":" + ui.optBoolean("queueCleared");
+        if (queueLibrary == app.library.all() && queueSelection.equals(selection)) {
+            setQueueMode(ui); return;
+        }
         Set<String> invisible = new HashSet<>(); if (hidden != null) for (int i = 0; i < hidden.length(); i++) invisible.add(hidden.optString(i));
-        List<MediaItem> items = new ArrayList<>();
+        List<JSONObject> desired = new ArrayList<>();
         boolean matched = false;
         if (queue != null) for (int i = 0; i < queue.length(); i++) {
             JSONObject track = app.library.track(queue.optString(i));
-            if (track != null) { matched = true; if (!invisible.contains(track.optString("id"))) items.add(media(track)); }
+            if (track != null) { matched = true; if (!invisible.contains(track.optString("id"))) desired.add(track); }
         }
-        if (!matched && !ui.optBoolean("queueCleared")) for (JSONObject track : app.library.all()) if (!invisible.contains(track.optString("id"))) items.add(media(track));
-        boolean same = items.size() == player.getMediaItemCount();
-        for (int i = 0; same && i < items.size(); i++) same = items.get(i).mediaId.equals(player.getMediaItemAt(i).mediaId);
+        if (!matched && !ui.optBoolean("queueCleared")) for (JSONObject track : app.library.all()) if (!invisible.contains(track.optString("id"))) desired.add(track);
+        boolean same = desired.size() == player.getMediaItemCount();
+        for (int i = 0; same && i < desired.size(); i++) same = desired.get(i).optString("id").equals(player.getMediaItemAt(i).mediaId);
         if (!same) {
+            long started = SystemClock.elapsedRealtime();
+            List<MediaItem> items = new ArrayList<>();
+            for (JSONObject track : desired) items.add(media(track));
+            android.util.Log.i("M3X.Perf", "queue items built in " + (SystemClock.elapsedRealtime() - started) + " ms");
             MediaItem current = player.getCurrentMediaItem(); long position = player.getCurrentPosition(); boolean playing = player.getPlayWhenReady();
-            int index = 0; if (current != null) for (int i = 0; i < items.size(); i++) if (items.get(i).mediaId.equals(current.mediaId)) index = i;
-            player.setMediaItems(items, index, current == null || items.isEmpty() || !items.get(index).mediaId.equals(current.mediaId) ? 0 : position);
+            String selected = current == null ? ui.optString("trackId") : current.mediaId;
+            int index = 0;
+            for (int i = 0; i < items.size(); i++) if (items.get(i).mediaId.equals(selected)) { index = i; break; }
+            if (current == null) position = ui.optBoolean("rememberPosition", true) ? Math.max(0, (long) (ui.optDouble("position") * 1000)) : 0;
+            List<MediaSource> sources = new ArrayList<>();
+            for (MediaItem item : items) sources.add(sourceFactory.createMediaSource(item));
+            android.util.Log.i("M3X.Perf", "queue sources built in " + (SystemClock.elapsedRealtime() - started) + " ms");
+            player.setMediaSources(sources, index, items.isEmpty() || !items.get(index).mediaId.equals(selected) ? 0 : position);
             player.setPlayWhenReady(playing && !items.isEmpty());
+            android.util.Log.i("M3X.Perf", "queue applied in " + (SystemClock.elapsedRealtime() - started) + " ms");
         }
+        queueLibrary = app.library.all(); queueSelection = selection;
+        setQueueMode(ui);
+    }
+    private void setQueueMode(JSONObject ui) {
         int mode = ui.optInt("mode");
         player.setShuffleModeEnabled(mode == 1);
         player.setRepeatMode(mode == 2 ? Player.REPEAT_MODE_ONE : Player.REPEAT_MODE_ALL);
@@ -245,13 +289,14 @@ public final class PlaybackService extends MediaSessionService {
     }
 
     public void load(String id, boolean play) {
+        if (restoring) throw new IllegalStateException("曲库正在加载，请稍候");
         cancelWholeSongTimer();
         conversionPlay = play;
         int index = indexOf(id);
         if (index < 0) {
             JSONObject track = app.library.track(id);
             if (track == null) return;
-            player.addMediaItem(media(track)); index = player.getMediaItemCount() - 1;
+            player.addMediaItem(media(track)); queueLibrary = null; index = player.getMediaItemCount() - 1;
         }
         player.seekTo(index, 0); error = "";
         if (!prepareDsd()) { player.prepare(); player.setPlayWhenReady(play); }
@@ -389,7 +434,7 @@ public final class PlaybackService extends MediaSessionService {
     private void applyDsp() { try { if (processor != null) processor.engine.set(dspConfig()); } catch (Exception exception) { error = exception.getMessage(); } }
     private void statsTime(long elapsed) { try { stats.put("seconds", stats.optDouble("seconds", 0) + elapsed / 1000d); } catch (Exception ignored) {} }
     private void savePosition() {
-        if (player == null) return;
+        if (player == null || restoring) return;
         JSONObject ui = app.settings("ui"), track = currentTrack();
         try {
             if (track != null) { ui.put("trackId", track.getString("id")); ui.put("position", player.getCurrentPosition() / 1000d); }
@@ -397,19 +442,20 @@ public final class PlaybackService extends MediaSessionService {
         } catch (Exception ignored) {}
     }
 
-    public JSONObject snapshot() {
-        JSONObject track = currentTrack();
-        String route = "未检测到外接音频设备";
+    private void updateRoute() {
         AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
         List<String> devices = new ArrayList<>();
         for (AudioDeviceInfo device : manager.getDevices(AudioManager.GET_DEVICES_OUTPUTS)) {
             if (device.getType() == AudioDeviceInfo.TYPE_USB_DEVICE || device.getType() == AudioDeviceInfo.TYPE_USB_HEADSET || device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADPHONES
                 || device.getType() == AudioDeviceInfo.TYPE_WIRED_HEADSET || device.getType() == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP) devices.add(device.getProductName().toString());
         }
-        if (!devices.isEmpty()) route = "系统已连接：" + android.text.TextUtils.join(" / ", devices);
+        route = devices.isEmpty() ? "未检测到外接音频设备" : "系统已连接：" + android.text.TextUtils.join(" / ", devices);
+    }
+    public JSONObject snapshot() {
+        JSONObject track = currentTrack();
         return json("id", track == null ? "" : track.optString("id"), "position", player.getCurrentPosition() / 1000d,
             "duration", player.getDuration() > 0 ? player.getDuration() / 1000d : track == null ? 0 : track.optDouble("duration"),
-            "paused", !player.getPlayWhenReady(), "playing", player.isPlaying(), "ready", player.getPlaybackState() == Player.STATE_READY,
+            "paused", !player.getPlayWhenReady(), "playing", player.isPlaying(), "ready", player.getPlaybackState() == Player.STATE_READY, "loading", restoring,
             "error", error, "conversion", conversion, "settings", settings, "stats", stats, "outputRate", outputRate,
             "outputEncoding", outputEncoding, "decoder", decoderName, "route", route, "sleepRemaining", sleepDeadline == 0 ? 0 : Math.max(0, sleepDeadline - SystemClock.elapsedRealtime()),
             "sleepFinish", sleepFinish, "sleepWaiting", sleepExpired);
@@ -417,6 +463,7 @@ public final class PlaybackService extends MediaSessionService {
     @Override public MediaSession onGetSession(MediaSession.ControllerInfo controller) { return session; }
     @Override public void onDestroy() {
         destroyed = true;
+        ((AudioManager) getSystemService(AUDIO_SERVICE)).unregisterAudioDeviceCallback(routeChanges);
         app.main.removeCallbacks(tick); app.main.removeCallbacks(fadeTick); fileRequest++; savePosition(); app.save("tools", stats);
         if (session != null) session.release(); if (player != null) player.release(); app.playback = null; super.onDestroy();
     }

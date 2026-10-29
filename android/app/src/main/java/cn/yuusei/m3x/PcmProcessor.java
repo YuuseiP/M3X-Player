@@ -5,6 +5,7 @@ import androidx.media3.common.audio.AudioProcessor;
 import androidx.media3.common.audio.BaseAudioProcessor;
 import java.nio.ByteBuffer;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 final class PcmProcessor extends BaseAudioProcessor {
     final DspEngine engine = new DspEngine();
     private double[] frame;

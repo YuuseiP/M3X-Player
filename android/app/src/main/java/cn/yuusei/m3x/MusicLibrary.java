@@ -31,8 +31,9 @@ public final class MusicLibrary {
     private volatile boolean cancelled;
     private final AtomicFile catalog;
     private final AtomicFile scanReport;
-    private final ArtistClassification classification;
+    private ArtistClassification classification;
     private final ConcurrentMap<String, Object> artworkLocks = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> documentProviders = new ConcurrentHashMap<>();
     public final File artwork;
     public final File lyrics;
     private final Set<String> formats = new HashSet<>(Arrays.asList("flac", "mp3", "wav", "m4a", "aac", "ogg", "opus", "aif", "aiff", "dsf", "dff"));
@@ -42,20 +43,30 @@ public final class MusicLibrary {
     }
 
     public MusicLibrary(PlayerApp context) {
+        this(context, true);
+    }
+    MusicLibrary(PlayerApp context, boolean loadNow) {
         app = context;
         catalog = new AtomicFile(new File(app.getFilesDir(), "library.json"));
         scanReport = new AtomicFile(new File(app.getFilesDir(), "scan-report.json"));
         artwork = new File(app.getCacheDir(), "covers"); artwork.mkdirs();
         lyrics = new File(app.getFilesDir(), "lyrics"); lyrics.mkdirs();
+        if (loadNow) load();
+    }
+    void load() {
+        long started = SystemClock.elapsedRealtime();
         try {
             classification = new ArtistClassification(new JSONObject(new String(
                 read(app.getAssets().open("player/artist-classification.json"), 16 * 1024 * 1024), "UTF-8")));
         } catch (Exception error) { throw new IllegalStateException("内置分类配置不可读取", error); }
+        android.util.Log.i("M3X.Perf", "classification parsed in " + (SystemClock.elapsedRealtime() - started) + " ms");
         try {
             JSONArray saved = new JSONArray(new String(read(catalog.openRead(), 64 * 1024 * 1024), "UTF-8"));
+            android.util.Log.i("M3X.Perf", "catalog parsed in " + (SystemClock.elapsedRealtime() - started) + " ms");
             List<JSONObject> list = new ArrayList<>();
             for (int i = 0; i < saved.length(); i++) list.add(saved.getJSONObject(i));
             setTracks(list);
+            android.util.Log.i("M3X.Perf", "catalog ready: " + list.size() + " tracks in " + (SystemClock.elapsedRealtime() - started) + " ms");
         } catch (Exception ignored) {}
         try { scan = new JSONObject(new String(read(scanReport.openRead(), 16 * 1024 * 1024), "UTF-8")); }
         catch (Exception ignored) {}
@@ -110,11 +121,19 @@ public final class MusicLibrary {
     }
 
     public JSONObject snapshot() {
+        app.awaitLibrary();
         JSONArray list = new JSONArray();
         Map<String, JSONObject> entities = new LinkedHashMap<>();
         int matched = 0;
         for (JSONObject item : tracks) {
-            list.put(item);
+            JSONObject summary = new JSONObject();
+            try {
+                for (Iterator<String> keys = item.keys(); keys.hasNext();) {
+                    String key = keys.next();
+                    if (!key.equals("uri") && !key.equals("path") && !key.equals("embeddedLyrics")) summary.put(key, item.get(key));
+                }
+            } catch (org.json.JSONException error) { throw new IllegalStateException(error); }
+            list.put(summary);
             if (item.optBoolean("classificationMatched")) matched++;
             JSONArray credits = item.optJSONArray("credits");
             if (credits != null) for (int i = 0; i < credits.length(); i++) {
@@ -143,18 +162,38 @@ public final class MusicLibrary {
         return byId.get(id);
     }
     private void setTracks(List<JSONObject> list) throws Exception {
+        long located = 0, applied = 0;
         Map<String, JSONObject> index = new HashMap<>();
         List<JSONObject> classified = new ArrayList<>();
         for (JSONObject item : list) {
+            long started = System.nanoTime();
             Uri uri = Uri.parse(item.optString("uri"));
-            String path = DocumentsContract.isDocumentUri(app, uri) ? DocumentsContract.getDocumentId(uri) : uri.getPath();
+            String path = classificationPath(uri);
+            located += System.nanoTime() - started;
+            started = System.nanoTime();
             JSONObject track = classification.apply(item, "http".equals(uri.getScheme()) || "https".equals(uri.getScheme()) ? "" : path == null ? "" : path);
+            applied += System.nanoTime() - started;
             index.put(track.optString("id"), track); classified.add(track);
         }
         byId = index; tracks = classified;
+        android.util.Log.i("M3X.Perf", "track locations=" + located / 1000000 + " ms classification=" + applied / 1000000 + " ms");
     }
 
     public List<JSONObject> all() { return tracks; }
+    String classificationPath(Uri uri) {
+        if (!isDocumentUri(uri)) return uri.getPath();
+        String path = uri.getEncodedPath();
+        return Uri.decode(path.substring(path.lastIndexOf('/') + 1));
+    }
+    boolean isDocumentUri(Uri uri) {
+        if (!"content".equals(uri.getScheme())) return false;
+        String[] segments = uri.getEncodedPath().split("/", -1);
+        boolean document = segments.length == 3 && "document".equals(segments[1])
+            || segments.length == 5 && "tree".equals(segments[1]) && "document".equals(segments[3]);
+        if (!document) return false;
+        // Provider discovery is a Binder call; do it once per authority, not once per song.
+        return documentProviders.computeIfAbsent(uri.getAuthority(), key -> DocumentsContract.isDocumentUri(app, uri));
+    }
     public void stop() { cancelled = true; }
 
     public synchronized void start() {
@@ -182,7 +221,7 @@ public final class MusicLibrary {
     }
     String identity(Uri uri) throws IOException {
         if ("file".equals(uri.getScheme())) return "file:" + new File(uri.getPath()).getCanonicalPath();
-        if (DocumentsContract.isDocumentUri(app, uri)) {
+        if (isDocumentUri(uri)) {
             String document = DocumentsContract.getDocumentId(uri);
             if ("com.android.externalstorage.documents".equals(uri.getAuthority()) && document.contains(":")) {
                 String[] parts = document.split(":", 2);
@@ -574,7 +613,7 @@ public final class MusicLibrary {
     }
 
     private String cueLocation(Source source) throws IOException {
-        if (DocumentsContract.isDocumentUri(app, source.uri) && !"com.android.externalstorage.documents".equals(source.uri.getAuthority())) {
+        if (isDocumentUri(source.uri) && !"com.android.externalstorage.documents".equals(source.uri.getAuthority())) {
             // Provider document IDs may be opaque, so use the discovered tree-relative names.
             String root = DocumentsContract.getTreeDocumentId(source.uri);
             return "tree:" + source.uri.getAuthority() + ":" + root + "/" +

@@ -6,18 +6,27 @@ import android.os.Looper;
 import org.json.JSONObject;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 public final class PlayerApp extends Application {
     public static PlayerApp instance;
     public final Handler main = new Handler(Looper.getMainLooper());
     public final ExecutorService jobs = Executors.newSingleThreadExecutor();
     public MusicLibrary library;
     public PlaybackService playback;
+    private Future<?> libraryReady;
 
     @Override public void onCreate() {
         super.onCreate();
         instance = this;
-        library = new MusicLibrary(this);
+        library = new MusicLibrary(this, false);
+        libraryReady = jobs.submit(() -> library.load());
+    }
+
+    public void awaitLibrary() {
+        try { if (libraryReady != null) libraryReady.get(); }
+        catch (Exception error) { throw new IllegalStateException("Unable to load library", error); }
     }
 
     public JSONObject settings(String key) {

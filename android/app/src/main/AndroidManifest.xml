@@ -20,8 +20,9 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:mimeType="audio/*" android:scheme="content"/>
-                <data android:mimeType="audio/*" android:scheme="file"/>
+                <data android:mimeType="audio/*"/>
+                <data android:scheme="content"/>
+                <data android:scheme="file"/>
             </intent-filter>
         </activity>
         <service android:name=".PlaybackService" android:exported="true" android:foregroundServiceType="mediaPlayback">

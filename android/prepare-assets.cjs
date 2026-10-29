@@ -47,6 +47,8 @@ let html = fs.readFileSync(path.join(root, "index.html"), "utf8")
   .replace('<span class="m3x-caption">0.1</span>', `<span class="m3x-caption">${version}</span>`)
   .replace('<script defer src="classification.js"></script>', "")
   .replace('浏览器原生音频', 'ExoPlayer · AudioTrack')
+  .replace('<div class="m3x-feedback" id="playback-status" role="status" hidden></div>',
+    '<div class="m3x-feedback" id="playback-status" role="status">正在载入本地曲库…</div>')
   .replace('<script defer src="tracks.js"></script>', '<script defer src="polyfills.js"></script><script defer src="native-bridge.js"></script><script>window.M3X_TRACKS=[];</script>')
   .replace('<script defer src="player-tools.js"></script>', '<script defer src="player-tools.js"></script><script defer src="native-tools.js"></script>');
 fs.writeFileSync(path.join(output, "index.html"), html);

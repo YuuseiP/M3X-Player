@@ -7,7 +7,12 @@
   } catch { /* The prepared library also works without the scan service. */ }
   const tracks = library?.tracks || window.M3X_TRACKS;
   let indexById = new Map(tracks.map((track, index) => [track.id, index]));
+  let entityById = new Map((library?.classification?.entities || []).map(entity => [entity.id, entity]));
+  let libraryRevision = 0;
+  const listRenderKeys = new WeakMap();
+  const compareNames = new Intl.Collator("zh-Hans", { numeric: true }).compare;
   const listLimits = {};
+  const listPageSize = window.M3X_NATIVE ? 40 : 150;
   window.M3X_TRACKS = tracks;
   const root = document.getElementById("m3x-concept");
   const screen = root.querySelector(".m3x-screen");
@@ -16,6 +21,7 @@
   const search = root.querySelector(".m3x-search");
   const dialog = document.getElementById("output-dialog");
   const status = document.getElementById("playback-status");
+  if (window.M3X_NATIVE) { status.hidden = true; status.textContent = ""; }
   const modes = ["列表循环", "随机播放", "单曲循环"];
   const nickname = document.getElementById("nickname");
   const playlistDialog = document.getElementById("playlist-dialog");
@@ -53,6 +59,14 @@
   let renderedScanSources = "";
   let menuIndex = state.index;
   let renderedTrack = null;
+  root.addEventListener("keydown", event => {
+    if (event.key === "Tab") root.classList.add("keyboard-navigation");
+  });
+  function pointerInput() {
+    root.classList.remove("keyboard-navigation");
+  }
+  root.addEventListener("touchstart", pointerInput, { passive: true });
+  root.addEventListener("mousedown", pointerInput);
   audio.volume = 1;
   const paths = {
     library: '<path d="M4 4v16M9 4v16M14 4v16M18 4l3 16"/>',
@@ -94,7 +108,9 @@
   const quality = track => track.bits && track.sampleRate ? `${track.bits}bit · ${track.sampleRate / 1000}kHz` : track.sampleRate ? `${track.sampleRate / 1000}kHz` : track.codec || "音频";
   const format = track => (track.codec || "FLAC") + " · " + quality(track);
   function text(key, value) {
-    root.querySelectorAll(`[data-text="${key}"]`).forEach(element => { element.textContent = value; });
+    root.querySelectorAll(`[data-text="${key}"]`).forEach(element => {
+      if (element.textContent !== String(value)) element.textContent = value;
+    });
   }
   function announce(message) {
     root.querySelector(".m3x-live").textContent = message;
@@ -130,7 +146,7 @@
   }
   const displayTitle = track => state.filenameTitle ? track.filename || track.title : track.title;
   const folderPath = track => (track.folder || "").replace(/\\/g, "/").replace(/^\.\/|\/$/g, "").replace(/^\.$/, "");
-  const matchesQuery = (track, query) => (track.title + " " + track.artist + " " + (track.originalArtist || "") + " " + track.album + " " + (track.filename || "") + " " + (track.folder || "")).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+  const matchesQuery = (track, query) => !query.trim() || (track.title + " " + track.artist + " " + (track.originalArtist || "") + " " + track.album + " " + (track.filename || "") + " " + (track.folder || "")).toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
   const favoriteIndices = () => sortedIndices(tracks.map((_, index) => index).filter(index =>
     state.favorites.has(tracks[index].id) && !state.hidden.has(tracks[index].id) && matchesQuery(tracks[index], state.favoriteQuery)));
   function groupValues(track) {
@@ -144,8 +160,9 @@
     return [state.filter === "albums" ? track.album : state.filter === "artists" ? track.artist : track.folder || "."];
   }
   const groupLabel = key => state.filter === "folders" ? (key || "").split("/").pop() :
-    library?.classification?.entities.find(item => item.id === key)?.name || (key === "." ? "根目录" : key || "");
+    entityById.get(key)?.name || (key === "." ? "根目录" : key || "");
   function sortedIndices(indices) {
+    if (state.sort === "original") return indices;
     return [...indices].sort((a, b) => {
       const left = tracks[a], right = tracks[b];
       if (state.sort === "duration" || state.sort === "duration-desc") return (left.duration - right.duration) * (state.sort === "duration" ? 1 : -1);
@@ -153,7 +170,7 @@
       if (state.sort === "year") return String(right.year || "").localeCompare(String(left.year || "")) || a - b;
       if (state.sort === "album") return left.album.localeCompare(right.album) || (parseInt(left.discNumber) || 0) - (parseInt(right.discNumber) || 0) || (parseInt(left.trackNumber) || 0) - (parseInt(right.trackNumber) || 0) || a - b;
       if (state.sort === "original") return a - b;
-      return String(state.sort === "title" ? displayTitle(left) : left.artist).localeCompare(String(state.sort === "title" ? displayTitle(right) : right.artist), "zh-Hans", { numeric: true }) || a - b;
+      return compareNames(String(state.sort === "title" ? displayTitle(left) : left.artist), String(state.sort === "title" ? displayTitle(right) : right.artist)) || a - b;
     });
   }
   function libraryIndices(includeSubfolders = false) {
@@ -194,24 +211,36 @@
     location.textContent = state.groupKey ? state.groupKey.split("/").join(" / ") : (library?.folder || "").split(/[\\/]/).pop() || "曲库根目录";
     location.title = location.textContent;
     screen.querySelector(".m3x-library-controls").classList.toggle("has-mixed-folders", browsingGroups && hasSongs);
+    if (!browsingGroups) {
+      if (groups.firstChild) groups.replaceChildren();
+      listRenderKeys.delete(groups);
+      return;
+    }
+    const groupLimit = window.M3X_NATIVE ? listLimits.groups || listPageSize : Infinity;
+    const renderKey = JSON.stringify([libraryRevision, state.filter, state.groupKey, state.query, state.groupSort, state.showCovers, [...state.hidden], groupLimit]);
+    if (listRenderKeys.get(groups) === renderKey) return;
+    listRenderKeys.set(groups, renderKey);
     groups.replaceChildren();
-    if (!browsingGroups) return;
     const ordered = [...grouped].sort((a, b) => {
-      const nameOrder = groupLabel(a[0]).localeCompare(groupLabel(b[0]), "zh-Hans", { numeric: true });
+      const nameOrder = compareNames(groupLabel(a[0]), groupLabel(b[0]));
       if (state.groupSort === "count") return b[1].length - a[1].length || nameOrder;
       return state.groupSort === "name-desc" ? -nameOrder : nameOrder;
     });
-    for (const [key, indices] of ordered) {
+    for (const [key, indices] of ordered.slice(0, groupLimit)) {
       const button = document.createElement("button"); button.type = "button";
       button.className = "m3x-playlist-row"; button.dataset.group = key;
       const cover = document.createElement(folders ? "span" : "img");
       if (folders) { cover.className = "m3x-folder-icon"; cover.innerHTML = icon("folder"); }
-      else { cover.src = tracks[indices[0]].cover; cover.alt = ""; cover.hidden = !state.showCovers; }
+      else { cover.src = tracks[indices[0]].cover; cover.alt = ""; cover.loading = "lazy"; cover.hidden = !state.showCovers; }
       const info = document.createElement("span");
       const name = document.createElement("strong"); name.textContent = groupLabel(key);
       const count = document.createElement("small"); count.textContent = indices.length + " 首";
       info.append(name, count); button.append(cover, info); groups.append(button);
       if (folders) button.insertAdjacentHTML("beforeend", icon("right"));
+    }
+    if (ordered.length > groupLimit) {
+      const more = document.createElement("button"); more.type = "button"; more.className = "m3x-text-button";
+      more.dataset.moreList = "groups"; more.textContent = "加载更多（" + groupLimit + " / " + ordered.length + "）"; groups.append(more);
     }
     if (!grouped.size) {
       const empty = document.createElement("p"); empty.className = "m3x-empty"; empty.textContent = "没有匹配的音乐"; groups.append(empty);
@@ -228,21 +257,34 @@
   }
   function renderPlayback() {
     root.querySelectorAll('[data-action="play"]').forEach(button => {
-      button.setAttribute("aria-label", audio.paused ? "播放" : "暂停");
-      button.innerHTML = icon(audio.paused ? "play" : "pause");
+      const label = audio.paused ? "播放" : "暂停";
+      if (button.getAttribute("aria-label") !== label || !button.firstElementChild) {
+        button.setAttribute("aria-label", label);
+        button.innerHTML = icon(audio.paused ? "play" : "pause");
+      }
     });
     text("engine", audio.error ? "读取失败" : window.M3X_NATIVE ? "ExoPlayer · AudioTrack" : "浏览器音频");
     renderProgress();
   }
   function renderLists() {
+    const queue = queueIndices();
     root.querySelectorAll("[data-list]").forEach(list => {
+      if (list.closest("[data-panel][hidden]")) return;
+      if (list.dataset.list === "upcoming" && state.layout !== "catalog") return;
+      if (list.hidden) {
+        if (list.firstChild) list.replaceChildren();
+        listRenderKeys.delete(list);
+        return;
+      }
       const nodes = [];
-      const queue = queueIndices();
-      const indices = list.dataset.list === "recent" ? state.history.map(id => tracks.findIndex(track => track.id === id)).filter(index => index !== -1) :
+      const indices = list.dataset.list === "recent" ? state.history.map(id => indexById.get(id)).filter(index => index !== undefined) :
         list.dataset.list === "upcoming" ? [...queue.slice(queue.indexOf(state.index) + 1), ...queue.slice(0, Math.max(0, queue.indexOf(state.index)))] :
-        list.dataset.list === "playlist" ? (state.playlists.find(item => item.id === state.playlistId)?.trackIds || []).map(id => tracks.findIndex(track => track.id === id)).filter(index => index !== -1) :
+        list.dataset.list === "playlist" ? (state.playlists.find(item => item.id === state.playlistId)?.trackIds || []).map(id => indexById.get(id)).filter(index => index !== undefined) :
         list.dataset.list === "queue" ? queueIndices() : list.dataset.list === "favorites" ? favoriteIndices() : libraryIndices();
-      const limit = listLimits[list.dataset.list] || 150;
+      const limit = listLimits[list.dataset.list] || listPageSize;
+      const renderKey = JSON.stringify([libraryRevision, indices, limit, state.index, state.showCovers, state.filenameTitle]);
+      if (listRenderKeys.get(list) === renderKey) return;
+      listRenderKeys.set(list, renderKey);
       indices.slice(0, limit).forEach(index => {
         const track = tracks[index];
         if (state.hidden.has(track.id)) return;
@@ -314,7 +356,7 @@
   function renderProfile() {
     if (document.activeElement !== nickname) nickname.value = state.nickname;
     text("favoriteCount", tracks.filter(track => state.favorites.has(track.id) && !state.hidden.has(track.id)).length);
-    text("historyCount", state.history.filter(id => tracks.some(track => track.id === id)).length + " 首");
+    text("historyCount", state.history.filter(id => indexById.has(id)).length + " 首");
     text("songCount", tracks.length);
     text("playlistTotal", state.playlists.length);
     text("hiddenCount", state.hidden.size + " 首");
@@ -325,6 +367,7 @@
   }
   function render() {
     const track = tracks[state.index];
+    const queue = queueIndices();
     document.documentElement.style.colorScheme = state.theme === "system" ? "light dark" : state.theme;
     screen.dataset.layout = state.layout;
     screen.querySelectorAll("[data-panel]").forEach(panel => { panel.hidden = panel.dataset.panel !== state.page; });
@@ -340,20 +383,22 @@
     text("format", track ? format(track) : "");
     text("next", tracks.length ? state.mode === 1 ? "随机选择下一首" : tracks[nextIndex()]?.title || "队列播放完毕" : "暂无歌曲");
     text("trackCount", tracks.length + " 首");
-    text("queueCount", queueIndices().length + " 首歌曲");
+    text("queueCount", queue.length + " 首歌曲");
     const playlist = state.playlists.find(item => item.id === state.playlistId);
     text("playlistName", playlist?.name || "歌单");
-    text("playlistCount", (playlist?.trackIds.filter(id => tracks.some(track => track.id === id)).length || 0) + " 首");
+    text("playlistCount", (playlist?.trackIds.filter(id => indexById.has(id)).length || 0) + " 首");
     const cover = screen.querySelector(".m3x-cover");
-    cover.src = track?.cover || "cover-placeholder.svg";
+    const coverSource = track?.cover || "cover-placeholder.svg";
+    if (cover.getAttribute("src") !== coverSource) cover.src = coverSource;
     cover.alt = track ? track.album + " 专辑封面" : "";
-    screen.querySelector(".m3x-mini-cover").src = track?.cover || "cover-placeholder.svg";
+    const miniCover = screen.querySelector(".m3x-mini-cover");
+    if (miniCover.getAttribute("src") !== coverSource) miniCover.src = coverSource;
     screen.querySelector(".m3x-title").title = track?.title || "";
     screen.querySelector(".m3x-artist").title = track?.artist || "";
     const favorite = screen.querySelector('[data-action="favorite"]');
     favorite.setAttribute("aria-pressed", String(state.favorites.has(track?.id)));
     favorite.setAttribute("aria-label", state.favorites.has(track?.id) ? "取消收藏当前歌曲" : "收藏当前歌曲");
-    screen.querySelectorAll('[data-action="play"], [data-action="next"], [data-action="previous"], [data-action="favorite"], [data-action="add-playlist"], [data-action="song-menu"]').forEach(button => { button.disabled = !track || (["next", "previous"].includes(button.dataset.action) && !queueIndices().length); });
+    screen.querySelectorAll('[data-action="play"], [data-action="next"], [data-action="previous"], [data-action="favorite"], [data-action="add-playlist"], [data-action="song-menu"]').forEach(button => { button.disabled = !track || (["next", "previous"].includes(button.dataset.action) && !queue.length); });
     const mode = screen.querySelector('[data-action="mode"]');
     mode.innerHTML = icon(["sequential", "shuffle", "repeat"][state.mode]);
     mode.setAttribute("aria-label", "播放模式：" + modes[state.mode]);
@@ -368,11 +413,11 @@
     });
     text("librarySize", tracks.length + " 首 · " + (tracks.reduce((size, item) => size + item.bytes, 0) / 1024 ** 3).toFixed(2) + " GiB");
     renderProfile();
+    if (state.page === "library") renderGroups();
     renderLists();
     renderPlaylists();
     renderPlayback();
     positionDialogs();
-    renderGroups();
     window.dispatchEvent(new CustomEvent("m3x-render", { detail: { page: state.page } }));
     if (renderedTrack !== track?.id) {
       renderedTrack = track?.id;
@@ -382,10 +427,13 @@
   function renderPlaylists() {
     const container = document.getElementById("profile-playlists");
     const choices = document.getElementById("playlist-choices");
+    const renderKey = JSON.stringify([libraryRevision, state.playlists, state.playlistTarget]);
+    if (listRenderKeys.get(container) === renderKey) return;
+    listRenderKeys.set(container, renderKey);
     container.replaceChildren();
     choices.replaceChildren();
     for (const playlist of state.playlists) {
-      const available = playlist.trackIds.map(id => tracks.find(track => track.id === id)).filter(Boolean);
+      const available = playlist.trackIds.map(id => tracks[indexById.get(id)]).filter(Boolean);
       for (const target of [container, choices]) {
         const button = document.createElement("button");
         button.type = "button"; button.className = "m3x-playlist-row";
@@ -410,19 +458,28 @@
       container.append(empty);
     }
   }
+  const closingDialogs = new WeakMap();
   function openDialog(element) {
+    clearTimeout(closingDialogs.get(element));
+    element.classList.remove("is-closing");
     element.dataset.instant = "false";
     if (!element.open) element.showModal();
     positionDialogs();
-    void element.offsetWidth;
     element.classList.add("is-open");
   }
   function closeDialog(element, instant = false) {
+    clearTimeout(closingDialogs.get(element));
     element.classList.remove("is-open");
-    if (instant) element.close();
-    else Promise.allSettled(element.getAnimations({ subtree: true }).map(animation => animation.finished)).then(() => {
+    if (!element.open) return;
+    if (instant || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      element.classList.remove("is-closing"); element.close(); return;
+    }
+    element.classList.add("is-closing");
+    const finish = () => {
+      element.classList.remove("is-closing");
       if (!element.classList.contains("is-open") && element.open) element.close();
-    });
+    };
+    closingDialogs.set(element, setTimeout(finish, 160));
   }
   function openPlaylist(action, target = tracks[state.index]?.id) {
     playlistAction = action;
@@ -577,7 +634,9 @@
     const previous = tracks[state.index];
     const previousSource = previous?.src;
     tracks.splice(0, tracks.length, ...data.tracks);
+    libraryRevision++;
     indexById = new Map(tracks.map((track, index) => [track.id, index]));
+    entityById = new Map((data.classification?.entities || []).map(entity => [entity.id, entity]));
     const nativeId = window.M3X_NATIVE ? window.nativeCommand("poll").id : null;
     if (window.M3X_NATIVE) state.queue = window.nativeCommand("queue").ids || state.queue;
     state.index = Math.max(0, tracks.findIndex(track => track.id === (nativeId || previous?.id)));
@@ -678,23 +737,18 @@
     return queue[((current < 0 ? queue.length : current) + queue.length - 1) % queue.length];
   }
   function positionDialogs() {
+    const opened = screen.querySelectorAll("dialog[open]");
+    if (!opened.length) return;
     const rect = screen.getBoundingClientRect();
-    screen.querySelectorAll("dialog[open]").forEach(element => {
+    opened.forEach(element => {
       Object.assign(element.style, { left: rect.left + window.scrollX + "px", top: rect.top + window.scrollY + "px", width: rect.width + "px", height: rect.height + "px" });
     });
   }
   function syncSheet(instant = false) {
-    dialog.dataset.instant = String(instant);
     if (state.sheetOpen) {
-      if (!dialog.open) { dialog.showModal(); positionDialogs(); void dialog.offsetWidth; }
-      dialog.classList.add("is-open");
-    } else if (dialog.open) {
-      dialog.classList.remove("is-open");
-      if (instant) dialog.close();
-      else Promise.allSettled(dialog.getAnimations({ subtree: true }).map(animation => animation.finished)).then(() => {
-        if (!state.sheetOpen && dialog.open) dialog.close();
-      });
-    }
+      if (!dialog.open || dialog.classList.contains("is-closing")) openDialog(dialog);
+      dialog.dataset.instant = String(instant);
+    } else if (dialog.open) closeDialog(dialog, instant);
     screen.querySelectorAll('[data-action="output"]').forEach(button => button.setAttribute("aria-expanded", String(state.sheetOpen)));
     screen.querySelectorAll("[data-sheet-tab]").forEach(button => button.setAttribute("aria-selected", String(button.dataset.sheetTab === state.sheetTab)));
     screen.querySelectorAll("[data-sheet-panel]").forEach(panel => { panel.hidden = panel.dataset.sheetPanel !== state.sheetTab; });
@@ -707,7 +761,7 @@
     if (button.hasAttribute("data-close")) {
       closeDialog(button.closest("dialog")); return;
     } else if (button.dataset.moreList) {
-      listLimits[button.dataset.moreList] = (listLimits[button.dataset.moreList] || 150) + 150;
+      listLimits[button.dataset.moreList] = (listLimits[button.dataset.moreList] || listPageSize) + listPageSize;
     } else if (button.dataset.menuTrack !== undefined) {
       openSongMenu(Number(button.dataset.menuTrack)); return;
     } else if (button.dataset.removeQueue) {
@@ -777,7 +831,7 @@
     } else if (action === "locate-current") {
       const position = queueIndices().indexOf(state.index);
       if (position < 0) { toast("当前歌曲不在队列中"); return; }
-      listLimits.queue = Math.max(listLimits.queue || 150, position + 1);
+      listLimits.queue = Math.max(listLimits.queue || listPageSize, position + 1);
       renderLists();
       screen.querySelector('[data-list="queue"] [aria-current="true"]')?.scrollIntoView({ block: "center" }); return;
     } else if (action === "scan-report-export") {
@@ -845,15 +899,17 @@
       return;
     }
     render();
-    persist();
+    const viewOnly = button.dataset.page || button.dataset.filter || button.dataset.group !== undefined || button.dataset.moreList ||
+      ["group-back", "open-library", "open-favorites", "open-playlists", "back-playlists"].includes(action);
+    if (!viewOnly) persist();
     if (button.dataset.page && !button.closest(".m3x-nav")) {
       screen.querySelector('[data-panel="' + state.page + '"] button')?.focus({ preventScroll: true });
     }
   });
   search.addEventListener("input", () => {
     state.query = search.value;
-    renderLists();
     renderGroups();
+    renderLists();
     announce("找到 " + screen.querySelectorAll('[data-list="library"] [data-track]').length + " 首歌曲");
   });
   document.getElementById("favorites-search").addEventListener("input", event => {
@@ -1024,9 +1080,9 @@
         state.page = { playlist: "playlists", favorites: "profile", playlists: "profile", settings: "profile",
           statistics: "profile", queue: "player", lyrics: "player" }[state.page] || "library";
       }
-      render(); persist(); return true;
+      render(); return true;
     },
-    currentTrack: () => tracks[state.index], tracks,
+    currentTrack: () => tracks[state.index], tracks, library: () => library,
     play, next: () => loadTrack(nextIndex(), true),
     previous: () => loadTrack(previousIndex(), true),
     previewLibrary(data, showLibrary = false) {
@@ -1042,6 +1098,7 @@
       for (const key of ["duration", "sampleRate", "bits", "channels", "codec", "cover", "bitrate", "year", "trackNumber", "discNumber", "replayGain"]) {
         if (data[key] !== undefined) track[key] = data[key];
       }
+      libraryRevision++;
       render();
     },
     showTrack: id => { const index = tracks.findIndex(track => track.id === id); if (index >= 0) { state.page = "player"; loadTrack(index, true); } },
@@ -1051,5 +1108,6 @@
       renderProfile(); return true;
     }
   };
+  if (window.M3X_NATIVE) console.info("M3X UI ready at " + Math.round(performance.now()) + " ms");
   window.dispatchEvent(new Event("m3x-ready"));
 })();

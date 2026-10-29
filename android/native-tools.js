@@ -8,9 +8,10 @@
     classification.id = "builtin-classification"; classification.className = "m3x-caption";
     const directories = document.getElementById("scan-directories");
     directories.parentNode.insertBefore(classification, directories.nextSibling);
-    fetch("/api/library").then(response => response.json()).then(library => {
-      classification.textContent = `内置分类 · 已匹配 ${library.classification.matched} 首 · 其余保留原始歌手`;
-    });
+    function classificationSummary() {
+      classification.textContent = `内置分类 · 已匹配 ${ui.library()?.classification?.matched || 0} 首 · 其余保留原始歌手`;
+    }
+    classificationSummary();
     const configure = update => { const result = nativeCommand("configure", update); if (!result.error) config = result.settings; return result; };
     function setting(label, control) {
       const row = document.createElement("label"); row.className = "m3x-setting";
@@ -205,7 +206,7 @@
       if (event.detail.message || event.detail.error) ui.toast(event.detail.error || event.detail.message);
       if (event.detail.message === "歌词已保存") lyrics();
     });
-    window.addEventListener("m3x-render", event => { page = event.detail.page; theme(); });
+    window.addEventListener("m3x-render", event => { page = event.detail.page; theme(); classificationSummary(); });
     window.addEventListener("m3x-native-state", event => {
       state = event.detail;
       config = state.settings || config;

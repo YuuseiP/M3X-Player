@@ -17,6 +17,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import static cn.yuusei.m3x.PlayerApp.json;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 public final class MainActivity extends Activity {
     WebView web;
     PlayerApp app;
@@ -48,6 +49,11 @@ public final class MainActivity extends Activity {
                 Uri uri = request.getUrl();
                 if (!"https".equals(uri.getScheme()) || !"m3x.local".equals(uri.getHost())) return response("text/plain", new ByteArrayInputStream(new byte[0]));
                 String path = uri.getPath().substring(1);
+                if (path.startsWith("native-api/")) {
+                    app.awaitLibrary();
+                    String api = "/api/" + path.substring("native-api/".length()) + (uri.getEncodedQuery() == null ? "" : "?" + uri.getEncodedQuery());
+                    return response("application/json", new ByteArrayInputStream(new Bridge().request(api, "").getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+                }
                 if (path.isEmpty()) path = "index.html";
                 try {
                     if (path.contains("..")) throw new IOException();
@@ -138,7 +144,10 @@ public final class MainActivity extends Activity {
         Uri uri = intent.getData();
         if (requestCode == DIRECTORY) {
             try {
-                getContentResolver().takePersistableUriPermission(uri, intent.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+                if ((intent.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION) == 0) throw new IOException("所选目录未授予读取权限");
+                int grantFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                if ((intent.getFlags() & Intent.FLAG_GRANT_WRITE_URI_PERMISSION) != 0) grantFlags |= Intent.FLAG_GRANT_WRITE_URI_PERMISSION;
+                getContentResolver().takePersistableUriPermission(uri, grantFlags);
                 app.library.addRoot(uri); refresh();
             } catch (Exception error) { toast("无法保存目录授权：" + error.getMessage()); }
         } else if (requestCode == EXPORT || requestCode == IMPORT) {
@@ -187,6 +196,7 @@ public final class MainActivity extends Activity {
         }
         @JavascriptInterface public String request(String path, String body) {
             try {
+                app.awaitLibrary();
                 JSONObject data = body == null || body.isEmpty() ? new JSONObject() : new JSONObject(body);
                 if (path.equals("/api/library")) return app.library.snapshot().toString();
                 if (path.equals("/api/scan-status")) return app.library.scanStatus().toString();
@@ -219,8 +229,8 @@ public final class MainActivity extends Activity {
                         case "seek": service.player.seekTo(Math.max(0, (long) (data.getDouble("position") * 1000))); break;
                         case "configure": service.configure(data); break;
                         case "sleep": service.sleep(data.optInt("minutes"), data.optBoolean("finish")); break;
-                        case "ui-save": app.save("ui", data); service.syncQueue(data); break;
-                        case "tools-save": app.save("tools", data); break;
+                        case "ui-save": app.save("ui", data); service.syncQueue(data); return "{}";
+                        case "tools-save": app.save("tools", data); return "{}";
                         case "directories": directories(); break;
                         case "network": NativeNetwork.handle(MainActivity.this, data); break;
                         case "external-edit": externalEdit(data); break;

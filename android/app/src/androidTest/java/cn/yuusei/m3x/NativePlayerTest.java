@@ -16,9 +16,15 @@ public final class NativePlayerTest extends InstrumentationTestCase {
         super.setUp();
         activity = (MainActivity) getInstrumentation().startActivitySync(new Intent(getInstrumentation().getTargetContext(), MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         app = PlayerApp.instance;
+        app.awaitLibrary();
         long deadline = SystemClock.elapsedRealtime() + 10000;
-        while (app.playback == null && SystemClock.elapsedRealtime() < deadline) Thread.sleep(50);
+        boolean[] ready = {false};
+        while (!ready[0] && SystemClock.elapsedRealtime() < deadline) {
+            getInstrumentation().runOnMainSync(() -> ready[0] = app.playback != null && !app.playback.snapshot().optBoolean("loading"));
+            if (!ready[0]) Thread.sleep(50);
+        }
         assertNotNull(app.playback);
+        assertTrue("Playback restoration", ready[0]);
     }
     @Override protected void tearDown() throws Exception {
         getInstrumentation().runOnMainSync(() -> { if (app.playback != null) app.playback.player.pause(); if (activity != null) activity.finish(); });
@@ -569,8 +575,22 @@ public final class NativePlayerTest extends InstrumentationTestCase {
         JSONObject songInfo = app.library.all().get(0);
         assertEquals(16, songInfo.getInt("bits")); assertEquals(44100, songInfo.getInt("sampleRate"));
         assertTrue(app.library.details(songInfo.getString("id")).getString("lyrics").contains("Line two"));
+        getInstrumentation().runOnMainSync(() -> {
+            JSONObject queue = json("queue", new JSONArray().put(songInfo.optString("id")), "mode", 0);
+            app.playback.syncQueue(queue);
+            androidx.media3.common.MediaItem item = app.playback.player.getMediaItemAt(0);
+            app.playback.syncQueue(json("queue", new JSONArray().put(songInfo.optString("id")), "mode", 2));
+            assertSame(item, app.playback.player.getMediaItemAt(0));
+            assertEquals(androidx.media3.common.Player.REPEAT_MODE_ONE, app.playback.player.getRepeatMode());
+            app.playback.syncQueue(json("queue", new JSONArray(), "queueCleared", true));
+            assertEquals(0, app.playback.player.getMediaItemCount());
+            app.playback.syncQueue(queue);
+            assertEquals(songInfo.optString("id"), app.playback.player.getMediaItemAt(0).mediaId);
+        });
         getInstrumentation().runOnMainSync(() -> activity.refresh());
         waitJs("Boolean(window.M3X_UI)&&document.querySelectorAll('[data-list=\"library\"] [data-track]').length===1");
+        assertEquals("0", js("document.querySelectorAll('[data-list=\"queue\"] [data-track]').length"));
+        assertEquals("true", js("(function(){var b=document.querySelector('.m3x-nav [data-page=\"player\"]');b.dispatchEvent(new MouseEvent('mousedown',{bubbles:true,clientX:20,clientY:20}));return !!document.querySelector('.m3x-ripple');})()"));
         assertEquals("true", js("document.querySelector('.m3x-header')===null"));
         js("document.querySelector('[data-list=\"library\"] [data-track]').click()");
         waitJs("!audio.paused&&audio.currentTime>0.2&&audio.readyState>=2");

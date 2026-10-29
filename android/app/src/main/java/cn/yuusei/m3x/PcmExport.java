@@ -12,6 +12,7 @@ import androidx.media3.datasource.okhttp.OkHttpDataSource;
 import androidx.media3.extractor.DefaultExtractorInput;
 import androidx.media3.extractor.FlacStreamMetadata;
 
+@androidx.annotation.OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
 final class PcmExport {
     static File decode(Context context, Uri uri, long startMs, long endMs, boolean reverse, String id) throws Exception {
         try { return decodePlatform(context, uri, startMs, endMs, reverse, id); }

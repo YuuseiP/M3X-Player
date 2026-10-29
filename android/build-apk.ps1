@@ -25,6 +25,7 @@ try {
         & npm.cmd ci
         if ($LASTEXITCODE -ne 0) { throw '安装界面构建依赖失败' }
     }
+    & '.\prepare-ffmpeg.ps1'
     & npm.cmd run assets
     if ($LASTEXITCODE -ne 0) { throw '构建 Android 7.1 界面失败' }
     & '.\prepare-flac.ps1'
