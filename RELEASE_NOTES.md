@@ -6,7 +6,7 @@
 - 一键将平台原文和同步译文合为 LRC，写入歌曲标准歌词标签。
 - 暂存副本上校验音频、封面与其他标签，完整文件撤销、SAF 自动回滚和中断恢复记录。
 - FLAC、AIFF、MP3、WAV、M4A 合成夹具通过；CUE、网络源、不支持格式禁止固化，无同步译文禁止双语固化。
-- versionCode 6；操作、验证范围与未覆盖边界见 [LYRICS.md](android/LYRICS.md)。未在 M3X 真机或用户曲库写入。
+- versionCode 6；操作、验证范围与未覆盖边界见 [LYRICS.md](android/LYRICS.md)。M3X 真机 17 项验收及内置存储／SD 卡 AIFF 写入恢复通过，仅使用合成歌曲，用户数据恢复校验通过。
 
 ---
 

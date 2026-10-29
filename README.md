@@ -6,7 +6,7 @@
 
 ## 下载与安装
 
-0.5.0 内置联网歌词搜索、逐曲标注和双语歌词标签固化，安装包在 `dist/Cheng-M3X-0.5.0.apk`，沿用发布签名，可覆盖安装；本次未创建或更新远程 Release。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`；歌词使用与恢复边界见 [歌词功能说明](android/LYRICS.md)。
+0.5.0 内置联网歌词搜索、逐曲标注和双语歌词标签固化，安装包在 `dist/Cheng-M3X-0.5.0.apk`，沿用发布签名，可覆盖安装；本次未创建或更新远程 Release。AIFF 真机验证见 `android/AIFF.md`，启动、触摸与动画验证见 `android/PERFORMANCE.md`；歌词使用与恢复边界见 [歌词功能说明](android/LYRICS.md)。0.5.0 已在 M3X 真机通过 17 项歌词验收，并验证内置存储／SD 卡合成 AIFF 写入与完整恢复。
 
 从 [0.4.0 Release](../../releases/tag/v0.4.0) 下载 `Cheng-M3X-0.4.0.apk`、`.apk.sha256` 校验文件与 `verification-0.4.0.json` 验证记录；本机构建输出位于 `dist/`。历史版本保留在 [Releases](../../releases) 中。仓库现已公开。
 

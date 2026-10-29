@@ -16,7 +16,7 @@
     "android": "7.1.1",
     "api": 25,
     "abi": "x86_64",
-    "realDeviceTested": false,
+    "realDeviceTested": true,
     "userAudioModified": false
   },
   "checks": {
@@ -78,12 +78,42 @@
     }
   },
   "limits": [
-    "No physical M3X tag write test",
+    "Synthetic songs only; real SD DocumentsProvider, power loss and long tracks not tested",
     "No real music changed",
     "No claim of recording match accuracy from search or duration",
     "SAF replacement is not atomic; recovery journal and backup retained",
     "One-level undo in app-private storage, removed by uninstall",
     "Direct source endpoints may change or restrict access",
     "No remote publication or push"
-  ]
+  ],
+  "physicalDevice": {
+    "date": "2026-10-29",
+    "model": "Shanling M3X",
+    "android": "7.1.1",
+    "api": 25,
+    "abi": "arm64-v8a",
+    "releaseInstalled": true,
+    "tests": 17,
+    "failures": 0,
+    "userStateRestored": true,
+    "userAudioModified": false,
+    "online": [
+      "QQ search and synchronized original/translation fetch",
+      "NetEase search and synchronized original/translation fetch",
+      "QQ UI search, annotate +1200ms/title, adopt, bilingual embed and full-file undo"
+    ],
+    "externalStorage": [
+      {
+        "removable": false,
+        "format": "AIFF24",
+        "writeAndFullRestore": true
+      },
+      {
+        "removable": true,
+        "format": "AIFF24",
+        "writeAndFullRestore": true
+      }
+    ],
+    "saf": "Synthetic test DocumentsProvider normal/readonly/truncate failure rollback; real SD DocumentsProvider not tested"
+  }
 }
