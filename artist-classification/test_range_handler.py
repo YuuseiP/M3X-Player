@@ -1,6 +1,6 @@
 import unittest
 
-from server import byte_range
+from range_handler import byte_range
 
 
 class ByteRangeTest(unittest.TestCase):

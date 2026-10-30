@@ -2,7 +2,7 @@
 
 ## 安装
 
-安装文件：`D:\CodeFile\M3X-Player\dist\Cheng-M3X-0.4.2.apk`。
+安装文件：`dist/Cheng-M3X-0.6.0.apk`，可从仓库的 v0.6.0 Release 下载。
 
 这是带本地发布签名的侧载 APK，不是 Google Play 发布包。面向原版 M3X 的 Android 7.1 / API 25，`minSdk=25`、`targetSdk=28`。不要求电脑预览服务、不捆绑测试歌曲、不登录账户。
 
@@ -12,6 +12,12 @@
 4. 软件内没有音量滑块；使用 M3X 实体音量键。声音处理、提交格式信息仍在播放页底部弹出面板。
 
 不需要把 Windows 上的 `D:\BaiduNetdiskDownload` 路径填进设备；设备只能访问自身存储及已授权的网络服务器。
+
+## 0.6.0 外观与统计
+
+新增列表/双列网格、经典主题封面动态配色、终末地浅深色工业主题、歌词更多菜单、收藏/歌单预览与日/小时听歌图表。界面源文件迁至 `ui/`，外观使用物理设备截图和本地批注审阅。
+
+验证详情见 [0.6.0 验证报告](APPEARANCE_060_VERIFICATION.md)。测试完成后恢复原曲库、设置、统计及播放位置；截图只作显示验收，静音短时播放不是听感或模拟 DAC 证明。
 
 ## 0.4.2 AIFF 播放修复
 
@@ -38,23 +44,23 @@
 
 ## 0.3.0 界面与内置分类（保留）
 
-- 复用当前网页预览的曲库、播放与「我的」界面。角色、组合、歌手独立浏览，分类排序和歌曲排序互不干扰；文件夹逐层进入，系统返回键也逐层返回。
+- 内置曲库、播放与「我的」界面。角色、组合、歌手独立浏览，分类排序和歌曲排序互不干扰；文件夹逐层进入，系统返回键也逐层返回。
 - 收藏、歌单与本地歌曲放在「我的」整行横向栏目中，沿用原来的收藏、歌单、队列和歌曲 ID；不清除旧版本数据。
-- 构建时从 `artist-classification/semantic/library-preview.json` 和已保存的 `web-preview/.classification-draft.json` 内置当前确认结果：4,235 首歌曲、461 个角色/组合/歌手实体。配置只保留相对路径，不包含 Windows 根目录，不捆绑歌曲，不调用电脑服务。
+- 构建时从 `artist-classification/semantic/library-preview.json` 和已保存的 `android/ui/.classification-draft.json` 内置当前确认结果：4,235 首歌曲、461 个角色/组合/歌手实体。配置只保留相对路径，不包含 Windows 根目录，不捆绑歌曲，不调用电脑服务。
 - 按完整相对路径和文件大小匹配已保存归属，支持内置存储、microSD、SAF 和选择更上层/下层目录；保留原目录结构即可。改名后的新文件仅在 `THE_IDOLMASTER` 目录内复用无歧义的原始歌手标签精确映射。不重新识别、不拆分未知署名、不推断组合成员。
 - 名称保留目前分类中已核实的百科汉字名；未命中配置的歌曲按完整原始署名放入普通歌手分类。匹配数量在扫描设置中显示，不设置待检查项目，不修改源文件标签。
 - 扫描仍由用户手动触发；扫描完成才发布真实时长、位深、采样率与封面，不把预览快照中的零时长放入 Android 曲库。取消/失败保留上次完整曲库，缓存重扫重新应用内置分类。
-- 长队列的「当前歌曲」会先加载到对应位置再滚动定位。此次不提供 APK 内分类编辑器；分类调整仍先在网页确认，再构建进 APK。
+- 长队列的「当前歌曲」会先加载到对应位置再滚动定位。此次不提供 APK 内分类编辑器；分类调整写入配置后构建进 APK，并在真机确认。
 
 ## 架构
 
-- 页面与网页版共用界面源码，构建时转为 Android 7.1 旧 WebView 可执行的脚本和样式，所有页面资源打包在 APK 中。
+- 界面源码位于 `android/ui/`，构建时转为 Android 7.1 旧 WebView 可执行的脚本和样式，所有页面资源打包在 APK 中。
 - 界面使用本机 Endfield Game `sdkresources\font` 目录中复制的 HarmonyOS Sans 等字体；常规与粗体及多语言回退字体均打包在 APK 中，离线可用。
 - WebView 只负责展示和输入。音频由 **Media3 ExoPlayer / MediaSessionService / AudioTrack** 在原生服务中播放，不使用 HTML Audio 播放。
 - MediaStore、SAF 持久目录授权、元数据、CUE、DSD 转 PCM、DSP、网络访问、文件导入导出均在 Java 层处理。
 - 通知、锁屏控制、耳机键、音频焦点、拔耳机暂停、播放唤醒锁由原生媒体会话和播放引擎接入。
 - libFLAC 和 FFmpeg 扩展包含 ARM32、ARM64 和 x86_64 原生库；其余格式取决于系统解码器和 Media3 支持。DAC 输出与文件解码是两条独立链路。
-- 网页不调用原生桥；原生 WebView 只允许内置 `https://m3x.local/` 页面，外部页面不进入桥接上下文。
+- 原生 WebView 只允许内置 `https://m3x.local/` 页面，外部页面不进入桥接上下文。
 
 ## 构建
 
@@ -101,11 +107,11 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 
 测试创建专用夹具，扫描测试不能指向用户歌曲目录。FLAC、AAC 和 16/24 位 ALAC 测试片段只在 `androidTest` 包中，不进入发布 APK。`AlacPlaybackTest` 可通过 `probeUri` 参数只读验证一首设备歌曲，不修改曲库。
 
-可选完整歌曲吞吐测试使用网页预览已有的 10 首完整 24bit/96kHz FLAC（约 1.36 GB），仅复制到指定模拟器测试目录，不进入 APK。安装匹配签名的应用与测试包后运行：
+可选完整歌曲吞吐测试使用本机 `android/local-fixtures/media` 中保留的音频夹具，仅复制到指定模拟器测试目录，不进入 APK。安装匹配签名的应用与测试包后运行：
 
 ```powershell
 $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
-& $adb -s emulator-5580 push '..\web-preview\media' '/sdcard/Download/m3x-full-scan-fixtures'
+& $adb -s emulator-5580 push '.\local-fixtures\media' '/sdcard/Download/m3x-full-scan-fixtures'
 & $adb -s emulator-5580 shell am instrument -w -e class cn.yuusei.m3x.NativePlayerTest#testFullLengthScanThroughput -e scanDirectory /sdcard/Download/m3x-full-scan-fixtures cn.yuusei.m3x.test/android.test.InstrumentationTestRunner
 ```
 
@@ -144,3 +150,7 @@ $adb = "$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe"
 - 构建期 Babel（MIT）、core-js（MIT）、测试期 JUnit（EPL-1.0）、JSON-java（公开项目依赖，见对应发行许可）。
 
 本项目未使用参考 APK 的代码、图标、BASS 动态库、授权模块、品牌音效或私有服务协议。
+
+## 真机外观截图
+
+外观调整以 ADB 物理显示截图为依据，运行 `.\capture-appearance.ps1`。之后运行 `python -u .\appearance-review.py`，在 `http://127.0.0.1:18766/` 绘画、填写批注并保存本地草稿，供后续 agent 直接读取。详见 [APPEARANCE.md](APPEARANCE.md)。

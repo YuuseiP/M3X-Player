@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>澄 · 真机外观批注</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/review.css">
+  <script defer src="/review.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">澄</span><span>真机外观审阅<small>M3X SCREENSHOT REVIEW</small></span></a>
+    <div class="save-actions"><span id="save-status" class="save-status" role="status">正在读取本地草稿…</span><button id="backup" class="quiet">下载备份</button><button id="save" class="primary">保存到本地 <kbd>Ctrl S</kbd></button></div>
+  </header>
+  <div id="error" class="error-banner" role="alert" hidden><span id="error-text"></span><button id="retry">重试保存</button><button id="reload-draft" hidden>重新载入磁盘草稿</button></div>
+  <main class="workspace">
+    <section class="intro">
+      <div><p class="eyebrow"><span class="live-dot"></span> ADB · PHYSICAL DEVICE</p><h1>把想法，留在真机画面上。</h1><p class="description">打开截图，用画笔、方框或箭头圈出问题，写下你想要的变化。</p></div>
+      <div class="batch"><label for="run">截图批次</label><select id="run" aria-label="截图批次"></select><span id="device">正在读取设备信息</span></div>
+    </section>
+    <details class="global-note" id="global-details"><summary><span>整体修改要求 <small>适用于所有页面</small></span><span id="global-indicator">＋</span></summary><textarea id="global-note" rows="3" maxlength="20000" placeholder="例如：整体留白更紧凑，按钮触控区域保持足够大。每页的具体要求可以写在截图旁。" aria-label="整体修改要求"></textarea></details>
+    <section class="browsebar" aria-label="截图筛选">
+      <div class="tabs" id="theme-tabs"><button data-theme="all" aria-pressed="true">全部</button><button data-theme="light" aria-pressed="false">浅色</button><button data-theme="dark" aria-pressed="false">深色</button></div>
+      <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="查找页面或批注…" aria-label="查找页面或批注"></label>
+      <button id="only-marked" class="marked-filter" aria-pressed="false">只看有批注</button><span id="count" class="count"></span>
+    </section>
+    <div id="grid" class="grid" aria-label="真机截图"></div>
+    <div id="empty" class="empty" hidden>没有匹配的截图，试试其他筛选条件。</div>
+    <details id="unavailable" class="unavailable"><summary>本批次未展示的状态</summary><ul id="unavailable-list"></ul></details>
+    <footer><span>批注自动保存到本机文件 · 原始截图始终保留</span><span id="draft-path"></span></footer>
+  </main>
+  <dialog id="editor" aria-labelledby="editor-title">
+    <header class="editor-header"><div><p id="editor-id" class="eyebrow"></p><h2 id="editor-title"></h2></div><div class="editor-nav"><button id="previous" aria-label="上一张截图">←</button><span id="position"></span><button id="next" aria-label="下一张截图">→</button><button id="close-editor" class="close-button" aria-label="关闭批注编辑器">×</button></div></header>
+    <div class="editor-body">
+      <section class="drawing-area" aria-label="截图标注画布">
+        <div class="drawing-toolbar">
+          <div id="tools" class="tools" aria-label="绘画工具"><button data-tool="pen" title="画笔 (P)" aria-pressed="true">✎ <span>画笔</span></button><button data-tool="rect" title="方框 (R)" aria-pressed="false">□ <span>方框</span></button><button data-tool="arrow" title="箭头 (A)" aria-pressed="false">↗ <span>箭头</span></button><button data-tool="pin" title="标记 (N)" aria-pressed="false">⊙ <span>标记</span></button></div>
+          <div class="stroke-options"><label title="标注颜色"><input id="color" type="color" value="#e35e3e" aria-label="标注颜色"></label><select id="width" aria-label="线宽"><option value="3">细线</option><option value="5" selected>中线</option><option value="9">粗线</option></select></div>
+          <div class="history"><button id="undo" title="撤销绘画 (Ctrl Z)" aria-label="撤销绘画">↶</button><button id="redo" title="重做绘画 (Ctrl Shift Z)" aria-label="重做绘画">↷</button><select id="zoom" aria-label="截图缩放"><option value="fit">适应窗口</option><option value="1">100%</option><option value="1.5">150%</option></select></div>
+        </div>
+        <div id="stage" class="stage"><div id="canvas-wrap" class="canvas-wrap"><canvas id="canvas" aria-label="在真机截图上绘画标注"></canvas></div></div>
+        <div class="canvas-caption"><span id="dimensions"></span><span>拖动绘画 · 数字对应右侧批注</span></div>
+      </section>
+      <aside class="notes-panel">
+        <div class="notes-heading"><h3>修改意见</h3><span id="annotation-count">0 处标注</span></div>
+        <label class="note-label" for="page-note">这张页面的整体要求</label><textarea id="page-note" rows="4" maxlength="12000" placeholder="希望哪里发生变化？也可以只写文字，不绘画。"></textarea>
+        <div class="annotations-heading"><h4>逐处批注</h4><span>点击标注即可编辑</span></div>
+        <div id="annotation-list" class="annotation-list"></div>
+        <div id="annotation-empty" class="annotation-empty"><span>✎</span><p>先在画面上圈出一处，<br>再写下具体的修改要求。</p></div>
+        <div id="annotation-editor" class="annotation-editor" hidden><label id="annotation-label" class="note-label" for="annotation-text"></label><textarea id="annotation-text" rows="4" maxlength="4000" placeholder="例如：这个按钮与上方标题的间距缩小一些。"></textarea><button id="delete-annotation" class="delete-button">删除这处标注</button></div>
+        <div class="notes-tip">会自动保存到本机草稿。后续 agent 直接读取草稿、原图和标注图进行修改。</div>
+      </aside>
+    </div>
+    <footer class="editor-footer"><span id="editor-save-status">修改会自动保存</span><button id="editor-save" class="primary">保存草稿</button></footer>
+  </dialog>
+</body>
+</html>

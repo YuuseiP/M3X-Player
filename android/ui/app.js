@@ -44,6 +44,9 @@
     filenameTitle: saved.filenameTitle === true, showCovers: saved.showCovers !== false,
     avatar: typeof saved.avatar === "string" && saved.avatar.startsWith("data:image/jpeg;base64,") ? saved.avatar : "",
     nickname: typeof saved.nickname === "string" && saved.nickname.trim() ? saved.nickname.trim().slice(0, 20) : "本地听众",
+    libraryView: saved.libraryView === "grid" ? "grid" : "list",
+    visualTheme: saved.visualTheme === "endfield" ? "endfield" : "classic",
+    colorMode: saved.colorMode === "cover" ? "cover" : "fixed",
     theme: ["system", "light", "dark"].includes(saved.theme) ? saved.theme : "system",
     startPage: ["library", "player", "profile"].includes(saved.startPage) ? saved.startPage : "library",
     rememberPosition: saved.rememberPosition !== false,
@@ -59,6 +62,9 @@
   let renderedScanSources = "";
   let menuIndex = state.index;
   let renderedTrack = null;
+  root.addEventListener("error", event => {
+    if (event.target.tagName === "IMG" && !event.target.src.endsWith("cover-placeholder.svg")) event.target.src = "cover-placeholder.svg";
+  }, true);
   root.addEventListener("keydown", event => {
     if (event.key === "Tab") root.classList.add("keyboard-navigation");
   });
@@ -91,7 +97,9 @@
     sequential: '<path d="M4 6h15m-4-4 4 4-4 4M20 18H5m4-4-4 4 4 4"/>',
     shuffle: '<path d="M3 6h3c5 0 7 12 12 12h3m-4-4 4 4-4 4M3 18h3c5 0 7-12 12-12h3m-4-4 4 4-4 4"/>',
     repeat: '<path d="M5 7h14l-3-3m3 3-3 3M19 17H5l3-3m-3 3 3 3M4 12V9m16 3v3"/><path d="M11 10h1v5"/>',
-    scan: '<path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M7 12h10"/>',
+    scan: '<path d="M20 7a8 8 0 1 0 0 10M20 3v5h-5"/>',
+    list: '<path d="M8 5h13M8 12h13M8 19h13M3 5h1M3 12h1M3 19h1"/>',
+    grid: '<path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/>',
     folder: '<path d="M3 6h7l2 2h9v12H3Z"/>',
     check: '<path d="m5 12 4 4L19 6"/>',
     remove: '<path d="M5 12h14"/>',
@@ -129,7 +137,7 @@
         favorites: [...state.favorites], history: state.history, nickname: state.nickname,
         playlists: state.playlists, avatar: state.avatar, queue: state.queue, queueCleared: state.queueCleared,
         hidden: [...state.hidden], sort: state.sort, groupSort: state.groupSort, filenameTitle: state.filenameTitle, showCovers: state.showCovers,
-        theme: state.theme, startPage: state.startPage, rememberPosition: state.rememberPosition,
+        theme: state.theme, libraryView: state.libraryView, visualTheme: state.visualTheme, colorMode: state.colorMode, startPage: state.startPage, rememberPosition: state.rememberPosition,
         position: state.rememberPosition ? (audio.readyState ? audio.currentTime : pendingSeek) : 0
       }));
       if (window.M3X_NATIVE) window.nativeCommand("ui-save", JSON.parse(localStorage.getItem(storageKey)));
@@ -217,7 +225,7 @@
       return;
     }
     const groupLimit = window.M3X_NATIVE ? listLimits.groups || listPageSize : Infinity;
-    const renderKey = JSON.stringify([libraryRevision, state.filter, state.groupKey, state.query, state.groupSort, state.showCovers, [...state.hidden], groupLimit]);
+    const renderKey = JSON.stringify([libraryRevision, state.filter, state.groupKey, state.query, state.groupSort, state.showCovers, state.libraryView, [...state.hidden], groupLimit]);
     if (listRenderKeys.get(groups) === renderKey) return;
     listRenderKeys.set(groups, renderKey);
     groups.replaceChildren();
@@ -231,11 +239,18 @@
       button.className = "m3x-playlist-row"; button.dataset.group = key;
       const cover = document.createElement(folders ? "span" : "img");
       if (folders) { cover.className = "m3x-folder-icon"; cover.innerHTML = icon("folder"); }
-      else { cover.src = tracks[indices[0]].cover; cover.alt = ""; cover.loading = "lazy"; cover.hidden = !state.showCovers; }
+      else { cover.src = tracks[indices[0]].cover || "cover-placeholder.svg"; cover.alt = ""; cover.loading = "lazy"; cover.hidden = !state.showCovers; }
       const info = document.createElement("span");
       const name = document.createElement("strong"); name.textContent = groupLabel(key);
       const count = document.createElement("small"); count.textContent = indices.length + " 首";
-      info.append(name, count); button.append(cover, info); groups.append(button);
+      info.append(name, count);
+      if (state.libraryView === "grid") {
+        const art = document.createElement("span"); art.className = "m3x-card-art";
+        cover.hidden = false;
+        if (!folders && !state.showCovers) cover.src = "cover-placeholder.svg";
+        art.append(cover); button.append(art, info);
+      } else button.append(cover, info);
+      groups.append(button);
       if (folders) button.insertAdjacentHTML("beforeend", icon("right"));
     }
     if (ordered.length > groupLimit) {
@@ -282,7 +297,7 @@
         list.dataset.list === "playlist" ? (state.playlists.find(item => item.id === state.playlistId)?.trackIds || []).map(id => indexById.get(id)).filter(index => index !== undefined) :
         list.dataset.list === "queue" ? queueIndices() : list.dataset.list === "favorites" ? favoriteIndices() : libraryIndices();
       const limit = listLimits[list.dataset.list] || listPageSize;
-      const renderKey = JSON.stringify([libraryRevision, indices, limit, state.index, state.showCovers, state.filenameTitle]);
+      const renderKey = JSON.stringify([libraryRevision, indices, limit, state.index, state.showCovers, state.filenameTitle, list.dataset.list === "library" ? state.libraryView : "list"]);
       if (listRenderKeys.get(list) === renderKey) return;
       listRenderKeys.set(list, renderKey);
       indices.slice(0, limit).forEach(index => {
@@ -297,7 +312,7 @@
         button.setAttribute("aria-label", track.title + "，" + track.artist + "，播放");
         const cover = document.createElement("img");
         cover.className = "m3x-swatch";
-        cover.src = track.cover;
+        cover.src = track.cover || "cover-placeholder.svg";
         cover.alt = "";
         cover.width = cover.height = 40;
         cover.loading = "lazy";
@@ -321,7 +336,11 @@
         resolution.textContent = quality(track);
         artist.append(resolution);
         details.textContent = track.duration > 0 ? time(track.duration) : "—";
-        button.append(cover, info, details);
+        if (list.dataset.list === "library" && state.libraryView === "grid") {
+          const art = document.createElement("span"); art.className = "m3x-card-art";
+          cover.hidden = false; if (!state.showCovers) cover.src = "cover-placeholder.svg";
+          art.append(cover); button.append(art, info, details);
+        } else button.append(cover, info, details);
         if (["playlist", "queue", "library", "recent", "favorites"].includes(list.dataset.list)) {
           const row = document.createElement("div");
           row.className = "m3x-track-row";
@@ -360,15 +379,55 @@
     text("songCount", tracks.length);
     text("playlistTotal", state.playlists.length);
     text("hiddenCount", state.hidden.size + " 首");
+    if (state.page === "profile") renderCollectionPreviews();
     const avatar = document.getElementById("avatar-image");
     avatar.hidden = !state.avatar;
     if (state.avatar && avatar.getAttribute("src") !== state.avatar) avatar.src = state.avatar;
     screen.querySelector(".m3x-avatar span").hidden = Boolean(state.avatar);
   }
+  function renderCollectionPreviews() {
+    const favorites = [...new Set([...state.history, ...state.favorites])].filter(id => state.favorites.has(id) && indexById.has(id) && !state.hidden.has(id)).slice(0, 4);
+    const items = state.playlists.slice(0, 4);
+    for (const [id, entries] of [["favorite-preview", favorites], ["playlist-preview", items]]) {
+      const target = document.getElementById(id);
+      const key = JSON.stringify([libraryRevision, entries]);
+      if (listRenderKeys.get(target) === key) continue;
+      listRenderKeys.set(target, key); target.replaceChildren();
+      entries.forEach(entry => {
+        const playlist = id === "playlist-preview";
+        const track = playlist ? tracks[indexById.get(entry.trackIds.find(value => indexById.has(value)))] : tracks[indexById.get(entry)];
+        const card = document.createElement("button"); card.type = "button"; card.className = "m3x-preview-card";
+        if (playlist) card.dataset.playlist = entry.id;
+        else { card.dataset.track = indexById.get(entry); card.dataset.context = "favorites"; }
+        const art = document.createElement("span"); art.className = "m3x-card-art";
+        const img = document.createElement("img"); img.src = track?.cover || "cover-placeholder.svg"; img.alt = ""; img.loading = "lazy";
+        art.append(img);
+        const title = document.createElement("span"); title.textContent = playlist ? entry.name : track.title;
+        card.append(art, title); card.title = title.textContent; target.append(card);
+      });
+      if (!entries.length) {
+        const empty = document.createElement("p"); empty.className = "m3x-caption";
+        empty.textContent = id === "favorite-preview" ? "暂无收藏，点亮歌曲的爱心即可添加" : "还没有歌单";
+        target.append(empty);
+        if (id === "playlist-preview") { const add = document.createElement("button"); add.type = "button"; add.className = "m3x-text-button"; add.dataset.action = "new-playlist"; add.textContent = "+ 创建歌单"; target.append(add); }
+      }
+    }
+  }
+  const libraryScrolls = new Map();
+  const libraryScrollKey = view => JSON.stringify([state.filter, state.groupKey, state.query, state.sort, state.groupSort, view]);
+  root.querySelectorAll("[data-library-view]").forEach(button => button.addEventListener("click", () => {
+    const browser = document.getElementById("library-browser");
+    libraryScrolls.set(libraryScrollKey(state.libraryView), browser.scrollTop);
+    state.libraryView = button.dataset.libraryView; render(); persist(true);
+    browser.scrollTop = libraryScrolls.get(libraryScrollKey(state.libraryView)) || 0;
+  }));
   function render() {
     const track = tracks[state.index];
     const queue = queueIndices();
-    document.documentElement.style.colorScheme = state.theme === "system" ? "light dark" : state.theme;
+    window.M3X_APPEARANCE.apply(state, track);
+    screen.dataset.libraryView = state.libraryView;
+    screen.querySelectorAll("[data-library-view]").forEach(button => button.setAttribute("aria-pressed", String(button.dataset.libraryView === state.libraryView)));
+    screen.querySelector('[data-setting="colorMode"]').disabled = state.visualTheme === "endfield";
     screen.dataset.layout = state.layout;
     screen.querySelectorAll("[data-panel]").forEach(panel => { panel.hidden = panel.dataset.panel !== state.page; });
     screen.querySelectorAll(".m3x-nav [data-page]").forEach(button => {

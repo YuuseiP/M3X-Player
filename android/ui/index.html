@@ -8,7 +8,7 @@
   <link rel="icon" href="covers/01.jpg">
   <link rel="stylesheet" href="styles.css">
   <script defer src="tracks.js"></script>
-  <script defer src="app.js"></script>
+  <script defer src="appearance.js"></script><script defer src="app.js"></script>
   <script defer src="avatar.js"></script>
   <script defer src="player-tools.js"></script>
   <script defer src="classification.js"></script>
@@ -21,7 +21,7 @@
         <button type="button" data-page="player"><i data-icon="disc"></i>播放</button>
         <button type="button" data-page="profile"><i data-icon="user"></i>我的</button>
       </nav>
-      <main class="m3x-content">
+      <div class="m3x-endfield-band" aria-hidden="true"><b>ENDFIELD / AUDIO</b><span>终末地 · 本地音乐</span></div><main class="m3x-content">
         <section class="m3x-panel m3x-player" data-panel="player" aria-label="正在播放" hidden>
           <button type="button" class="m3x-cover-open" data-page="lyrics" aria-label="查看歌词"><img class="m3x-cover" alt="" width="240" height="240"></button>
           <div class="m3x-song">
@@ -43,11 +43,11 @@
           <div class="m3x-up-next"><button type="button" data-page="queue"><small>接下来</small><span data-text="next"></span><i data-icon="right"></i></button><div class="m3x-track-list" data-list="upcoming" aria-label="接下来播放"></div></div>
         </section>
         <section class="m3x-panel" data-panel="library" aria-label="本地曲库">
-          <div class="m3x-page-heading"><h2 class="m3x-heading">曲库 <small data-text="trackCount">10 首</small></h2><button type="button" class="m3x-icon" data-action="scan" aria-label="扫描歌曲"><i data-icon="scan"></i></button></div>
+          <div class="m3x-page-heading"><h2 class="m3x-heading">曲库 <small data-text="trackCount">10 首</small></h2><button type="button" class="m3x-scan-entry" data-action="scan" aria-label="扫描曲库" title="扫描已授权目录，更新本地曲库"><i data-icon="scan"></i><span>扫描</span></button></div>
           <button type="button" class="m3x-create-entry m3x-browser-only" data-page="create-library"><span><strong>管理曲库分类</strong><small>THE_IDOLMASTER · 使用已保留的分类</small></span><i data-icon="right"></i></button>
           <input class="m3x-search" type="search" placeholder="搜索歌曲、歌手、专辑" aria-label="搜索曲库">
           <div class="m3x-filters" aria-label="曲库筛选"><button type="button" data-filter="all" aria-pressed="true">歌曲</button><button type="button" data-filter="characters" aria-pressed="false" hidden>角色</button><button type="button" data-filter="groups" aria-pressed="false" hidden>组合</button><button type="button" data-filter="artists" aria-pressed="false">歌手</button><button type="button" data-filter="albums" aria-pressed="false">专辑</button><button type="button" data-filter="folders" aria-pressed="false">文件夹</button></div>
-          <div class="m3x-library-controls"><button type="button" class="m3x-text-button" id="group-back" data-action="group-back" hidden><i data-icon="back"></i><span id="group-label"></span></button><label hidden>分类排序<select data-setting="groupSort" aria-label="分类排序"><option value="name">名称升序</option><option value="name-desc">名称降序</option><option value="count">歌曲最多</option></select></label><label>歌曲排序<select data-setting="sort" aria-label="歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
+          <div class="m3x-library-controls"><div class="m3x-view-switch" aria-label="曲库显示方式"><button type="button" data-library-view="list" aria-label="列表视图" aria-pressed="true"><i data-icon="list"></i></button><button type="button" data-library-view="grid" aria-label="方形网格视图" aria-pressed="false"><i data-icon="grid"></i></button></div><button type="button" class="m3x-text-button" id="group-back" data-action="group-back" hidden><i data-icon="back"></i><span id="group-label"></span></button><label hidden>分类排序<select data-setting="groupSort" aria-label="分类排序"><option value="name">名称升序</option><option value="name-desc">名称降序</option><option value="count">歌曲最多</option></select></label><label>歌曲排序<select data-setting="sort" aria-label="歌曲排序"><option value="original">默认顺序</option><option value="title">歌曲名称</option><option value="artist">歌手</option><option value="album">专辑音轨</option><option value="duration">时长升序</option><option value="duration-desc">时长降序</option><option value="added">最近添加</option><option value="year">发行年份</option></select></label></div>
           <p id="folder-location" class="m3x-caption" hidden></p>
           <div id="library-browser" class="m3x-scroll">
             <div id="library-groups" hidden></div>
@@ -91,12 +91,12 @@
           <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="player" aria-label="返回播放"><i data-icon="back"></i></button><h2>歌词</h2></div>
           <h3 class="m3x-lyric-title" data-text="title"></h3><p class="m3x-subheading" data-text="singer"></p>
           <div id="lyrics-lines" class="m3x-scroll" aria-label="歌词内容"></div>
-          <label class="m3x-lyric-offset">歌词偏移 <output id="lyric-offset-label">0.0 秒</output><input id="lyric-offset" type="range" min="-10" max="10" step="0.1" value="0" aria-label="歌词偏移"></label>
+          <button type="button" class="m3x-icon m3x-lyrics-more" id="lyrics-more" aria-label="歌词更多操作" aria-haspopup="dialog"><i data-icon="more"></i></button><div id="lyric-offset-home" hidden><label class="m3x-lyric-offset">歌词偏移 <output id="lyric-offset-label">0.0 秒</output><input id="lyric-offset" type="range" min="-10" max="10" step="0.1" value="0" aria-label="歌词偏移"></label></div>
         </section>
         <section class="m3x-panel m3x-scroll" data-panel="statistics" aria-label="听歌统计" hidden>
           <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>听歌统计</h2></div>
           <div class="m3x-stats-summary"><div><strong id="listening-minutes">0</strong><small>累计听歌分钟</small></div><div><strong id="listening-count">0</strong><small>播放次数</small></div></div>
-          <h3 class="m3x-section-label">常听歌曲</h3><div id="listening-ranking"></div>
+          <p id="stats-since" class="m3x-caption"></p><section class="m3x-chart-card"><h3>最近 7 天 <small>听歌分钟</small></h3><div id="stats-days" class="m3x-day-chart"></div></section><section class="m3x-chart-card"><h3>听歌时段 <small>最近 7 天 · 本地时间</small></h3><div id="stats-hours" class="m3x-hour-chart"></div><p id="stats-detail" class="m3x-caption" role="status">点击图表查看时长</p></section><h3 class="m3x-section-label">常听歌曲</h3><div id="listening-ranking"></div>
         </section>
         <section class="m3x-panel" data-panel="favorites" aria-label="我的收藏" hidden>
           <div class="m3x-page-heading"><div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>我的收藏</h2></div><span class="m3x-caption"><span data-text="favoriteCount">0</span> 首</span></div>
@@ -120,8 +120,8 @@
             <div class="m3x-profile-name"><input id="nickname" type="text" maxlength="20" value="本地听众" aria-label="昵称" autocomplete="nickname"></div>
             <button type="button" class="m3x-icon" data-action="edit-profile" aria-label="修改昵称"><i data-icon="edit"></i></button>
           </div>
-          <button type="button" class="m3x-menu-row" data-action="open-favorites"><span class="m3x-menu-icon"><i data-icon="heart"></i></span><span><strong>我的收藏</strong></span><small class="m3x-caption"><span data-text="favoriteCount">0</span> 首</small><i data-icon="right"></i></button>
-          <button type="button" class="m3x-menu-row" data-action="open-playlists"><span class="m3x-menu-icon"><i data-icon="add-list"></i></span><span><strong>我的歌单</strong></span><small class="m3x-caption"><span data-text="playlistTotal">0</span> 个</small><i data-icon="right"></i></button>
+          <section class="m3x-collection-section"><div class="m3x-section-heading"><h3>我的收藏 <small data-text="favoriteCount"></small></h3><button type="button" class="m3x-text-button" data-action="open-favorites">查看全部 ›</button></div><p class="m3x-caption">近期听过的收藏歌曲</p><div id="favorite-preview" class="m3x-preview-cards"></div></section>
+          <section class="m3x-collection-section"><div class="m3x-section-heading"><h3>我的歌单 <small data-text="playlistTotal"></small></h3><button type="button" class="m3x-text-button" data-action="open-playlists">查看全部 ›</button></div><div id="playlist-preview" class="m3x-preview-cards"></div></section>
           <button type="button" class="m3x-menu-row" data-action="open-library"><span class="m3x-menu-icon"><i data-icon="library"></i></span><span><strong>本地歌曲</strong></span><small class="m3x-caption"><span data-text="songCount">10</span> 首</small><i data-icon="right"></i></button>
           <button type="button" class="m3x-menu-row" data-page="settings"><span class="m3x-menu-icon"><i data-icon="settings"></i></span><span><strong>软件设置</strong></span><i data-icon="right"></i></button>
           <button type="button" class="m3x-menu-row" data-page="statistics"><span class="m3x-menu-icon"><i data-icon="disc"></i></span><span><strong>听歌统计</strong></span><i data-icon="right"></i></button>
@@ -132,7 +132,10 @@
           <div class="m3x-queue-heading"><button type="button" class="m3x-icon" data-page="profile" aria-label="返回我的"><i data-icon="back"></i></button><h2>软件设置</h2></div>
           <div class="m3x-scroll m3x-settings-body">
             <h3 class="m3x-section-label">外观</h3>
-            <label class="m3x-setting"><span>主题</span><select data-setting="theme" aria-label="主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+            <label class="m3x-setting"><span>明暗模式</span><select data-setting="theme" aria-label="主题"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+            <label class="m3x-setting"><span>界面主题</span><select data-setting="visualTheme" aria-label="界面主题"><option value="classic">澄 · 经典</option><option value="endfield">终末地 · 工业</option></select></label>
+            <label class="m3x-setting"><span>主题配色</span><select data-setting="colorMode" aria-label="主题配色"><option value="fixed">固定配色</option><option value="cover">跟随歌曲封面</option></select></label>
+            <p id="theme-description" class="m3x-caption">封面配色适用于经典主题；终末地主题使用黑白与信号黄。</p>
             <label class="m3x-setting"><span>播放器布局</span><select data-setting="layout" aria-label="播放器布局"><option value="album">专辑沉浸</option><option value="catalog">曲库优先</option></select></label>
             <label class="m3x-setting"><span>以文件名显示歌曲</span><input type="checkbox" data-setting="filenameTitle" aria-label="以文件名显示歌曲"></label>
             <label class="m3x-setting"><span>列表显示封面</span><input type="checkbox" data-setting="showCovers" aria-label="列表显示封面" checked></label>

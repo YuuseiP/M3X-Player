@@ -2,11 +2,11 @@ const fs = require("node:fs");
 const path = require("node:path");
 const babel = require("@babel/core");
 const { compileClassification } = require("./prepare-classification.cjs");
-const root = path.resolve(__dirname, "../web-preview");
+const root = path.resolve(__dirname, "ui");
 const output = path.join(__dirname, "app/src/main/assets/player");
 const version = fs.readFileSync(path.join(__dirname, "app/build.gradle"), "utf8").match(/versionName '([^']+)'/)[1];
 fs.mkdirSync(output, { recursive: true });
-const baselineFile = path.resolve(root, "../artist-classification/semantic/library-preview.json");
+const baselineFile = path.resolve(__dirname, "../artist-classification/semantic/library-preview.json");
 const draftFile = path.join(root, ".classification-draft.json");
 const classification = compileClassification(fs.readFileSync(baselineFile), fs.existsSync(draftFile) ? JSON.parse(fs.readFileSync(draftFile, "utf8")) : null);
 fs.writeFileSync(path.join(output, "artist-classification.json"), JSON.stringify(classification));
@@ -34,7 +34,7 @@ prelude += "},cache={};function require(id){if(cache[id])return cache[id].export
 for (const feature of polyfills) prelude += `require(${ids.get(require.resolve("core-js/modules/" + feature))});`;
 prelude += "})();";
 fs.writeFileSync(path.join(output, "polyfills.js"), prelude);
-for (const name of ["app.js", "avatar.js", "player-tools.js", "native-bridge.js", "native-tools.js"]) {
+for (const name of ["appearance.js", "app.js", "avatar.js", "player-tools.js", "native-bridge.js", "native-tools.js"]) {
   const filename = name.startsWith("native-") ? path.join(__dirname, name) : path.join(root, name);
   const result = babel.transformSync(fs.readFileSync(filename, "utf8"), {
     presets: [["@babel/preset-env", { targets: { chrome: "51" }, modules: false }]],
@@ -56,7 +56,11 @@ let css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 let darkRules = [];
 css = css.replace(/([^{}]+)\{([^{}]*)\}/g, (full, selector, body) => {
   let dark = body.replace(/light-dark\(([^,()]+),\s*([^()]+)\)/g, "$2");
-  if (dark !== body && !selector.trim().startsWith("@")) darkRules.push(selector.trim().split(",").map(s => "html[data-theme=dark] " + s.trim()).join(",") + "{" + dark + "}");
+  // Copy only color-dependent declarations. Repeating the whole block gives the
+  // dark selector higher specificity than Android's full-screen layout overrides.
+  const darkDeclarations = body.split(";").filter(declaration => declaration.includes("light-dark("))
+    .map(declaration => declaration.replace(/light-dark\(([^,()]+),\s*([^()]+)\)/g, "$2")).join(";");
+  if (dark !== body && !selector.trim().startsWith("@")) darkRules.push(selector.trim().split(",").map(s => "html[data-theme=dark] " + s.trim()).join(",") + "{" + darkDeclarations + ";}");
   return selector + "{" + body.replace(/light-dark\(([^,()]+),\s*([^()]+)\)/g, "$1") + "}";
 });
 css += "\n" + darkRules.join("\n") + "\n#m3x-concept{display:flex;justify-content:center;align-items:center;padding:0;min-height:100vh}#m3x-concept .m3x-screen{width:100%;height:100vh;border:0;border-radius:0;box-shadow:none}#m3x-concept dialog{margin:0;border:0;padding:0;background:transparent;display:none}#m3x-concept dialog[open]{display:flex;position:absolute;z-index:10}#m3x-concept .m3x-track-artist{gap:0}#m3x-concept .m3x-track-artist small{margin-left:8px}#m3x-concept .m3x-cover-open{height:240px}#m3x-concept .m3x-screen[data-layout=catalog] .m3x-cover-open{height:80px}";
@@ -108,7 +112,7 @@ css = css.replace(/#([0-9a-f]{8}|[0-9a-f]{4})\b/gi, (_, hex) => {
   return `rgba(${parseInt(hex.slice(0, 2), 16)},${parseInt(hex.slice(2, 4), 16)},${parseInt(hex.slice(4, 6), 16)},${(parseInt(hex.slice(6), 16) / 255).toFixed(4)})`;
 });
 fs.writeFileSync(path.join(output, "styles.css"), css);
-fs.copyFileSync(path.join(root, "cover-placeholder.svg"), path.join(output, "cover-placeholder.svg"));
+for (const asset of ["cover-placeholder.svg", "endfield-contours.svg"]) fs.copyFileSync(path.join(root, asset), path.join(output, asset));
 fs.cpSync(path.join(root, "fonts"), path.join(output, "fonts"), { recursive: true });
 const licenses = fs.readdirSync(path.join(__dirname, "licenses")).filter(name => name.endsWith(".txt"))
   .map(name => name + "\n\n" + fs.readFileSync(path.join(__dirname, "licenses", name), "utf8")).join("\n\n────────────────\n\n");

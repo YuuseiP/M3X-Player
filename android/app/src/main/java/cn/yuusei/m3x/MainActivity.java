@@ -219,6 +219,15 @@ public final class MainActivity extends Activity {
                     PlaybackService service = app.playback;
                     if (service == null) return json("error", "播放服务正在启动").toString();
                     switch (name) {
+                        case "appearance-bars": {
+                            int color = Color.parseColor(data.getString("color"));
+                            getWindow().setStatusBarColor(color); getWindow().setNavigationBarColor(color);
+                            View decor = getWindow().getDecorView();
+                            int flags = decor.getSystemUiVisibility();
+                            if (data.optBoolean("dark")) flags &= ~android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                            else flags |= android.view.View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+                            decor.setSystemUiVisibility(flags); return "{}";
+                        }
                         case "poll": return service.snapshot().toString();
                         case "queue": {
                             JSONArray ids = new JSONArray();

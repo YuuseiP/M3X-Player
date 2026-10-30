@@ -9,3 +9,6 @@ captures/
 .signing/
 local-signing.properties
 *.log
+
+local-fixtures/
+ui/.classification-draft.json

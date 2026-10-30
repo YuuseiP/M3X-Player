@@ -4,13 +4,11 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path, PureWindowsPath
-import sys
 from urllib.parse import unquote, urlsplit
 
 HERE = Path(__file__).resolve().parent
-WEB = HERE.parent / "web-preview"
-sys.path.insert(0, str(WEB))
-from server import PreviewHandler  # Reuse the player's range/seek implementation.
+FONTS = HERE.parent / "android" / "ui" / "fonts"
+from range_handler import RangeHandler
 
 
 class ClassificationLibrary:
@@ -68,7 +66,7 @@ class ClassificationLibrary:
         return None
 
 
-class ClassificationHandler(PreviewHandler):
+class ClassificationHandler(RangeHandler):
     def local_request(self):
         return self.headers.get("Host") in {
             f"localhost:{self.server.server_port}", f"127.0.0.1:{self.server.server_port}"}
@@ -98,7 +96,7 @@ class ClassificationHandler(PreviewHandler):
         if route in {"/fonts/HarmonyOS_Sans_SC_Medium.woff2",
                      "/fonts/HarmonyOS_Sans_SC_Bold.woff2",
                      "/fonts/NotoSansJP_Medium.woff2"}:
-            return str(WEB / route.lstrip("/"))
+            return str(FONTS / Path(route).name)
         return str(HERE / "preview" / ".missing")
 
 

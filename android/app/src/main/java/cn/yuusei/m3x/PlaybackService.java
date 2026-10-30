@@ -38,6 +38,7 @@ public final class PlaybackService extends MediaSessionService {
     private int outputRate, outputEncoding, audioTracks;
     private String decoderName = "";
     private long lastStats, listenedMs, lastSave;
+    private boolean statsPlaying;
     private boolean counted;
     private boolean destroyed;
     private JSONObject stats;
@@ -106,6 +107,7 @@ public final class PlaybackService extends MediaSessionService {
         super.onCreate();
         long started = SystemClock.elapsedRealtime();
         app = PlayerApp.instance; app.playback = this; settings = app.settings("audio"); stats = app.settings("tools");
+        ListeningStats.initialize(stats, System.currentTimeMillis(), java.util.TimeZone.getDefault());
         ((AudioManager) getSystemService(AUDIO_SERVICE)).registerAudioDeviceCallback(routeChanges, app.main);
         updateRoute();
         buildPlayer();
@@ -151,7 +153,9 @@ public final class PlaybackService extends MediaSessionService {
         player.setWakeMode(C.WAKE_MODE_LOCAL);
         player.addListener(new Player.Listener() {
             @Override public void onIsPlayingChanged(boolean playing) {
-                lastStats = SystemClock.elapsedRealtime();
+                long now = SystemClock.elapsedRealtime();
+                if (statsPlaying) statsTime(Math.max(0, Math.min(1500, now - lastStats)));
+                statsPlaying = playing; lastStats = now;
                 if (!playing) savePosition();
                 app.main.removeCallbacks(fadeTick); app.main.post(fadeTick);
             }
@@ -424,7 +428,7 @@ public final class PlaybackService extends MediaSessionService {
         configure(backup.getJSONObject("audio"), true);
         pause();
         app.save("ui", backup.getJSONObject("ui"));
-        stats = backup.getJSONObject("tools"); app.save("tools", stats);
+        stats = backup.getJSONObject("tools"); ListeningStats.initialize(stats, System.currentTimeMillis(), java.util.TimeZone.getDefault()); app.save("tools", stats);
         syncQueue(app.settings("ui"));
     }
     private DspEngine.Config dspConfig() throws Exception {
@@ -456,7 +460,7 @@ public final class PlaybackService extends MediaSessionService {
         return new DspEngine.Config(bands.toArray(new DspEngine.Band[0]), gain, settings.optBoolean("reverb"), settings.optBoolean("compressor"), settings.optBoolean("hall"));
     }
     private void applyDsp() { try { if (processor != null) processor.engine.set(dspConfig()); } catch (Exception exception) { error = exception.getMessage(); } }
-    private void statsTime(long elapsed) { try { stats.put("seconds", stats.optDouble("seconds", 0) + elapsed / 1000d); } catch (Exception ignored) {} }
+    private void statsTime(long elapsed) { ListeningStats.record(stats, System.currentTimeMillis(), elapsed, java.util.TimeZone.getDefault()); }
     private void savePosition() {
         if (player == null || restoring) return;
         JSONObject ui = app.settings("ui"), track = currentTrack();
